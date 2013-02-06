@@ -1,17 +1,35 @@
 (function() {
-  var Gesture, GestureHandler, _getElGestures;
+  var Gesture, GestureHandler, copyTouchEvent, copyTouchList;
 
-  _getElGestures = function(el) {
-    var gestures;
-    if (el.getAttribute) {
-      gestures = el.getAttribute('data-gestures');
+  copyTouchList = function(list) {
+    var copied, touch, _i, _len;
+    copied = Array(0);
+    for (_i = 0, _len = list.length; _i < _len; _i++) {
+      touch = list[_i];
+      copied.push({
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        pageX: touch.pageX,
+        pageY: touch.pageY,
+        screenX: touch.screenX,
+        screenY: touch.screenY,
+        identifier: touch.identifier
+      });
     }
-    if (!gestures) {
-      return null;
-    }
-    return gestures.split(',').map(function(g) {
-      return g.trim();
-    });
+    return copied;
+  };
+
+  copyTouchEvent = function(e) {
+    var copied;
+    copied = {
+      target: e.target,
+      timeStamp: e.timeStamp,
+      touches: copyTouchList(e.touches),
+      changedTouches: copyTouchList(e.changedTouches),
+      scale: e.scale,
+      rotation: e.rotation
+    };
+    return copied;
   };
 
   GestureHandler = (function() {
@@ -19,41 +37,41 @@
     function GestureHandler(root, dommy) {
       this.root = root;
       this.dommy = dommy != null ? dommy : window.dommy;
-      this.reset();
+      this._reset();
       this.options = {
         real_move_distance: 10
       };
     }
 
-    GestureHandler.prototype.reset = function() {
+    GestureHandler.prototype._reset = function() {
       this._touchmoveThrottle = {
         active: false,
         frame: requestAnimationFrame(function() {})
       };
       this._boundListeners = {
-        start: this.touchstartListener.bind(this),
-        end: this.touchendListener.bind(this),
-        move: this.touchmoveListener.bind(this),
-        handleMove: this.handleTouchmove.bind(this)
+        start: this._touchstartListener.bind(this),
+        end: this._touchendListener.bind(this),
+        move: this._touchmoveListener.bind(this),
+        handleMove: this._handleTouchmove.bind(this)
       };
-      this._lastEvents = {
+      this.lastEvents = {
         start: null,
         move: null,
         end: null
       };
-      this._firstEvent = null;
-      this._lastEventType = null;
-      this._starts = 0;
-      this._hadRealMove = false;
-      this._candidates = [];
+      this.firstEvent = null;
+      this.lastEventType = null;
+      this.starts = 0;
+      this.hadRealMove = false;
+      this.candidates = [];
       this.gesture = null;
       this.gestureName = '';
       this.el = null;
       this.elFastId = 0;
       this.elEventListener = function() {};
       this.elEventListenerInitialized = false;
-      this._finishOnLastTouchEnd = true;
-      return this.stuff = {};
+      this.elCustomEventListeners = {};
+      return this.gestureVars = {};
     };
 
     GestureHandler.prototype.listen = function() {
@@ -70,14 +88,14 @@
       return this;
     };
 
-    GestureHandler.prototype.touchstartListener = function(e) {
+    GestureHandler.prototype._touchstartListener = function(e) {
       e.stop();
-      this._lastEvents.start = e;
-      this._lastEventType = 'start';
-      this._starts++;
-      if (!this._firstEvent) {
-        this._firstEvent = e;
-        this.findTargets();
+      this.lastEvents.start = copyTouchEvent(e);
+      this.lastEventType = 'start';
+      this.starts++;
+      if (!this.firstEvent) {
+        this.firstEvent = copyTouchEvent(e);
+        this._findCandidates();
       }
       if (this.gesture) {
         return this.gesture.start(this, e);
@@ -89,10 +107,10 @@
       }
     };
 
-    GestureHandler.prototype.touchendListener = function(e) {
+    GestureHandler.prototype._touchendListener = function(e) {
       e.stop();
-      this._lastEventType = 'end';
-      this._lastEvents.end = e;
+      this.lastEventType = 'end';
+      this.lastEvents.end = copyTouchEvent(e);
       if (this.gesture) {
         this.gesture.end(this, e);
       } else {
@@ -101,62 +119,76 @@
           this.gesture.end(this, e);
         }
       }
-      if (e.touches.length === 0 && this._finishOnLastTouchEnd) {
-        return this.finish();
+      if (e.touches.length === 0) {
+        return this.shouldFinish();
       }
     };
 
-    GestureHandler.prototype.touchmoveListener = function(e) {
+    GestureHandler.prototype._touchmoveListener = function(e) {
       e.stop();
-      this._lastEvents.move = e;
-      this._lastEventType = 'move';
-      console.log('move', e.touches[0].screenX);
+      this.lastEvents.move = copyTouchEvent(e);
+      this.lastEventType = 'move';
       if (!this._touchmoveThrottle.active) {
         this._touchmoveThrottle.frame = window.requestAnimationFrame(this._boundListeners.handleMove);
         return this._touchmoveThrottle.active = true;
       }
     };
 
-    GestureHandler.prototype.handleTouchmove = function() {
+    GestureHandler.prototype._handleTouchmove = function() {
       var first, touch, touches, _i, _len;
       this._touchmoveThrottle.active = false;
-      if (!this._hadRealMove) {
-        touches = this._lastEvents.move.touches;
-        first = this._firstEvent.touches[0];
-        console.log('checking for real move', 'last touches', touches, 'first', first);
+      if (!this.hadRealMove) {
+        touches = this.lastEvents.move.touches;
+        first = this.firstEvent.touches[0];
         for (_i = 0, _len = touches.length; _i < _len; _i++) {
           touch = touches[_i];
           if (Math.abs(touch.screenX - first.screenX) >= this.options.real_move_distance || Math.abs(touch.screenY - first.screenY) >= this.options.real_move_distance) {
-            this._hadRealMove = true;
-            console.log('-- had real mvoe!');
+            this.hadRealMove = true;
             break;
           }
         }
       }
       if (this.gesture) {
-        return this.gesture.move(this, this._lastEvents.move);
+        return this.gesture.move(this, this.lastEvents.move);
       } else {
         this._checkForType();
         if (this.gesture) {
-          return this.gesture.move(this, this._lastEvents.move);
+          return this.gesture.move(this, this.lastEvents.move);
         }
       }
     };
 
-    GestureHandler.prototype.finish = function() {
-      if (this.gestureName) {
-        console.log('finished with: ' + this.gestureName);
+    GestureHandler.prototype.shouldFinish = function() {
+      var shouldFinish;
+      shouldFinish = true;
+      if (this.gesture) {
+        shouldFinish = this.gesture.shouldFinish(this);
       }
-      return this.reset();
+      if (!shouldFinish) {
+        return;
+      }
+      return this.finish();
     };
 
-    GestureHandler.prototype.findTargets = function() {
-      var gestureName, gestures, target, tempGests, _i, _len, _results;
-      target = this._firstEvent.target;
+    GestureHandler.prototype.finish = function() {
+      if (this.gesture) {
+        this.gesture.finish(this);
+      }
+      if (this.gestureName) {
+        console.info('finished with: ' + this.gestureName);
+      }
+      console.info('-----------------------------');
+      return this._reset();
+    };
+
+    GestureHandler.prototype._findCandidates = function() {
+      var fastId, gestureName, gestures, target, tempGests, _i, _len, _results;
+      target = this.firstEvent.target;
       tempGests = {};
       _results = [];
       while (target != null) {
-        gestures = _getElGestures(target);
+        fastId = this.dommy.fastId(target);
+        gestures = this._getElGestures(fastId, target);
         if (!gestures) {
           if (target === this.root) {
             break;
@@ -168,11 +200,12 @@
           gestureName = gestures[_i];
           if (!tempGests[gestureName]) {
             if (!Gesture[gestureName]) {
-              console.error('Invalid gesture name \'' + gestureName + '\'');
+              console.warn('Invalid gesture name \'' + gestureName + '\'');
             }
-            this._candidates.push({
+            this.candidates.push({
               gestureName: gestureName,
-              target: target
+              target: target,
+              fastId: fastId
             });
           }
           tempGests[gestureName] = true;
@@ -185,16 +218,41 @@
       return _results;
     };
 
+    GestureHandler.prototype._getElGestures = function(fastId, el) {
+      var gestures;
+      gestures = this.dommy._get(fastId, 'gestures');
+      if (gestures !== void 0) {
+        return gestures;
+      }
+      console.log('DOM! for', fastId, gestures, el);
+      if (el.getAttribute) {
+        gestures = el.getAttribute('data-gestures');
+      }
+      if (!gestures) {
+        this.dommy._set(fastId, 'gestures', null);
+        return null;
+      }
+      gestures = gestures.split(',').map(function(g) {
+        return g.trim();
+      });
+      this.dommy._set(fastId, 'gestures', gestures);
+      return gestures;
+    };
+
     GestureHandler.prototype._checkForType = function() {
       var gestureName, set, shouldBreak;
+      if (this.candidates.length === 0) {
+        return;
+      }
+      console.group('Type');
       shouldBreak = false;
-      while (this._candidates.length !== 0) {
-        set = this._candidates[0];
+      while (this.candidates.length !== 0) {
+        set = this.candidates[0];
         gestureName = set.gestureName;
-        console.log('checking ' + this._candidates[0].gestureName);
+        console.log('checking ' + this.candidates[0].gestureName);
         switch (Gesture[gestureName].check(this)) {
           case -1:
-            this._candidates.shift();
+            this.candidates.shift();
             console.log('wasnt ' + gestureName);
             continue;
           case 0:
@@ -202,28 +260,42 @@
             break;
           case 1:
             this.el = set.target;
-            this.elFastId = this.dommy.fastId(this.el);
+            this.elFastId = set.fastId;
             this.gestureName = gestureName;
             this.gesture = Gesture[gestureName];
             this.gesture.init(this);
+            console.groupEnd();
             return;
         }
         if (shouldBreak) {
           break;
         }
       }
-      if (this._candidates.length !== 0) {
-        return console.log('havent determined yet');
+      if (this.candidates.length !== 0) {
+        console.log('havent determined yet');
+      } else {
+        console.log("Don't know!");
       }
+      return console.groupEnd();
     };
 
     GestureHandler.prototype.fire = function(e) {
-      console.log('firing');
+      console.group('Firing for', this.gestureName);
       if (!this.elEventListenerInitialized) {
         this.elEventListener = dommy.getListener(this.elFastId, this.el, this.gestureName);
         this.elEventListenerInitialized = true;
       }
-      return this.elEventListener(e);
+      this.elEventListener(e);
+      return console.groupEnd();
+    };
+
+    GestureHandler.prototype.fireCustom = function(name, e) {
+      console.group('Custom Firing', name, 'for', this.gestureName);
+      if (this.elCustomEventListeners[name] === void 0) {
+        this.elCustomEventListeners[name] = dommy.getListener(this.elFastId, this.el, name);
+      }
+      this.elCustomEventListeners[name](e);
+      return console.groupEnd();
     };
 
     return GestureHandler;
@@ -252,6 +324,13 @@
         },
         move: function(h, e) {
           return console.log('Caught touchmove for "' + name + '"');
+        },
+        shouldFinish: function(h) {
+          console.log('Caught shouldFinish for "' + name + '"');
+          return true;
+        },
+        finish: function(h) {
+          return console.log('Caught finish for ' + name + '"');
         }
       };
       bare.name = name;
@@ -266,15 +345,15 @@
   })();
 
   new Gesture('tap', {
-    tap_time: 300,
+    tap_time: 250,
     check: function(h) {
-      if (h._starts !== 1 || h._hadRealMove) {
+      if (h.starts !== 1 || h.hadRealMove) {
         return -1;
       }
-      if (h._lastEventType !== 'end') {
+      if (h.lastEventType !== 'end') {
         return 0;
       }
-      if (h._lastEvents.end.timeStamp - h._firstEvent.timeStamp > this.tap_time) {
+      if (h.lastEvents.end.timeStamp - h.firstEvent.timeStamp > this.tap_time) {
         return -1;
       }
       return 1;
@@ -285,12 +364,12 @@
   });
 
   new Gesture('hold', {
-    hold_time: 600,
+    hold_time: 250,
     check: function(h) {
-      if (h._starts !== 1 || h._hadRealMove) {
+      if (h.starts !== 1 || h.hadRealMove) {
         return -1;
       }
-      if (h._lastEventType !== 'end' || h._lastEvents.end.timeStamp - h._firstEvent.timeStamp < this.hold_time) {
+      if (h.lastEventType !== 'end' || h.lastEvents.end.timeStamp - h.firstEvent.timeStamp < this.hold_time) {
         return 0;
       }
       return 1;
@@ -300,7 +379,17 @@
     }
   });
 
-  new Gesture('instantmove');
+  new Gesture('instantmove', {
+    check: function(h) {
+      return 1;
+    },
+    move: function(h, e) {
+      return h.fire({
+        translateX: e.touches[0].screenX - h.firstEvent.touches[0].screenX,
+        translateY: e.touches[0].screenY - h.firstEvent.touches[0].screenY
+      });
+    }
+  });
 
   new Gesture('transform');
 

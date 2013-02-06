@@ -4,21 +4,27 @@
 	
 	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
 
-	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<script src="scripts/js/extras/benchmark.js"></script>
 
 	<script src="scripts/js/lib/native.js"></script>
 	<script src="scripts/js/lib/math.js"></script>
+	<script src="scripts/js/lib/graphics.js"></script>
 	<script src="scripts/js/lib/dom.js"></script>
 	<script src="scripts/js/lib/events.js"></script>
 	<script src="scripts/js/lib/touch.js"></script>
 	<script src="scripts/js/main.js"></script>
 
+
+
 	<link rel="stylesheet" href="styles/minimal.css">
 
 	<script>
+		// Weinre remote debugger for remote clients
 		(function(){
-			if (document.location.hostname !== 'emr.pix' && document.location.hostname !== 'localhost') {
+			if (document.location.hostname !== 'localhost') {
 				var s = document.createElement('script');
 				s.type = 'text/javascript';
 				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
@@ -28,12 +34,11 @@
 		
 	</script>
 
-
-
 	<style>
 		body {
 			height: 100%;
 		}
+		
 		.one {
 			position: absolute;
 			width: 80%; height: 80%;
@@ -46,13 +51,24 @@
 			
 			top: 60px;
 			left: 120px;
+			
+			
+		}
+
+		.two.alone {
+			-webkit-transform: rotate3d(1, 0, 0, 45deg);
+		}
+
+		.two.extra {
+			left: 820px;
 		}
 	</style>
 </head>
 <body data-gestures="move">
 	<div class="one" data-gestures="transform">
 		<div class="extra">
-			<div class="two" data-gestures="tap, hold, instantmove" data-type="babs"></div>
+			<div class="two alone" data-gestures="instantmove, tap, hold" data-type="babs"></div>
+			<div class="two extra"></div>
 		</div>
 		
 	</div>
