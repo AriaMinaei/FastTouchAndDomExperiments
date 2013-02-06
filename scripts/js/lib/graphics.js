@@ -176,80 +176,61 @@
       return this;
     };
 
-    Matrix3d.prototype._setRotationFamous = function(x, y, z) {
-      var a, b, d, e, h, s;
-      h = Math.cos(x);
-      a = Math.sin(x);
-      s = Math.cos(y);
-      b = Math.sin(y);
-      e = Math.cos(z);
-      d = Math.sin(z);
-      this.r[0] = s * e;
-      this.r[1] = h * d + a * b * e;
-      this.r[2] = a * d - h * b * e;
-      this.r[4] = -s * d;
-      this.r[5] = h * e - a * b * d;
-      this.r[6] = a * e + h * b * d;
-      this.r[8] = b;
-      this.r[9] = -a * s;
-      this.r[10] = h * s;
+    Matrix3d.prototype._setRotation = function(x, y, z) {
+      var cosx, cosy, cosz, sinx, siny, sinz;
+      cosx = Math.cos(x);
+      sinx = Math.sin(x);
+      cosy = Math.cos(y);
+      siny = Math.sin(y);
+      cosz = Math.cos(z);
+      sinz = Math.sin(z);
+      this.r[0] = cosy * cosz;
+      this.r[1] = cosx * sinz + sinx * siny * cosz;
+      this.r[2] = sinx * sinz - cosx * siny * cosz;
+      this.r[4] = -cosy * sinz;
+      this.r[5] = cosx * cosz - sinx * siny * sinz;
+      this.r[6] = sinx * cosz + cosx * siny * sinz;
+      this.r[8] = siny;
+      this.r[9] = -sinx * cosy;
+      this.r[10] = cosx * cosy;
       return this;
     };
 
-    Matrix3d.prototype._setRotationW3 = function(x, y, z, alpha) {
-      var sc, sin, sq, x2, xsc, xysq, xzsq, y2, ysc, yzsq, z2, zsc;
-      alpha = alpha / 2;
-      sin = Math.sin(alpha);
-      sc = sin * Math.cos(alpha);
-      sq = sin * sin;
-      x2 = x * x;
-      y2 = y * y;
-      z2 = z * z;
-      xysq = x * y * sq;
-      xzsq = x * z * sq;
-      yzsq = y * z * sq;
-      xsc = x * sc;
-      ysc = y * sc;
-      zsc = z * sc;
-      this.r[0] = 1 - 2 * (y2 + z2) * sq;
-      this.r[1] = 2 * (xysq + zsc);
-      this.r[2] = 2 * (xzsq - ysc);
-      this.r[4] = 2 * (xysq - zsc);
-      this.r[5] = 1 - 2 * (x2 + z2) * sq;
-      this.r[6] = 2 * (yzsq + xsc);
-      this.r[8] = 2 * (xzsq + ysc);
-      this.r[9] = 2 * (yzsq - xsc);
-      this.r[10] = 1 - 2 * (x2 + y2) * sq;
+    Matrix3d.prototype._setRotationX = function(x) {
+      var cosx, sinx;
+      cosx = Math.cos(x);
+      sinx = Math.sin(x);
+      this.r[5] = cosx;
+      this.r[6] = sinx;
+      this.r[9] = -sinx;
+      this.r[10] = cosx;
+      return this;
+    };
+
+    Matrix3d.prototype._setRotationY = function(y) {
+      var cosy, siny;
+      cosy = Math.cos(y);
+      siny = Math.sin(y);
+      this.r[0] = cosy;
+      this.r[2] = -siny;
+      this.r[8] = siny;
+      this.r[10] = cosy;
+      return this;
+    };
+
+    Matrix3d.prototype._setRotationZ = function(z) {
+      var cosz, sinz;
+      cosz = Math.cos(z);
+      sinz = Math.sin(z);
+      this.r[0] = cosz;
+      this.r[1] = sinz;
+      this.r[4] = -sinz;
+      this.r[5] = cosz;
       return this;
     };
 
     return Matrix3d;
 
-  })();
-
-  (function() {
-    var g, rad, suite;
-    suite = new Benchmark.Suite;
-    g = new Graphics.Matrix3d;
-    rad = Math.PI / 4;
-    suite.on('cycle', function(e) {
-      return console.log(String(e.target));
-    });
-    suite.add('w3', function() {
-      return g._setRotationFamous(1, 0, 0, rad);
-    });
-    suite.add('famous', function() {
-      return g._setRotationFamous(rad, 0, 0);
-    });
-    suite.on('complete', function() {
-      return console.log('Fastest:', this);
-    });
-    return window.run = function() {
-      suite.run({
-        async: true
-      });
-      return null;
-    };
   })();
 
 }).call(this);

@@ -21,29 +21,29 @@ document.addEventListener "DOMContentLoaded", ->
 	# g.listen()
 	# root.g = g
 	
-	# window.t = 
-	# 	el: null
-	# 	m: new Graphics.Matrix3d
-	# 	default: ->
-	# 		@fromEl(document.querySelectorAll('.two.extra')[0])
-	# 		@
-	# 	fromEl: (@el) ->
-	# 		@m.fromString getComputedStyle(@el).webkitTransform
-	# 		@
-	# 	apply: ->
-	# 		@el.style.webkitTransform = @m.toString()
-	# 		@
+	window.t = 
+		el: null
+		m: new Graphics.Matrix3d
+		default: ->
+			@fromEl(document.querySelectorAll('.two.extra')[0])
+			@
+		fromEl: (@el) ->
+			@m.fromString getComputedStyle(@el).webkitTransform
+			@
+		apply: ->
+			@el.style.webkitTransform = @m.toString()
+			@
 
-	# t.default()
+	t.default()
 
-	# window.m = t.m
+	window.m = t.m
 
-	# setInterval ->
-	# 	t.apply()
-	# , 1000
+	setInterval ->
+		t.apply()
+	, 1000
 
-	# # m._setRotationFamous(Math.PI / 4, 0, 0)
-	# m._setRotationW3(1, 0, 0, Math.PI / 4)
-	# console.log 'm', m.toString()
+	# m._setRotation(Math.PI / 4, 0, 0)
+	m._setRotationZ(Math.PI / 4)
+	console.log 'm', m.toString()
 
-	# console.log 'w', getComputedStyle(document.querySelectorAll('.two.alone')[0]).webkitTransform
+	console.log 'w', getComputedStyle(document.querySelectorAll('.two.alone')[0]).webkitTransform

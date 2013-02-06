@@ -254,114 +254,93 @@ class Graphics.Matrix3d
 		@r[10] *= parseFloat z
 		@
 
-	_setRotationFamous: (x, y, z) ->
-		# alpha = alpha / 2
-		# sin = Math.sin(alpha)
-		# sc = sin * Math.cos(alpha)
-		# sq = sin * sin
+	_setRotation: (x, y, z) ->
+		# I tried w3c's method with some optimizations and Famo.us` method.
+		# They perform the same. Famo.us` is cleaner, so I'm going with that.
+		cosx = Math.cos(x)
+		sinx = Math.sin(x)
 
-		# x2 = x * x
-		# y2 = y * y
-		# z2 = z * z
+		cosy = Math.cos(y)
+		siny = Math.sin(y)
+		cosz = Math.cos(z)
+		sinz = Math.sin(z)
 
-		# xysq = x * y * sq
-		# xzsq = x * z * sq
-		# yzsq = y * z * sq
+		@r[0] = cosy * cosz
+		@r[1] = cosx * sinz + sinx * siny * cosz
+		@r[2] = sinx * sinz - cosx * siny * cosz
 
-		# xsc = x * sc
-		# ysc = y * sc
-		# zsc = z * sc
+		@r[4] = -cosy * sinz
+		@r[5] = cosx * cosz - sinx * siny * sinz
+		@r[6] = sinx * cosz + cosx * siny * sinz
 
-		# @r[0] = 1 - 2 * (y2 + z2) * sq
-		# @r[1] = 2 * ( xysq + zsc )
-		# @r[2] = 2 * ( xzsq - ysc )
-
-		# @r[4] = 2 * ( xysq - zsc )
-		# @r[5] = 1 - 2 * (x2 + z2) * sq
-		# @r[6] = 2 * ( yzsq + xsc )
-
-		# @r[8] = 2 * ( xzsq + ysc )
-		# @r[9] = 2 * ( yzsq - xsc )
-		# @r[10] = 1 - 2 * (x2 + y2) * sq
-
-		# @
-
-		h = Math.cos(x)
-		a = Math.sin(x)
-
-		s = Math.cos(y)
-		b = Math.sin(y)
-		e = Math.cos(z)
-		d = Math.sin(z)
-
-		@r[0] = s * e
-		@r[1] = h * d + a * b * e
-		@r[2] = a * d - h * b * e
-
-		@r[4] = -s * d
-		@r[5] = h * e - a * b * d
-		@r[6] = a * e + h * b * d
-
-		@r[8] = b
-		@r[9] = -a * s
-		@r[10] = h * s
+		@r[8] = siny
+		@r[9] = -sinx * cosy
+		@r[10] = cosx * cosy
 
 		@
 
-	_setRotationW3: (x, y, z, alpha) ->
-		alpha = alpha / 2
-		sin = Math.sin(alpha)
-		sc = sin * Math.cos(alpha)
-		sq = sin * sin
+	_setRotationX: (x) ->
+		cosx = Math.cos(x)
+		sinx = Math.sin(x)
 
-		x2 = x * x
-		y2 = y * y
-		z2 = z * z
+		@r[5] = cosx
+		@r[6] = sinx
 
-		xysq = x * y * sq
-		xzsq = x * z * sq
-		yzsq = y * z * sq
-
-		xsc = x * sc
-		ysc = y * sc
-		zsc = z * sc
-
-		@r[0] = 1 - 2 * (y2 + z2) * sq
-		@r[1] = 2 * ( xysq + zsc )
-		@r[2] = 2 * ( xzsq - ysc )
-
-		@r[4] = 2 * ( xysq - zsc )
-		@r[5] = 1 - 2 * (x2 + z2) * sq
-		@r[6] = 2 * ( yzsq + xsc )
-
-		@r[8] = 2 * ( xzsq + ysc )
-		@r[9] = 2 * ( yzsq - xsc )
-		@r[10] = 1 - 2 * (x2 + y2) * sq
+		@r[9] = -sinx
+		@r[10] = cosx
 
 		@
-do ->
-	suite = new Benchmark.Suite
 
-	g = new Graphics.Matrix3d
+	_setRotationY: (y) ->
+		# I tried w3c's method with some optimizations and Famo.us` method.
+		# They perform the same. Famo.us` is cleaner, so I'm going with that.
 
-	rad = Math.PI / 4
+		cosy = Math.cos(y)
+		siny = Math.sin(y)
 
-	suite.on 'cycle', (e) ->
-		console.log String(e.target)
+		@r[0] = cosy
+		@r[2] = -siny
 
-	suite.add 'w3', ->
-		g._setRotationFamous 1, 0, 0, rad
+		@r[8] = siny
+		@r[10] = cosy
 
-	suite.add 'famous', ->
-		g._setRotationFamous rad, 0, 0
+		@
+
+	_setRotationZ: (z) ->
+		cosz = Math.cos(z)
+		sinz = Math.sin(z)
+
+		@r[0] = cosz
+		@r[1] = sinz		
+
+		@r[4] = -sinz
+		@r[5] = cosz
+
+		@
+
+# do ->
+# 	suite = new Benchmark.Suite
+
+# 	g = new Graphics.Matrix3d
+
+# 	rad = Math.PI / 4
+
+# 	suite.on 'cycle', (e) ->
+# 		console.log String(e.target)
+
+# 	suite.add 'w3', ->
+# 		g._setRotationFamous 1, 0, 0, rad
+
+# 	suite.add 'famous', ->
+# 		g._setRotationFamous rad, 0, 0
 
 	
 
-	suite.on 'complete', ->
-		console.log 'Fastest:', this
+# 	suite.on 'complete', ->
+# 		console.log 'Fastest:', this
 
-	window.run = ->
-		suite.run
-			async: true
+# 	window.run = ->
+# 		suite.run
+# 			async: true
 
-		return null
+# 		return null
