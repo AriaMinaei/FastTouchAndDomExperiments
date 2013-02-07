@@ -43,7 +43,6 @@ class GestureHandler
 			start: @_touchstartListener.bind @
 			end: @_touchendListener.bind @
 			move: @_touchmoveListener.bind @
-			handleMove: @_handleTouchmove.bind @
 
 		# Latest touch events
 		@lastEvents =

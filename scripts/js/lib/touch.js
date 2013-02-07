@@ -51,8 +51,7 @@
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
-        move: this._touchmoveListener.bind(this),
-        handleMove: this._handleTouchmove.bind(this)
+        move: this._touchmoveListener.bind(this)
       };
       this.lastEvents = {
         start: null,
