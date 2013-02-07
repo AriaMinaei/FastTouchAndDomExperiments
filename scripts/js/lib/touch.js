@@ -125,18 +125,10 @@
     };
 
     GestureHandler.prototype._touchmoveListener = function(e) {
+      var first, touch, touches, _i, _len;
       e.stop();
       this.lastEvents.move = copyTouchEvent(e);
       this.lastEventType = 'move';
-      if (!this._touchmoveThrottle.active) {
-        this._touchmoveThrottle.frame = window.requestAnimationFrame(this._boundListeners.handleMove);
-        return this._touchmoveThrottle.active = true;
-      }
-    };
-
-    GestureHandler.prototype._handleTouchmove = function() {
-      var first, touch, touches, _i, _len;
-      this._touchmoveThrottle.active = false;
       if (!this.hadRealMove) {
         touches = this.lastEvents.move.touches;
         first = this.firstEvent.touches[0];

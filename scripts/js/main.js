@@ -6,12 +6,11 @@
   document.addEventListener("DOMContentLoaded", function() {
     var g;
     g = new GestureHandler(html);
-    (function() {
-      var raf, rafactive, rafdo, transforms;
+    g.listen();
+    root.g = g;
+    return (function() {
+      var transforms;
       transforms = {};
-      rafactive = false;
-      raf = null;
-      rafdo = function() {};
       dommy.addEvent('babs', 'instantmove', function(e, id, el) {
         var t;
         if (!transforms[id]) {
@@ -19,7 +18,7 @@
         } else {
           t = transforms[id];
         }
-        t.temporarily()._setRotationY(e.translateX * Math.PI / 720).translate(e.translateX, e.translateY, 0);
+        t.temporarily().translate(e.translateX, e.translateY, 0);
         return t.apply(el);
       });
       return dommy.addEvent('babs', 'instantmove-end', function(e, id, el) {
@@ -30,8 +29,6 @@
         }
       });
     })();
-    g.listen();
-    return root.g = g;
   });
 
 }).call(this);
