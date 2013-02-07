@@ -125,12 +125,28 @@
     };
 
     GestureHandler.prototype._touchmoveListener = function(e) {
+      var first, touch, touches, _i, _len;
       e.stop();
       this.lastEvents.move = copyTouchEvent(e);
       this.lastEventType = 'move';
-      if (!this._touchmoveThrottle.active) {
-        this._touchmoveThrottle.frame = window.requestAnimationFrame(this._boundListeners.handleMove);
-        return this._touchmoveThrottle.active = true;
+      if (!this.hadRealMove) {
+        touches = this.lastEvents.move.touches;
+        first = this.firstEvent.touches[0];
+        for (_i = 0, _len = touches.length; _i < _len; _i++) {
+          touch = touches[_i];
+          if (Math.abs(touch.screenX - first.screenX) >= this.options.real_move_distance || Math.abs(touch.screenY - first.screenY) >= this.options.real_move_distance) {
+            this.hadRealMove = true;
+            break;
+          }
+        }
+      }
+      if (this.gesture) {
+        return this.gesture.move(this, this.lastEvents.move);
+      } else {
+        this._checkForType();
+        if (this.gesture) {
+          return this.gesture.move(this, this.lastEvents.move);
+        }
       }
     };
 

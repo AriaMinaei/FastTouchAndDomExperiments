@@ -142,11 +142,34 @@ class GestureHandler
 		@lastEvents.move = copyTouchEvent(e)
 		@lastEventType = 'move'
 
-		unless @_touchmoveThrottle.active
-			@_touchmoveThrottle.frame = window.requestAnimationFrame @_boundListeners.handleMove
-			@_touchmoveThrottle.active = true
+		unless @hadRealMove
+			touches = @lastEvents.move.touches
+			first = @firstEvent.touches[0]
+
+			for touch in touches
+				if Math.abs(touch.screenX - first.screenX) >= @options.real_move_distance or
+				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
+					@hadRealMove = true
+					break
+
+
+		if @gesture then @gesture.move(@, @lastEvents.move)
+		else
+			@_checkForType()
+			if @gesture then @gesture.move(@, @lastEvents.move)
+
+
+
+		# unless @_touchmoveThrottle.active
+		# 	@_touchmoveThrottle.frame = window.requestAnimationFrame @_boundListeners.handleMove
+		# 	@_touchmoveThrottle.active = true
 
 	# Handles touchmove events, every 16ms or so
+	# 
+	# This was supposed to make things go smoother, but I don't think it does.
+	# The effect gets laggy, and its not good!
+	# 
+	# I'm gonna remove this in the next commit, and just handle everything in _touchmoveListener
 	_handleTouchmove: ->
 		@_touchmoveThrottle.active = false
 
