@@ -136,12 +136,13 @@ class GestureHandler
 
 		@shouldFinish() if e.touches.length is 0
 
-	# This one doesn't handle the move itself, it just throttles the events
+	# Listener for touchmove
 	_touchmoveListener: (e) ->
 		e.stop()
 		@lastEvents.move = copyTouchEvent(e)
 		@lastEventType = 'move'
 
+		# Checking to see if we've had any real move
 		unless @hadRealMove
 			touches = @lastEvents.move.touches
 			first = @firstEvent.touches[0]
@@ -158,37 +159,6 @@ class GestureHandler
 			@_checkForType()
 			if @gesture then @gesture.move(@, @lastEvents.move)
 
-
-
-		# unless @_touchmoveThrottle.active
-		# 	@_touchmoveThrottle.frame = window.requestAnimationFrame @_boundListeners.handleMove
-		# 	@_touchmoveThrottle.active = true
-
-	# Handles touchmove events, every 16ms or so
-	# 
-	# This was supposed to make things go smoother, but I don't think it does.
-	# The effect gets laggy, and its not good!
-	# 
-	# I'm gonna remove this in the next commit, and just handle everything in _touchmoveListener
-	_handleTouchmove: ->
-		@_touchmoveThrottle.active = false
-
-
-		unless @hadRealMove
-			touches = @lastEvents.move.touches
-			first = @firstEvent.touches[0]
-
-			for touch in touches
-				if Math.abs(touch.screenX - first.screenX) >= @options.real_move_distance or
-				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
-					@hadRealMove = true
-					break
-
-
-		if @gesture then @gesture.move(@, @lastEvents.move)
-		else
-			@_checkForType()
-			if @gesture then @gesture.move(@, @lastEvents.move)
 
 	# Runs when there are no touches left.
 	# If the gesture allows, it will finish
