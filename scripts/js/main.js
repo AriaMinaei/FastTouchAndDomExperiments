@@ -4,31 +4,34 @@
   root = this;
 
   document.addEventListener("DOMContentLoaded", function() {
-    window.t = {
-      el: null,
-      m: new Graphics.Matrix3d,
-      "default": function() {
-        this.fromEl(document.querySelectorAll('.two.extra')[0]);
-        return this;
-      },
-      fromEl: function(el) {
-        this.el = el;
-        this.m.fromString(getComputedStyle(this.el).webkitTransform);
-        return this;
-      },
-      apply: function() {
-        this.el.style.webkitTransform = this.m.toString();
-        return this;
-      }
-    };
-    t["default"]();
-    window.m = t.m;
-    setInterval(function() {
-      return t.apply();
-    }, 1000);
-    m._setRotationZ(Math.PI / 4);
-    console.log('m', m.toString());
-    return console.log('w', getComputedStyle(document.querySelectorAll('.two.alone')[0]).webkitTransform);
+    var g;
+    g = new GestureHandler(html);
+    (function() {
+      var raf, rafactive, rafdo, transforms;
+      transforms = {};
+      rafactive = false;
+      raf = null;
+      rafdo = function() {};
+      dommy.addEvent('babs', 'instantmove', function(e, id, el) {
+        var t;
+        if (!transforms[id]) {
+          transforms[id] = t = dommy.styles.getTransform(id, el);
+        } else {
+          t = transforms[id];
+        }
+        t.temporarily()._setRotationY(e.translateX * Math.PI / 720).translate(e.translateX, e.translateY, 0);
+        return t.apply(el);
+      });
+      return dommy.addEvent('babs', 'instantmove-end', function(e, id, el) {
+        console.log('received instantmove-end event for', e);
+        transforms[id].commit(el);
+        if (transforms[id]) {
+          return transforms[id] = null;
+        }
+      });
+    })();
+    g.listen();
+    return root.g = g;
   });
 
 }).call(this);

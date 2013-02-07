@@ -174,10 +174,6 @@
       if (this.gesture) {
         this.gesture.finish(this);
       }
-      if (this.gestureName) {
-        console.info('finished with: ' + this.gestureName);
-      }
-      console.info('-----------------------------');
       return this._reset();
     };
 
@@ -199,9 +195,6 @@
         for (_i = 0, _len = gestures.length; _i < _len; _i++) {
           gestureName = gestures[_i];
           if (!tempGests[gestureName]) {
-            if (!Gesture[gestureName]) {
-              console.warn('Invalid gesture name \'' + gestureName + '\'');
-            }
             this.candidates.push({
               gestureName: gestureName,
               target: target,
@@ -224,7 +217,6 @@
       if (gestures !== void 0) {
         return gestures;
       }
-      console.log('DOM! for', fastId, gestures, el);
       if (el.getAttribute) {
         gestures = el.getAttribute('data-gestures');
       }
@@ -244,16 +236,13 @@
       if (this.candidates.length === 0) {
         return;
       }
-      console.group('Type');
       shouldBreak = false;
       while (this.candidates.length !== 0) {
         set = this.candidates[0];
         gestureName = set.gestureName;
-        console.log('checking ' + this.candidates[0].gestureName);
         switch (Gesture[gestureName].check(this)) {
           case -1:
             this.candidates.shift();
-            console.log('wasnt ' + gestureName);
             continue;
           case 0:
             shouldBreak = true;
@@ -264,7 +253,6 @@
             this.gestureName = gestureName;
             this.gesture = Gesture[gestureName];
             this.gesture.init(this);
-            console.groupEnd();
             return;
         }
         if (shouldBreak) {
@@ -272,30 +260,25 @@
         }
       }
       if (this.candidates.length !== 0) {
-        console.log('havent determined yet');
+
       } else {
-        console.log("Don't know!");
+
       }
-      return console.groupEnd();
     };
 
     GestureHandler.prototype.fire = function(e) {
-      console.group('Firing for', this.gestureName);
       if (!this.elEventListenerInitialized) {
         this.elEventListener = dommy.getListener(this.elFastId, this.el, this.gestureName);
         this.elEventListenerInitialized = true;
       }
-      this.elEventListener(e);
-      return console.groupEnd();
+      return this.elEventListener(e);
     };
 
     GestureHandler.prototype.fireCustom = function(name, e) {
-      console.group('Custom Firing', name, 'for', this.gestureName);
       if (this.elCustomEventListeners[name] === void 0) {
         this.elCustomEventListeners[name] = dommy.getListener(this.elFastId, this.el, name);
       }
-      this.elCustomEventListeners[name](e);
-      return console.groupEnd();
+      return this.elCustomEventListeners[name](e);
     };
 
     return GestureHandler;
@@ -313,25 +296,14 @@
         check: function(h) {
           return -1;
         },
-        init: function() {
-          return console.log('Gesture "' + name + '" initialized');
-        },
-        start: function(h, e) {
-          return console.log('Caught touchstart for "' + name + '"');
-        },
-        end: function(h, e) {
-          return console.log('Caught touchend for "' + name + '"');
-        },
-        move: function(h, e) {
-          return console.log('Caught touchmove for "' + name + '"');
-        },
+        init: function() {},
+        start: function(h, e) {},
+        end: function(h, e) {},
+        move: function(h, e) {},
         shouldFinish: function(h) {
-          console.log('Caught shouldFinish for "' + name + '"');
           return true;
         },
-        finish: function(h) {
-          return console.log('Caught finish for ' + name + '"');
-        }
+        finish: function(h) {}
       };
       bare.name = name;
       bare = Object.append(bare, stuff);
@@ -388,6 +360,9 @@
         translateX: e.touches[0].screenX - h.firstEvent.touches[0].screenX,
         translateY: e.touches[0].screenY - h.firstEvent.touches[0].screenY
       });
+    },
+    finish: function(h) {
+      return h.fireCustom('instantmove-end', {});
     }
   });
 

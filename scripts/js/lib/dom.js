@@ -233,29 +233,91 @@
 
     Styles.prototype.getTransform = function(fastId, el) {
       var t;
-      if (t = this.dommy._get(fastId, 'style.transform')) {
-        return t;
+      t = this.dommy._get(fastId, 'style.transform');
+      if (!t) {
+        t = new DommyContainer.Styles.Transform(this.dommy, fastId, el);
+        this.dommy._set(fastId, 'style.transform', t);
       }
-      return this._initTransform(fastId, el);
-    };
-
-    Styles.prototype.setTransform = function(fastId, el, t) {};
-
-    Styles.prototype._initTransform = function(fastId, el) {
-      var prop, t;
-      prop = getComputedStyle(el).webkitTransform;
-      t = new WebKitCSSMatrix(prop);
-      this.dommy._set(fastId, 'style.transform', t);
-      this.dommy._set(fastId, 'style.transform.original', t);
       return t;
     };
 
-    Styles.prototype.translate = function(fastId, el, x, y) {
-      var t;
-      return t = this.getTransform(fastId, el).translate(x, y);
+    return Styles;
+
+  })();
+
+  DommyContainer.Styles.Transform = (function() {
+
+    function Transform(dommy, fastId, el) {
+      this.dommy = dommy;
+      this.fastId = fastId;
+      if (this.original = this.dommy._get(this.fastId, 'style.transform.original')) {
+        this.current = this.dommy._get(this.fastId, 'style.transform.current');
+        this.temp = this.dommy._get(this.fastId, 'style.transform.temp');
+      } else {
+        this.original = new Graphics.FastMatrix(getComputedStyle(el).webkitTransform);
+        this.dommy._set(this.fastId, 'style.transform.original', this.original);
+        this.current = this.original.copy();
+        this.dommy._set(this.fastId, 'style.transform.current', this.current);
+        this.temp = this.original.copy();
+        this.dommy._set(this.fastId, 'style.transform.temp', this.temp);
+      }
+      this.active = 1;
+    }
+
+    Transform.prototype.temporarily = function() {
+      this.temp.fromMatrix(this.current);
+      this.active = 0;
+      return this.temp;
     };
 
-    return Styles;
+    Transform.prototype.originally = function() {
+      this.active = 2;
+      return this.original;
+    };
+
+    Transform.prototype.currently = function() {
+      this.active = 1;
+      return this.current;
+    };
+
+    Transform.prototype.apply = function(el) {
+      switch (this.active) {
+        case 0:
+          el.style.webkitTransform = this.temp.toString();
+          break;
+        case 1:
+          el.style.webkitTransform = this.current.toString();
+          break;
+        case 2:
+          el.style.webkitTransform = this.original.toString();
+      }
+      return this;
+    };
+
+    Transform.prototype.commit = function(el) {
+      this.apply(el);
+      switch (this.active) {
+        case 0:
+          this.current.fromMatrix(this.temp);
+          break;
+        case 2:
+          this.current.fromMatrix(this.original);
+      }
+      this.active = 1;
+      return this;
+    };
+
+    Transform.prototype.revertToCurrent = function(el) {
+      this.currently();
+      return this.commit(el);
+    };
+
+    Transform.prototype.revertToOriginal = function(el) {
+      this.originally();
+      return this.commit(el);
+    };
+
+    return Transform;
 
   })();
 

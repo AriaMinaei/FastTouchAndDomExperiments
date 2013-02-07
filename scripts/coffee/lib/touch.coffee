@@ -182,8 +182,8 @@ class GestureHandler
 	finish: ->
 		@gesture.finish(@) if @gesture
 
-		console.info 'finished with: ' + @gestureName if @gestureName
-		console.info '-----------------------------'
+		#console.info 'finished with: ' + @gestureName if @gestureName
+		#console.info '-----------------------------'
 		@_reset()
 		
 	# Determines the potential targets and gestures for the current gesture
@@ -211,7 +211,7 @@ class GestureHandler
 				# This means if there are multiple elements in the bubble
 				# listening for this gesture, only the innermost may catch it.
 				unless tempGests[gestureName]
-					console.warn 'Invalid gesture name \'' + gestureName + '\'' if not Gesture[gestureName]
+					#console.warn 'Invalid gesture name \'' + gestureName + '\'' if not Gesture[gestureName]
 					@candidates.push
 						gestureName: gestureName
 						target: target
@@ -224,7 +224,7 @@ class GestureHandler
 			# Bubbling up
 			target = target.parentNode
 
-		# console.log 'candidates: ', @candidates
+		# #console.log 'candidates: ', @candidates
 
 	# Gets El's gestures either from its data-gestures attribute, or a chached
 	# one from dommy.
@@ -232,7 +232,7 @@ class GestureHandler
 		gestures = @dommy._get(fastId, 'gestures')
 		return gestures if gestures isnt undefined
 
-		console.log 'DOM! for', fastId, gestures, el
+		#console.log 'DOM! for', fastId, gestures, el
 		gestures = el.getAttribute 'data-gestures' if el.getAttribute
 		if !gestures
 			@dommy._set(fastId, 'gestures', null)
@@ -246,21 +246,21 @@ class GestureHandler
 	# For when we haven't determined the gesture's type yet
 	_checkForType: ->
 		return if @candidates.length is 0
-		console.group('Type')
+		#console.group('Type')
 		# Coffee doesn't support labels and stuff, so I gotta use this hack
 		# for breaking outside the while loop
 		shouldBreak = false
 		while @candidates.length != 0
 			set = @candidates[0]
 			gestureName = set.gestureName
-			console.log 'checking ' + @candidates[0].gestureName
+			#console.log 'checking ' + @candidates[0].gestureName
 
 			# Check if gesture applies
 			switch Gesture[gestureName].check(@)
 				# Doesn't apply > Remove it
 				when -1
 					@candidates.shift()
-					console.log 'wasnt ' + gestureName
+					#console.log 'wasnt ' + gestureName
 					continue
 				# May apply > Wait for next touch event
 				when 0
@@ -275,35 +275,35 @@ class GestureHandler
 					@gesture = Gesture[gestureName]
 					@gesture.init(@)
 
-					console.groupEnd()
+					#console.groupEnd()
 					return
 
 			break if shouldBreak
 
 		if @candidates.length isnt 0
-			console.log 'havent determined yet'
-		else console.log "Don't know!"
-		console.groupEnd()
+			#console.log 'havent determined yet'
+		else #console.log "Don't know!"
+		#console.groupEnd()
 
 	# Fires event on our elements
 	fire: (e) ->
-		console.group('Firing for', @gestureName)
+		# #console.group('Firing for', @gestureName)
 		unless @elEventListenerInitialized
 			@elEventListener = dommy.getListener(@elFastId, @el, @gestureName)
 			@elEventListenerInitialized = true
 
 		@elEventListener(e)
-		console.groupEnd()
+		# #console.groupEnd()
 
 	# Fires an event with a custom name
 	fireCustom: (name, e) ->
-		console.group('Custom Firing', name, 'for', @gestureName)
+		# #console.group('Custom Firing', name, 'for', @gestureName)
 
 		unless @elCustomEventListeners[name] isnt undefined
 			@elCustomEventListeners[name] = dommy.getListener(@elFastId, @el, name)
 
 		@elCustomEventListeners[name](e)
-		console.groupEnd()
+		# #console.groupEnd()
 		
 # To define different gestures. See examples below
 class Gesture
@@ -328,17 +328,17 @@ class Gesture
 			# things down.
 			# 
 			# If you need to introduce new variables, put them all in h.stuff
-			init: -> console.log 'Gesture "' + name + '" initialized'
+			init: -> #console.log 'Gesture "' + name + '" initialized'
 
 			# Called on touchstart events, when this gesture is active.
-			start: (h, e) -> console.log 'Caught touchstart for "' + name + '"'
+			start: (h, e) -> #console.log 'Caught touchstart for "' + name + '"'
 
 			# Called on touchend events, when this gesture is active.
-			end: (h, e) -> console.log 'Caught touchend for "' + name + '"'
+			end: (h, e) -> #console.log 'Caught touchend for "' + name + '"'
 
 			# Called on touchmove events, when this gesture is active.
 			# touchmove events get throttled for every animation frame.
-			move: (h, e) -> console.log 'Caught touchmove for "' + name + '"'
+			move: (h, e) -> #console.log 'Caught touchmove for "' + name + '"'
 
 			# Called by GestureHandler's shouldFinish(), which usually happens
 			# when all fingers are off screen.
@@ -350,12 +350,12 @@ class Gesture
 			# Also, if this returns true, or if GestureHandler.finish() is called, a finish method
 			# on this gesture will be called too.
 			shouldFinish: (h) -> 
-				console.log 'Caught shouldFinish for "' + name + '"'
+				#console.log 'Caught shouldFinish for "' + name + '"'
 				true
 
 			# Called by gestureHandler to inform that gesture is ending.
 			# Look at shouldFinish() too
-			finish: (h) -> console.log 'Caught finish for ' + name + '"'
+			finish: (h) -> #console.log 'Caught finish for ' + name + '"'
 
 		bare.name = name
 
@@ -407,6 +407,8 @@ new Gesture 'instantmove'
 		h.fire 
 			translateX: e.touches[0].screenX - h.firstEvent.touches[0].screenX
 			translateY: e.touches[0].screenY - h.firstEvent.touches[0].screenY
+	finish: (h) ->
+		h.fireCustom 'instantmove-end', {}
 
 new Gesture 'transform'
 new Gesture 'move'

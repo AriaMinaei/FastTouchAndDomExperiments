@@ -17,35 +17,34 @@
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   };
 
-  Graphics.Matrix3d = (function() {
+  Graphics.FastMatrix = (function() {
 
-    function Matrix3d(arg) {
+    function FastMatrix(arg) {
       if (Array.isArray(arg)) {
         this.r = arg;
-      }
-      if (typeof arg === 'string') {
+      } else if (typeof arg === 'string') {
         this.fromString(arg);
       } else {
         this.r = identity();
       }
     }
 
-    Matrix3d.prototype.fromMatrix = function(m) {
+    FastMatrix.prototype.fromMatrix = function(m) {
       this.r = clone16(m.r);
       return this;
     };
 
-    Matrix3d.prototype.copy = function() {
-      return new Graphics.Matrix3d(clone16(this.r));
+    FastMatrix.prototype.copy = function() {
+      return new Graphics.FastMatrix(clone16(this.r));
     };
 
-    Matrix3d.prototype.toString = function() {
+    FastMatrix.prototype.toString = function() {
       var a;
       a = this.r;
       return 'matrix3d(' + a[0] + ', ' + a[1] + ', ' + a[2] + ', ' + a[3] + ', ' + a[4] + ', ' + a[5] + ', ' + a[6] + ', ' + a[7] + ', ' + a[8] + ', ' + a[9] + ', ' + a[10] + ', ' + a[11] + ', ' + a[12] + ', ' + a[13] + ', ' + a[14] + ', ' + a[15] + ')';
     };
 
-    Matrix3d.prototype.fromString = function(s) {
+    FastMatrix.prototype.fromString = function(s) {
       var temp;
       if (s.substr(8, 1) === '(') {
         s = s.substr(9, s.length - 10);
@@ -53,7 +52,6 @@
       } else if (s.substr(6, 1) === '(') {
         s = s.substr(7, s.length - 8);
         temp = s.split(', ').map(parseFloat);
-        console.log('s.split', s.split(', '));
         this.r = [temp[0], temp[1], 0, 0, temp[2], temp[3], 0, 0, 0, 0, 1, 0, temp[4], temp[5], 0, 1];
       } else if (s[0] === 'n') {
         this.r = identity();
@@ -63,12 +61,12 @@
       return this;
     };
 
-    Matrix3d.prototype.fromWebkit = function(w) {
+    FastMatrix.prototype.fromWebkit = function(w) {
       this.r = [w.m11, w.m12, w.m13, w.m14, w.m21, w.m22, w.m23, w.m24, w.m31, w.m32, w.m33, w.m34, w.m41, w.m42, w.m43, w.m44];
       return this;
     };
 
-    Matrix3d.prototype.setTranslate = function(x, y, z) {
+    FastMatrix.prototype.setTranslate = function(x, y, z) {
       if (z == null) {
         z = 0;
       }
@@ -78,22 +76,22 @@
       return this;
     };
 
-    Matrix3d.prototype.setTranslateX = function(x) {
+    FastMatrix.prototype.setTranslateX = function(x) {
       this.r[12] = parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype.setTranslateY = function(y) {
+    FastMatrix.prototype.setTranslateY = function(y) {
       this.r[13] = parseFloat(y);
       return this;
     };
 
-    Matrix3d.prototype.setTranslateZ = function(z) {
+    FastMatrix.prototype.setTranslateZ = function(z) {
       this.r[14] = parseFloat(z);
       return this;
     };
 
-    Matrix3d.prototype.translate = function(x, y, z) {
+    FastMatrix.prototype.translate = function(x, y, z) {
       if (z == null) {
         z = 0;
       }
@@ -103,17 +101,17 @@
       return this;
     };
 
-    Matrix3d.prototype.translateX = function(x) {
+    FastMatrix.prototype.translateX = function(x) {
       this.r[12] += parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype.translateY = function(y) {
+    FastMatrix.prototype.translateY = function(y) {
       this.r[13] += parseFloat(y);
       return this;
     };
 
-    Matrix3d.prototype.translateZ = function(z) {
+    FastMatrix.prototype.translateZ = function(z) {
       this.r[14] += parseFloat(z);
       return this;
     };
@@ -132,51 +130,51 @@
     */
 
 
-    Matrix3d.prototype._setScale = function(x, y, z) {
+    FastMatrix.prototype._setScale = function(x, y, z) {
       this.r[0] = parseFloat(x);
       this.r[5] = parseFloat(y);
       this.r[10] = parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype._setScaleX = function(x) {
+    FastMatrix.prototype._setScaleX = function(x) {
       this.r[0] = parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype._setScaleY = function(y) {
+    FastMatrix.prototype._setScaleY = function(y) {
       this.r[5] = parseFloat(y);
       return this;
     };
 
-    Matrix3d.prototype._setScaleZ = function(z) {
+    FastMatrix.prototype._setScaleZ = function(z) {
       this.r[10] = parseFloat(z);
       return this;
     };
 
-    Matrix3d.prototype._scale = function(x, y, z) {
+    FastMatrix.prototype._scale = function(x, y, z) {
       this.r[0] *= parseFloat(x);
       this.r[5] *= parseFloat(y);
       this.r[10] *= parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype._scaleX = function(x) {
+    FastMatrix.prototype._scaleX = function(x) {
       this.r[0] *= parseFloat(x);
       return this;
     };
 
-    Matrix3d.prototype._scaleY = function(y) {
+    FastMatrix.prototype._scaleY = function(y) {
       this.r[5] *= parseFloat(y);
       return this;
     };
 
-    Matrix3d.prototype._scaleZ = function(z) {
+    FastMatrix.prototype._scaleZ = function(z) {
       this.r[10] *= parseFloat(z);
       return this;
     };
 
-    Matrix3d.prototype._setRotation = function(x, y, z) {
+    FastMatrix.prototype._setRotation = function(x, y, z) {
       var cosx, cosy, cosz, sinx, siny, sinz;
       cosx = Math.cos(x);
       sinx = Math.sin(x);
@@ -196,7 +194,7 @@
       return this;
     };
 
-    Matrix3d.prototype._setRotationX = function(x) {
+    FastMatrix.prototype._setRotationX = function(x) {
       var cosx, sinx;
       cosx = Math.cos(x);
       sinx = Math.sin(x);
@@ -207,7 +205,7 @@
       return this;
     };
 
-    Matrix3d.prototype._setRotationY = function(y) {
+    FastMatrix.prototype._setRotationY = function(y) {
       var cosy, siny;
       cosy = Math.cos(y);
       siny = Math.sin(y);
@@ -218,7 +216,7 @@
       return this;
     };
 
-    Matrix3d.prototype._setRotationZ = function(z) {
+    FastMatrix.prototype._setRotationZ = function(z) {
       var cosz, sinz;
       cosz = Math.cos(z);
       sinz = Math.sin(z);
@@ -229,7 +227,7 @@
       return this;
     };
 
-    return Matrix3d;
+    return FastMatrix;
 
   })();
 

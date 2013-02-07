@@ -56,8 +56,8 @@ identity = () ->
 		0, 0, 0, 1
 	]
 
-class Graphics.Matrix3d
-	# If arg is an array, it will set the matrix from that array
+class Graphics.FastMatrix
+	# If arg is an array, it will set the matrix from that array.
 	# It won't check the length of the array to save some time, so, make sure
 	# arg.length is 16
 	# 
@@ -65,7 +65,7 @@ class Graphics.Matrix3d
 	constructor: (arg) ->
 		if Array.isArray(arg)
 			@r = arg
-		if typeof arg is 'string'
+		else if typeof arg is 'string'
 			@fromString arg
 		else
 			@r = identity()
@@ -77,7 +77,7 @@ class Graphics.Matrix3d
 
 	# Returns a copy of itself
 	copy: ->
-		new Graphics.Matrix3d clone16(@r)
+		new Graphics.FastMatrix clone16(@r)
 
 	# Returns a string for css
 	toString: () ->
@@ -110,7 +110,6 @@ class Graphics.Matrix3d
 		else if s.substr(6, 1) is '('
 			s = s.substr(7, s.length - 8)
 			temp = s.split(', ').map(parseFloat)
-			console.log 's.split', s.split(', ')
 			@r = [
 				temp[0],
 				temp[1],
@@ -318,10 +317,13 @@ class Graphics.Matrix3d
 
 		@
 
+# class Graphics.DecomposedMatrix
+	# constructor
+
 # do ->
 # 	suite = new Benchmark.Suite
 
-# 	g = new Graphics.Matrix3d
+# 	g = new Graphics.FastMatrix
 
 # 	rad = Math.PI / 4
 
