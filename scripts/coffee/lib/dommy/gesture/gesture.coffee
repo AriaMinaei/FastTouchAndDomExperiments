@@ -1,3 +1,10 @@
+@Dommy = {} if not @Dommy
+Gesture = {}
+@Dommy.Gesture = Gesture
+
+# Returns a maintained copy of TouchList
+# Some wbekit versions update a TouchEvent object
+# if subsequent events are dispatched. This is a simple workaround.
 copyTouchList = (list) ->
 	copied = Array(0)
 	for touch in list
@@ -11,6 +18,7 @@ copyTouchList = (list) ->
 			identifier: touch.identifier
 	copied
 
+# Copies a TouchEvent
 copyTouchEvent = (e) ->
 	copied = 
 		target: e.target
@@ -22,22 +30,23 @@ copyTouchEvent = (e) ->
 	copied
 
 
-# Handles all gestures
-class GestureHandler
+# Listens to touch events on an element and sends Dommy Events as gesture
+# events to that element.
+# 
+# Choose a high-level element, like the html element, since this can delegate events
+# to child elements.
+class Gesture.Handler
 	# Just specify the root element. document.body usually works
 	constructor: (@root, @dommy = window.dommy) ->
 		@_reset()
 
 		@options =
 			real_move_distance	: 10
+
+		@_gestureInstances = []
 			
 	# Resets the whole object, but keeps the root el
 	_reset: ->
-		# Lests make sure class members don't change type.
-		@_touchmoveThrottle = 
-			active: false
-			frame : requestAnimationFrame ->
-
 		# Binding our few listeners to 'this'
 		@_boundListeners =
 			start: @_touchstartListener.bind @
@@ -90,6 +99,11 @@ class GestureHandler
 		# When the gesture is determined, it can use this space to hold its variables
 		@gestureVars = {}
 
+		# Reset all our gesture instances
+		g.reset() for g of @_gestureInstances
+
+		null
+
 	# Start listening to touch events
 	listen: ->
 		@root.addEventListener 'touchstart', @_boundListeners.start
@@ -117,10 +131,10 @@ class GestureHandler
 			@firstEvent = copyTouchEvent(e)
 			@_findCandidates()
 
-		if @gesture then @gesture.start(@, e)
+		if @gesture then @gesture.start(e)
 		else
 			@_checkForType()
-			if @gesture then @gesture.start(@, e)
+			if @gesture then @gesture.start(e)
 
 	# Listener for touchend
 	_touchendListener: (e) ->
@@ -128,12 +142,12 @@ class GestureHandler
 		@lastEventType = 'end'
 		@lastEvents.end = copyTouchEvent(e)
 
-		if @gesture then @gesture.end(@, e)
+		if @gesture then @gesture.end(e)
 		else 
 			@_checkForType()
-			if @gesture then @gesture.end(@, e)
+			if @gesture then @gesture.end(e)
 
-		@shouldFinish() if e.touches.length is 0
+		@_shouldFinish() if e.touches.length is 0
 
 	# Listener for touchmove
 	_touchmoveListener: (e) ->
@@ -153,26 +167,32 @@ class GestureHandler
 					break
 
 
-		if @gesture then @gesture.move(@, @lastEvents.move)
+		if @gesture then @gesture.move( @lastEvents.move)
 		else
 			@_checkForType()
-			if @gesture then @gesture.move(@, @lastEvents.move)
-
+			if @gesture then @gesture.move( @lastEvents.move)
 
 	# Runs when there are no touches left.
 	# If the gesture allows, it will finish
-	shouldFinish: ->
+	_shouldFinish: ->
 		shouldFinish = true
 		
-		shouldFinish = @gesture.shouldFinish(@) if @gesture
+		shouldFinish = @gesture.shouldFinish() if @gesture
 
 		return if not shouldFinish
 
 		@finish()
 
+	_getGestureInstance: (name) ->
+		return @_gestureInstances[name] if @_gestureInstances[name]
+
+		console.error "Gesture '" + name + "' isn't defined." if not definitions[name]
+		
+		@_gestureInstances[name] = new definitions[name] @, @dommy
+
 	# Final method that runs when the gesture ends.
 	finish: ->
-		@gesture.finish(@) if @gesture
+		@gesture.finish() if @gesture
 
 		#console.info 'finished with: ' + @gestureName if @gestureName
 		#console.info '-----------------------------'
@@ -248,7 +268,7 @@ class GestureHandler
 			#console.log 'checking ' + @candidates[0].gestureName
 
 			# Check if gesture applies
-			switch Gesture[gestureName].check(@)
+			switch @_getGestureInstance(gestureName).check(@)
 				# Doesn't apply > Remove it
 				when -1
 					@candidates.shift()
@@ -264,8 +284,8 @@ class GestureHandler
 					@el = set.target
 					@elFastId = set.fastId
 					@gestureName = gestureName
-					@gesture = Gesture[gestureName]
-					@gesture.init(@)
+					@gesture = @_getGestureInstance(gestureName)
+					@gesture.init()
 
 					#console.groupEnd()
 					return
@@ -297,112 +317,67 @@ class GestureHandler
 		@elCustomEventListeners[name](e)
 		# #console.groupEnd()
 		
-# To define different gestures. See examples below
-class Gesture
-	constructor: (name, stuff = {}) ->
-		bare = 
-			# This should check whether the user is performing this gesture or not.
-			# 
-			# Return values:
-			# -1 -> It means its absolutely not this gesture.
-			# 		The GestureHandler will not check this Gesture anymore, and move
-			# 		on to the next possibility.
-			# 1 ->  Positive that user is performing this gesture.
-			# 		GestureHandler will then call init on this gesture, and offload everything
-			# 		to this gesture.
-			# 0 ->  We're not sure yet.
-			# 		GestureHandler wil wait for next touch events and ask again.
-			check: (h) -> return -1
+# Holds a list of all gestures defined using Gesture.define
+definitions = Gesture.Definitions = {}
 
-			# Called when check has returned 1
-			# You can use this for debugging, or you can configure the GestureHandler
-			# Make sure you don't change GestureHandler's hidden type, as that will slow
-			# things down.
-			# 
-			# If you need to introduce new variables, put them all in h.stuff
-			init: -> #console.log 'Gesture "' + name + '" initialized'
+# To define a new gesture. Supply it with a name and a class
+Gesture.define = (name, cls) ->
+	definitions[name] = cls
 
-			# Called on touchstart events, when this gesture is active.
-			start: (h, e) -> #console.log 'Caught touchstart for "' + name + '"'
+# Abstract Gesture Class that Gesture Classes extend.
+class Gesture.Definition
+	# You basically don't need to override this. Just try to make
+	# sure all class variables are initialized and reset in @reset()
+	constructor: (@handler, @dommy) -> @reset()
 
-			# Called on touchend events, when this gesture is active.
-			end: (h, e) -> #console.log 'Caught touchend for "' + name + '"'
+	# Called when constructor is called, plus every time finish() is called
+	# in the Gesture Handler.
+	reset: -> console.log 'reset'
 
-			# Called on touchmove events, when this gesture is active.
-			# touchmove events get throttled for every animation frame.
-			move: (h, e) -> #console.log 'Caught touchmove for "' + name + '"'
+	# This should check whether the user is performing this gesture or not.
+	# 
+	# Return values:
+	# -1 -> It means its absolutely not this gesture.
+	# 		The Gesture.Handler will not check this Gesture anymore, and move
+	# 		on to the next possibility.
+	# 1 ->  Positive that user is performing this gesture.
+	# 		Gesture.Handler will then call init on this gesture, and offload everything
+	# 		to this gesture.
+	# 0 ->  We're not sure yet.
+	# 		Gesture.Handler wil wait for next touch events and ask again.
+	check: () -> return -1
 
-			# Called by GestureHandler's shouldFinish(), which usually happens
-			# when all fingers are off screen.
-			# 
-			# If this function returns true, then the gesture will end.
-			# If false, it will continue. You then will have to call GestureHandler.finish()
-			# to finish things.
-			# 
-			# Also, if this returns true, or if GestureHandler.finish() is called, a finish method
-			# on this gesture will be called too.
-			shouldFinish: (h) -> 
-				#console.log 'Caught shouldFinish for "' + name + '"'
-				true
+	# Called when check has returned 1
+	# You can use this for debugging, or you can configure the Gesture.Handler
+	# Make sure you don't change Gesture.Handler's hidden type, as that will slow
+	# things down.
+	# 
+	# If you need to introduce new variables, put them all in h.stuff
+	init: -> #console.log 'Gesture "' + name + '" initialized'
 
-			# Called by gestureHandler to inform that gesture is ending.
-			# Look at shouldFinish() too
-			finish: (h) -> #console.log 'Caught finish for ' + name + '"'
+	# Called on touchstart events, when this gesture is active.
+	start: (e) -> #console.log 'Caught touchstart for "' + name + '"'
 
-		bare.name = name
+	# Called on touchend events, when this gesture is active.
+	end: (e) -> #console.log 'Caught touchend for "' + name + '"'
 
-		bare = Object.append bare, stuff
+	# Called on touchmove events, when this gesture is active.
+	# touchmove events get throttled for every animation frame.
+	move: (e) -> #console.log 'Caught touchmove for "' + name + '"'
 
-		Gesture[name] = bare
-		bare
+	# Called by Gesture.Handler's shouldFinish(), which usually happens
+	# when all fingers are off screen.
+	# 
+	# If this function returns true, then the gesture will end.
+	# If false, it will continue. You then will have to call Gesture.Handler.finish()
+	# to finish things.
+	# 
+	# Also, if this returns true, or if Gesture.Handler.finish() is called, a finish method
+	# on this gesture will be called too.
+	shouldFinish: () -> 
+		#console.log 'Caught shouldFinish for "' + name + '"'
+		true
 
-# Defining a new gesture called 'tap'
-new Gesture 'tap', 
-	tap_time: 250
-	check: (h) ->
-		# Not this event, if had more than one finger on screen, or moved the finger more than
-		# a few pixels
-		return -1 if h.starts isnt 1 or h.hadRealMove
-
-		# If last event wasn't touchend, cant know yet.
-		return 0 if h.lastEventType isnt 'end'
-
-		# If touch was held longer than 300ms, then its not a tap
-		return -1 if h.lastEvents.end.timeStamp - h.firstEvent.timeStamp > @tap_time
-
-		# Alright, its a tap!
-		return 1
-
-	end: (h, e) ->
-		# Fire a tap event
-		h.fire({})
-
-# 'hold' gesture
-new Gesture 'hold',
-	hold_time: 250
-	check: (h) ->
-		return -1 if h.starts isnt 1 or h.hadRealMove
-
-		return 0 if h.lastEventType isnt 'end' or
-			h.lastEvents.end.timeStamp - h.firstEvent.timeStamp < @hold_time
-
-		return 1
-
-	end: (h, e) ->
-		h.fire({})
-
-# Move gesture, always captures
-new Gesture 'instantmove'
-	check: (h) ->
-		return 1
-	move: (h, e) ->
-		h.fire 
-			translateX: e.touches[0].screenX - h.firstEvent.touches[0].screenX
-			translateY: e.touches[0].screenY - h.firstEvent.touches[0].screenY
-	finish: (h) ->
-		h.fireCustom 'instantmove-end', {}
-
-new Gesture 'transform'
-new Gesture 'move'
-
-@GestureHandler = GestureHandler
+	# Called by gestureHandler to inform that gesture is ending.
+	# Look at shouldFinish() too
+	finish: () -> #console.log 'Caught finish for ' + name + '"'

@@ -4,7 +4,7 @@ document.addEventListener "DOMContentLoaded", ->
 	# Instantiate a new GestureHandler
 	# We only assign it to the topmost element, and it'll delegate
 	# the events to the descendants.
-	g = new GestureHandler html
+	g = new Dommy.Gesture.Handler html
 
 	# Start listening for events
 	g.listen()

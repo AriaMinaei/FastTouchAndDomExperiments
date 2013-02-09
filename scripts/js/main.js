@@ -5,7 +5,7 @@
 
   document.addEventListener("DOMContentLoaded", function() {
     var g;
-    g = new GestureHandler(html);
+    g = new Dommy.Gesture.Handler(html);
     g.listen();
     root.g = g;
     return (function() {
