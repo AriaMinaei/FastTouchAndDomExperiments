@@ -8,8 +8,7 @@ Definition = Gesture.Definition
 # Defining a new gesture called 'tap'
 define 'tap', class extends Definition
 	tap_time: 250
-
-	check: () ->
+	check: ->
 		# Not this event, if had more than one finger on screen, or moved the finger more than
 		# a few pixels
 		return -1 if @handler.starts isnt 1 or @handler.hadRealMove
@@ -42,7 +41,15 @@ define 'hold', class extends Definition
 		@handler.fire({})
 
 # Move gesture, always captures
-define 'instantmove', class extends Definition
+define 'instantmove', class
+	# You basically don't need to override this. Just try to make
+	# sure all class variables are initialized and reset in @reset()
+	constructor: (@handler, @dommy) -> @reset()
+
+	# Called when constructor is called, plus every time finish() is called
+	# in the Gesture Handler.
+	reset: ->
+
 	check: () ->
 		return 1
 	move: (e) ->
@@ -52,6 +59,20 @@ define 'instantmove', class extends Definition
 	finish: () ->
 		@handler.fireCustom 'instantmove-end', {}
 
+	# Called on touchstart events, when this gesture is active.
+	start: (e) -> #console.log 'Caught touchstart for "' + name + '"'
+
+	# Called on touchend events, when this gesture is active.
+	end: (e) -> #console.log 'Caught touchend for "' + name + '"'
+
+	shouldFinish: () -> 
+		#console.log 'Caught shouldFinish for "' + name + '"'
+		true
+
+	init: -> #console.log 'Gesture "' + name + '" initialized'
 
 # Transform gesture
-define 'tranform', class extends Definition
+define 'transform', class extends Definition
+
+
+define 'move', class extends Definition 

@@ -316,33 +316,3 @@ class Graphics.FastMatrix
 		@r[5] = cosz
 
 		@
-
-# class Graphics.DecomposedMatrix
-	# constructor
-
-# do ->
-# 	suite = new Benchmark.Suite
-
-# 	g = new Graphics.FastMatrix
-
-# 	rad = Math.PI / 4
-
-# 	suite.on 'cycle', (e) ->
-# 		console.log String(e.target)
-
-# 	suite.add 'w3', ->
-# 		g._setRotationFamous 1, 0, 0, rad
-
-# 	suite.add 'famous', ->
-# 		g._setRotationFamous rad, 0, 0
-
-	
-
-# 	suite.on 'complete', ->
-# 		console.log 'Fastest:', this
-
-# 	window.run = ->
-# 		suite.run
-# 			async: true
-
-# 		return null

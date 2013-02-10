@@ -43,7 +43,9 @@ class Gesture.Handler
 		@options =
 			real_move_distance	: 10
 
-		@_gestureInstances = []
+		@_gestureInstances = {}
+
+		@_getGestureInstance(name) for name of definitions
 			
 	# Resets the whole object, but keeps the root el
 	_reset: ->
@@ -96,11 +98,10 @@ class Gesture.Handler
 		# Element event listeners for event with custom names
 		@elCustomEventListeners = {}
 
-		# When the gesture is determined, it can use this space to hold its variables
-		@gestureVars = {}
-
 		# Reset all our gesture instances
-		g.reset() for g of @_gestureInstances
+		@_gestureInstances[g].reset() for g of @_gestureInstances
+		# console.log(@_gestureInstances[g]) for g of @_gestureInstances
+		# console.log @_gestureInstances
 
 		null
 
@@ -258,21 +259,22 @@ class Gesture.Handler
 	# For when we haven't determined the gesture's type yet
 	_checkForType: ->
 		return if @candidates.length is 0
-		#console.group('Type')
+		# console.group('Type')
 		# Coffee doesn't support labels and stuff, so I gotta use this hack
 		# for breaking outside the while loop
 		shouldBreak = false
 		while @candidates.length != 0
 			set = @candidates[0]
 			gestureName = set.gestureName
-			#console.log 'checking ' + @candidates[0].gestureName
+			# console.log 'checking ' + @candidates[0].gestureName
 
+			
 			# Check if gesture applies
 			switch @_getGestureInstance(gestureName).check(@)
 				# Doesn't apply > Remove it
 				when -1
 					@candidates.shift()
-					#console.log 'wasnt ' + gestureName
+					console.log 'wasnt ' + gestureName
 					continue
 				# May apply > Wait for next touch event
 				when 0
@@ -287,15 +289,15 @@ class Gesture.Handler
 					@gesture = @_getGestureInstance(gestureName)
 					@gesture.init()
 
-					#console.groupEnd()
+					console.groupEnd()
 					return
 
 			break if shouldBreak
 
 		if @candidates.length isnt 0
-			#console.log 'havent determined yet'
-		else #console.log "Don't know!"
-		#console.groupEnd()
+			# console.log 'havent determined yet'
+		else # console.log "Don't know!"
+		# console.groupEnd()
 
 	# Fires event on our elements
 	fire: (e) ->
@@ -317,12 +319,7 @@ class Gesture.Handler
 		@elCustomEventListeners[name](e)
 		# #console.groupEnd()
 		
-# Holds a list of all gestures defined using Gesture.define
-definitions = Gesture.Definitions = {}
 
-# To define a new gesture. Supply it with a name and a class
-Gesture.define = (name, cls) ->
-	definitions[name] = cls
 
 # Abstract Gesture Class that Gesture Classes extend.
 class Gesture.Definition
@@ -332,7 +329,7 @@ class Gesture.Definition
 
 	# Called when constructor is called, plus every time finish() is called
 	# in the Gesture Handler.
-	reset: -> console.log 'reset'
+	reset: ->
 
 	# This should check whether the user is performing this gesture or not.
 	# 
@@ -381,3 +378,10 @@ class Gesture.Definition
 	# Called by gestureHandler to inform that gesture is ending.
 	# Look at shouldFinish() too
 	finish: () -> #console.log 'Caught finish for ' + name + '"'
+
+# Holds a list of all gestures defined using Gesture.define
+definitions = Gesture.Definitions = {}
+
+# To define a new gesture. Supply it with a name and a class
+Gesture.define = (name, cls) ->
+	definitions[name] = cls

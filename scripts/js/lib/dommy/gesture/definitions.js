@@ -72,13 +72,15 @@
 
   })(Definition));
 
-  define('instantmove', (function(_super) {
+  define('instantmove', (function() {
 
-    __extends(_Class, _super);
-
-    function _Class() {
-      return _Class.__super__.constructor.apply(this, arguments);
+    function _Class(handler, dommy) {
+      this.handler = handler;
+      this.dommy = dommy;
+      this.reset();
     }
+
+    _Class.prototype.reset = function() {};
 
     _Class.prototype.check = function() {
       return 1;
@@ -95,11 +97,33 @@
       return this.handler.fireCustom('instantmove-end', {});
     };
 
+    _Class.prototype.start = function(e) {};
+
+    _Class.prototype.end = function(e) {};
+
+    _Class.prototype.shouldFinish = function() {
+      return true;
+    };
+
+    _Class.prototype.init = function() {};
+
+    return _Class;
+
+  })());
+
+  define('transform', (function(_super) {
+
+    __extends(_Class, _super);
+
+    function _Class() {
+      return _Class.__super__.constructor.apply(this, arguments);
+    }
+
     return _Class;
 
   })(Definition));
 
-  define('tranform', (function(_super) {
+  define('move', (function(_super) {
 
     __extends(_Class, _super);
 

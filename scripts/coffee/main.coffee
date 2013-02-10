@@ -17,8 +17,13 @@ document.addEventListener "DOMContentLoaded", ->
 		# holds refrences to transform handler objects for each element
 		transforms = {}
 
+		times = 0
+		started = 0
+
 		# listen to 'instantmove', for all elements of 'babs' type
 		dommy.addEvent 'babs', 'instantmove', (e, id, el) ->
+			started = Date.now() if not started
+			times++
 			# If we don't have a reference to this element's transform handler
 			unless transforms[id]
 				# Get one
@@ -38,8 +43,8 @@ document.addEventListener "DOMContentLoaded", ->
 
 		# When instantmove-end fires
 		dommy.addEvent 'babs', 'instantmove-end', (e, id, el) ->
-			# Log it (cause I think it doesn't fire properly sometimes)
-			console.log 'received instantmove-end event for', e
+			console.log 'fired ' + times + ' in ' + (Date.now() - started) + '. average: ' + (times / (Date.now() - started) * 1000)
+			# console.log 'received instantmove-end event for', e
 
 			# Commit the temp transformation as the current transformation.
 			# This way, the next time the user touches the element, the transformation
@@ -52,6 +57,28 @@ document.addEventListener "DOMContentLoaded", ->
 			# Btw, the rotation doesn't work the way the user intents,
 			# since the FastMatrix class isn't finished yet.
 
+
+
+	# To quickly benchmark different possible approaches on stuff
+	# do ->
+	# 	suite = new Benchmark.Suite
+
+	# 	suite.add 'case1', ->
+			
+
+	# 	suite.add 'case2', ->
+
+	# 	suite.on 'cycle', (e) ->
+	# 		console.log String(e.target)
+
+	# 	suite.on 'complete', ->
+	# 		console.log 'Fastest:', this
+
+	# 	window.run = ->
+	# 		suite.run
+	# 			async: true
+
+	# 		return null
 
 	# All of that above, compared to this one below, gives the same
 	# performance on my iOS6 iPad3, so I guess the architecture isn't too bad.

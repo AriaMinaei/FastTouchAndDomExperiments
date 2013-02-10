@@ -43,13 +43,17 @@
   Gesture.Handler = (function() {
 
     function Handler(root, dommy) {
+      var name;
       this.root = root;
       this.dommy = dommy != null ? dommy : window.dommy;
       this._reset();
       this.options = {
         real_move_distance: 10
       };
-      this._gestureInstances = [];
+      this._gestureInstances = {};
+      for (name in definitions) {
+        this._getGestureInstance(name);
+      }
     }
 
     Handler.prototype._reset = function() {
@@ -76,9 +80,8 @@
       this.elEventListener = function() {};
       this.elEventListenerInitialized = false;
       this.elCustomEventListeners = {};
-      this.gestureVars = {};
       for (g in this._gestureInstances) {
-        g.reset();
+        this._gestureInstances[g].reset();
       }
       return null;
     };
@@ -254,6 +257,7 @@
         switch (this._getGestureInstance(gestureName).check(this)) {
           case -1:
             this.candidates.shift();
+            console.log('wasnt ' + gestureName);
             continue;
           case 0:
             shouldBreak = true;
@@ -264,6 +268,7 @@
             this.gestureName = gestureName;
             this.gesture = this._getGestureInstance(gestureName);
             this.gesture.init();
+            console.groupEnd();
             return;
         }
         if (shouldBreak) {
@@ -296,12 +301,6 @@
 
   })();
 
-  definitions = Gesture.Definitions = {};
-
-  Gesture.define = function(name, cls) {
-    return definitions[name] = cls;
-  };
-
   Gesture.Definition = (function() {
 
     function Definition(handler, dommy) {
@@ -310,9 +309,7 @@
       this.reset();
     }
 
-    Definition.prototype.reset = function() {
-      return console.log('reset');
-    };
+    Definition.prototype.reset = function() {};
 
     Definition.prototype.check = function() {
       return -1;
@@ -335,5 +332,11 @@
     return Definition;
 
   })();
+
+  definitions = Gesture.Definitions = {};
+
+  Gesture.define = function(name, cls) {
+    return definitions[name] = cls;
+  };
 
 }).call(this);
