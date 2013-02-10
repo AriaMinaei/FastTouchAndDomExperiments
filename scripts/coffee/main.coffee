@@ -4,7 +4,7 @@ document.addEventListener "DOMContentLoaded", ->
 	# Instantiate a new GestureHandler
 	# We only assign it to the topmost element, and it'll delegate
 	# the events to the descendants.
-	g = new Dommy.Gesture.Handler html
+	g = new GestureHandler html
 
 	# Start listening for events
 	g.listen()
@@ -17,13 +17,8 @@ document.addEventListener "DOMContentLoaded", ->
 		# holds refrences to transform handler objects for each element
 		transforms = {}
 
-		times = 0
-		started = 0
-
 		# listen to 'instantmove', for all elements of 'babs' type
 		dommy.addEvent 'babs', 'instantmove', (e, id, el) ->
-			started = Date.now() if not started
-			times++
 			# If we don't have a reference to this element's transform handler
 			unless transforms[id]
 				# Get one
@@ -43,7 +38,6 @@ document.addEventListener "DOMContentLoaded", ->
 
 		# When instantmove-end fires
 		dommy.addEvent 'babs', 'instantmove-end', (e, id, el) ->
-			console.log 'fired ' + times + ' in ' + (Date.now() - started) + '. average: ' + (times / (Date.now() - started) * 1000)
 			# console.log 'received instantmove-end event for', e
 
 			# Commit the temp transformation as the current transformation.
