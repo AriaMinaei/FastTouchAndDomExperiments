@@ -1,7 +1,6 @@
 Gesture = {}
 # @Dommy.Gesture = Gesture
 
-
 # Returns a maintained copy of TouchList
 # Some wbekit versions update a TouchEvent object
 # if subsequent events are dispatched. This is a simple workaround.
@@ -29,19 +28,18 @@ copyTouchEvent = (e) ->
 		rotation: e.rotation
 	copied
 
-
 # Listens to touch events on an element and sends Dommy Events as gesture
 # events to that element.
 # 
 # Choose a high-level element, like the html element, since this can delegate events
 # to child elements.
-class GestureHandler
+class Gesture.Handler
 	# Just specify the root element. document.body usually works
 	constructor: (@root, @dommy = window.dommy) ->
 		@_reset()
 
 		@options =
-			real_move_distance	: 10
+			real_move_distance	: 16
 			
 	# Resets the whole object, but keeps the root el
 	_reset: ->
@@ -95,7 +93,7 @@ class GestureHandler
 		@elCustomEventListeners = {}
 
 		# Current active gesture can use this to store its variables
-		@gestureVars = {}
+		@vars = {}
 
 		null
 
@@ -152,16 +150,13 @@ class GestureHandler
 
 		# Checking to see if we've had any real move
 		unless @hadRealMove
-			touches = @lastEvents.move.touches
+			touch = @lastEvents.move.touches[0]
 			first = @firstEvent.touches[0]
 
-			for touch in touches
-				if Math.abs(touch.screenX - first.screenX) >= @options.real_move_distance or
-				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
-					@hadRealMove = true
-					break
-
-
+			if Math.abs(touch.screenX - first.screenX) >= @options.real_move_distance or
+			Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
+				@hadRealMove = true
+					
 		if @gesture then @gesture.move(@, @lastEvents.move)
 		else
 			@_checkForType()
@@ -319,18 +314,18 @@ Gesture.define = (name, stuff = {}) ->
 		# 
 		# Return values:
 		# -1 -> It means its absolutely not this gesture.
-		# 		The GestureHandler will not check this Gesture anymore, and move
+		# 		The Gesture.Handler will not check this Gesture anymore, and move
 		# 		on to the next possibility.
 		# 1 ->  Positive that user is performing this gesture.
-		# 		GestureHandler will then call init on this gesture, and offload everything
+		# 		Gesture.Handler will then call init on this gesture, and offload everything
 		# 		to this gesture.
 		# 0 ->  We're not sure yet.
-		# 		GestureHandler wil wait for next touch events and ask again.
+		# 		Gesture.Handler wil wait for next touch events and ask again.
 		check: (h) -> return -1
 
 		# Called when check has returned 1
-		# You can use this for debugging, or you can configure the GestureHandler
-		# Make sure you don't change GestureHandler's hidden type, as that will slow
+		# You can use this for debugging, or you can configure the Gesture.Handler
+		# Make sure you don't change Gesture.Handler's hidden type, as that will slow
 		# things down.
 		# 
 		# If you need to introduce new variables, put them all in h.stuff
@@ -346,14 +341,14 @@ Gesture.define = (name, stuff = {}) ->
 		# touchmove events get throttled for every animation frame.
 		move: (h, e) -> #console.log 'Caught touchmove for "' + name + '"'
 
-		# Called by GestureHandler's shouldFinish(), which usually happens
+		# Called by Gesture.Handler's shouldFinish(), which usually happens
 		# when all fingers are off screen.
 		# 
 		# If this function returns true, then the gesture will end.
-		# If false, it will continue. You then will have to call GestureHandler.finish()
+		# If false, it will continue. You then will have to call Gesture.Handler.finish()
 		# to finish things.
 		# 
-		# Also, if this returns true, or if GestureHandler.finish() is called, a finish method
+		# Also, if this returns true, or if Gesture.Handler.finish() is called, a finish method
 		# on this gesture will be called too.
 		shouldFinish: (h) -> 
 			#console.log 'Caught shouldFinish for "' + name + '"'
@@ -370,83 +365,14 @@ Gesture.define = (name, stuff = {}) ->
 	Definitions[name] = bare
 	bare
 
-# Defining a new gesture called 'tap'
-Gesture.define 'tap',
-	tap_time: 250
-	check: (h) ->
-		# Not this event, if had more than one finger on screen, or moved the finger more than
-		# a few pixels
-		return -1 if h.starts isnt 1 or h.hadRealMove
-
-		# If last event wasn't touchend, cant know yet.
-		return 0 if h.lastEventType isnt 'end'
-
-		# If touch was held longer than 300ms, then its not a tap
-		return -1 if h.lastEvents.end.timeStamp - h.firstEvent.timeStamp > @tap_time
-
-		# Alright, its a tap!
-		return 1
-
-	end: (h, e) ->
-		# Fire a tap event
-		h.fire({})
-
-# 'hold' gesture
-Gesture.define 'hold',
-	hold_time: 250
-	check: (h) ->
-		return -1 if h.starts isnt 1 or h.hadRealMove
-
-		return 0 if h.lastEventType isnt 'end' or
-			h.lastEvents.end.timeStamp - h.firstEvent.timeStamp < @hold_time
-
-		return 1
-
-	end: (h, e) ->
-		h.fire({})
-
-# Move gesture, always captures
-Gesture.define 'instantmove', 
-	check: (h) ->
-		return 1
-	init: (h) ->
-		# Hold the starting position
-		h.gestureVars.startX = h.firstEvent.touches[0].screenX
-		h.gestureVars.startY = h.firstEvent.touches[0].screenY
-
-		# Remember id of the main touch
-		h.gestureVars.id = h.firstEvent.touches[0].identifier
-	end: (h, e) ->
-		# Do nothing if there are no fingers left on screen
-		return if e.touches.length is 0
-
-		# Do nothing if the ended touch is not the touch we are tracking
-		return if e.changedTouches[0].identifier isnt h.gestureVars.id
-
-		# Alright, now we should track the next finger on the screen
-		
-		# Let's remember its id
-		h.gestureVars.id = e.touches[0].identifier
-
-		# And update the startX and startY
-		h.gestureVars.startX = e.touches[0].screenX - (e.changedTouches[0].screenX - h.gestureVars.startX)
-		h.gestureVars.startY = e.touches[0].screenY - (e.changedTouches[0].screenY - h.gestureVars.startY)
+# Define a new gesture, based on an existing gesture. You can override
+# its methods.
+Gesture.extend = (original, name, stuff = {}) ->
+	stuff.name = name
+	o = Object.append Object.clone(Definitions[original]), stuff
+	Definitions[name] = o
+	o
 
 
-		# h.gestureVars.startX -= e.touches[0].screenX - h.gestureVars.startX
-		# h.gestureVars.startY -= e.touches[0].screenY - h.gestureVars.startX
-	move: (h, e) ->
-		h.fire 
-			translateX: e.touches[0].screenX - h.gestureVars.startX
-			translateY: e.touches[0].screenY - h.gestureVars.startY
-	finish: (h) ->
-		h.fireCustom 'instantmove-end', {}
 
-
-# Transform gesture
-Gesture.define 'transform', {}
-
-
-Gesture.define 'move', {}
-
-window.GestureHandler = GestureHandler
+window.Gesture = Gesture
