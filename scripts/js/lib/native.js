@@ -109,4 +109,9 @@
     return Math.sqrt(Math.square(x2 - x1) + Math.square(y2 - y1));
   };
 
+  UIEvent.prototype.stop = function() {
+    this.stopPropagation();
+    return this.preventDefault();
+  };
+
 }).call(this);

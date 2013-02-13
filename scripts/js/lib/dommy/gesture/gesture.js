@@ -9,8 +9,6 @@
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       touch = list[_i];
       copied.push({
-        clientX: touch.clientX,
-        clientY: touch.clientY,
         pageX: touch.pageX,
         pageY: touch.pageY,
         screenX: touch.screenX,

@@ -8,8 +8,6 @@ copyTouchList = (list) ->
 	copied = Array(0)
 	for touch in list
 		copied.push
-			clientX: touch.clientX
-			clientY: touch.clientY
 			pageX: touch.pageX
 			pageY: touch.pageY
 			screenX: touch.screenX

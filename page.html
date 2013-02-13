@@ -12,7 +12,6 @@
 	<script src="scripts/js/lib/native.js"></script>
 	<script src="scripts/js/lib/graphics.js"></script>
 	<script src="scripts/js/lib/dom.js"></script>
-	<script src="scripts/js/lib/events.js"></script>
 
 	<script src="scripts/js/lib/dommy/gesture/gesture.js"></script>
 	<script src="scripts/js/lib/dommy/gesture/definitions.js"></script>
@@ -59,10 +58,6 @@
 			-webkit-backface-visibility: hidden;
 		}
 
-		.two.alone {
-			/*-webkit-transform: rotate3d(0, 0, 1, 45deg);*/
-		}
-
 		.two.extra {
 			left: 820px;
 		}
@@ -73,8 +68,8 @@
 	<!-- receives 'transform' gestures -->
 	<div class="one" data-gestures="transform">
 		<div class="extra">
-			<!-- receives 'instantmove', if it wasn't an instantmove, a 'tap', if not, a 'hold', ... -->
-			<div class="two alone" data-gestures="instanttransform, transform, tap, hold" data-type="babs"></div>
+			<!-- receives 'instanttransform', if it wasn't an instanttransform, a 'tap', if not, a 'hold', ... -->
+			<div class="two alone" data-gestures="instanttransform, tap, hold" data-type="babs"></div>
 			<div class="two extra"></div>
 		</div>
 		

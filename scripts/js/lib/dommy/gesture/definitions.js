@@ -41,8 +41,8 @@
         return 1;
       },
       init: function(h) {
-        h.vars.startX = h.firstEvent.touches[0].screenX;
-        h.vars.startY = h.firstEvent.touches[0].screenY;
+        h.vars.startX = h.firstEvent.touches[0].pageX;
+        h.vars.startY = h.firstEvent.touches[0].pageY;
         return h.vars.id = h.firstEvent.touches[0].identifier;
       },
       end: function(h, e) {
@@ -53,13 +53,13 @@
           return;
         }
         h.vars.id = e.touches[0].identifier;
-        h.vars.startX = e.touches[0].screenX - (e.changedTouches[0].screenX - h.vars.startX);
-        return h.vars.startY = e.touches[0].screenY - (e.changedTouches[0].screenY - h.vars.startY);
+        h.vars.startX = e.touches[0].pageX - (e.changedTouches[0].pageX - h.vars.startX);
+        return h.vars.startY = e.touches[0].pageY - (e.changedTouches[0].pageY - h.vars.startY);
       },
       move: function(h, e) {
         return h.fire({
-          translateX: e.touches[0].screenX - h.vars.startX,
-          translateY: e.touches[0].screenY - h.vars.startY
+          translateX: e.touches[0].pageX - h.vars.startX,
+          translateY: e.touches[0].pageY - h.vars.startY
         });
       },
       finish: function(h) {
@@ -80,8 +80,8 @@
       init: function(h) {
         var lastMove;
         lastMove = h.lastEvents.move;
-        h.vars.startX = lastMove.touches[0].screenX;
-        h.vars.startY = lastMove.touches[0].screenY;
+        h.vars.startX = lastMove.touches[0].pageX;
+        h.vars.startY = lastMove.touches[0].pageY;
         return h.vars.id = lastMove.touches[0].identifier;
       },
       finish: function(h) {
@@ -115,9 +115,9 @@
       h.vars.aId = a.identifier;
       h.vars.bId = b.identifier;
       h.vars.scaleMultiplier = h.vars.lastScale;
-      h.vars.distance = Math.distance(a.screenX, a.screenY, b.screenX, b.screenY);
-      startX = parseInt((b.screenX + a.screenX) / 2);
-      startY = parseInt((b.screenY + a.screenY) / 2);
+      h.vars.distance = Math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
+      startX = parseInt((b.pageX + a.pageX) / 2);
+      startY = parseInt((b.pageY + a.pageY) / 2);
       elDims = h.vars.elDims = h.el.getBoundingClientRect();
       h.vars.pX = ((startX - elDims.left) / elDims.width) - 0.5;
       h.vars.pY = ((startY - elDims.top) / elDims.height) - 0.5;
@@ -130,16 +130,16 @@
     _prepareForMove: function(h, touch) {
       h.vars.mode = 0;
       h.vars.scaleMultiplier = h.vars.lastScale;
-      h.vars.startX = touch.screenX - h.vars.lastTranslateX;
-      h.vars.startY = touch.screenY - h.vars.lastTranslateY;
+      h.vars.startX = touch.pageX - h.vars.lastTranslateX;
+      h.vars.startY = touch.pageY - h.vars.lastTranslateY;
       return null;
     },
     move: function(h, e) {
       var a, b, distance, removeFromTranslateX, removeFromTranslateY, scale, translateX, translateY;
       if (h.vars.mode === 0) {
         a = e.touches[0];
-        translateX = a.screenX - h.vars.startX;
-        translateY = a.screenY - h.vars.startY;
+        translateX = a.pageX - h.vars.startX;
+        translateY = a.pageY - h.vars.startY;
         h.fire({
           scale: h.vars.scaleMultiplier,
           translateX: translateX,
@@ -151,12 +151,12 @@
       }
       a = e.touches[0];
       b = e.touches[1];
-      distance = Math.distance(a.screenX, a.screenY, b.screenX, b.screenY);
+      distance = Math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
       scale = distance / h.vars.distance;
       removeFromTranslateX = (scale - 1) * h.vars.width * h.vars.pX;
       removeFromTranslateY = (scale - 1) * h.vars.height * h.vars.pY;
-      translateX = parseInt((b.screenX + a.screenX) / 2) - h.vars.startX - removeFromTranslateX;
-      translateY = parseInt((b.screenY + a.screenY) / 2) - h.vars.startY - removeFromTranslateY;
+      translateX = parseInt((b.pageX + a.pageX) / 2) - h.vars.startX - removeFromTranslateX;
+      translateY = parseInt((b.pageY + a.pageY) / 2) - h.vars.startY - removeFromTranslateY;
       scale *= h.vars.scaleMultiplier;
       h.fire({
         scale: scale,

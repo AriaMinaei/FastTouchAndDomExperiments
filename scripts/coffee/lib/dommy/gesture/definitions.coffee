@@ -41,8 +41,8 @@ do ->
 			return 1
 		init: (h) ->
 			# Hold the starting position
-			h.vars.startX = h.firstEvent.touches[0].screenX
-			h.vars.startY = h.firstEvent.touches[0].screenY
+			h.vars.startX = h.firstEvent.touches[0].pageX
+			h.vars.startY = h.firstEvent.touches[0].pageY
 
 			# Remember id of the main touch
 			h.vars.id = h.firstEvent.touches[0].identifier
@@ -59,12 +59,12 @@ do ->
 			h.vars.id = e.touches[0].identifier
 
 			# And update the startX and startY
-			h.vars.startX = e.touches[0].screenX - (e.changedTouches[0].screenX - h.vars.startX)
-			h.vars.startY = e.touches[0].screenY - (e.changedTouches[0].screenY - h.vars.startY)
+			h.vars.startX = e.touches[0].pageX - (e.changedTouches[0].pageX - h.vars.startX)
+			h.vars.startY = e.touches[0].pageY - (e.changedTouches[0].pageY - h.vars.startY)
 		move: (h, e) ->
 			h.fire 
-				translateX: e.touches[0].screenX - h.vars.startX
-				translateY: e.touches[0].screenY - h.vars.startY
+				translateX: e.touches[0].pageX - h.vars.startX
+				translateY: e.touches[0].pageY - h.vars.startY
 		finish: (h) ->
 			h.fireCustom 'instantmove-end', {}
 
@@ -80,8 +80,8 @@ do ->
 		init: (h) ->
 			lastMove = h.lastEvents.move
 			# Hold the starting position
-			h.vars.startX = lastMove.touches[0].screenX
-			h.vars.startY = lastMove.touches[0].screenY
+			h.vars.startX = lastMove.touches[0].pageX
+			h.vars.startY = lastMove.touches[0].pageY
 
 			# Remember id of the main touch
 			h.vars.id = lastMove.touches[0].identifier
@@ -127,10 +127,10 @@ Gesture.define 'transform',
 
 		h.vars.scaleMultiplier = h.vars.lastScale
 
-		h.vars.distance = Math.distance a.screenX, a.screenY, b.screenX, b.screenY
+		h.vars.distance = Math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
-		startX = parseInt((b.screenX + a.screenX) / 2)
-		startY = parseInt((b.screenY + a.screenY) / 2)
+		startX = parseInt((b.pageX + a.pageX) / 2)
+		startY = parseInt((b.pageY + a.pageY) / 2)
 		
 		# Dimensions of our element
 		elDims = h.vars.elDims = h.el.getBoundingClientRect()
@@ -159,8 +159,8 @@ Gesture.define 'transform',
 
 		h.vars.scaleMultiplier = h.vars.lastScale
 
-		h.vars.startX =  touch.screenX - h.vars.lastTranslateX
-		h.vars.startY =  touch.screenY - h.vars.lastTranslateY
+		h.vars.startX =  touch.pageX - h.vars.lastTranslateX
+		h.vars.startY =  touch.pageY - h.vars.lastTranslateY
 
 		null
 
@@ -169,8 +169,8 @@ Gesture.define 'transform',
 		if h.vars.mode is 0
 			a = e.touches[0]
 
-			translateX = a.screenX - h.vars.startX
-			translateY = a.screenY - h.vars.startY
+			translateX = a.pageX - h.vars.startX
+			translateY = a.pageY - h.vars.startY
 
 			h.fire
 				scale: h.vars.scaleMultiplier
@@ -185,7 +185,7 @@ Gesture.define 'transform',
 		a = e.touches[0]
 		b = e.touches[1]
 
-		distance = Math.distance a.screenX, a.screenY, b.screenX, b.screenY
+		distance = Math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
 		# Scale, without considering how much the scale multiplier is
 		scale = (distance / h.vars.distance)
@@ -195,8 +195,8 @@ Gesture.define 'transform',
 		removeFromTranslateY = (scale - 1) * h.vars.height * h.vars.pY
 
 		# Translate, based on user's intended translation, and the fixed positioning
-		translateX = parseInt((b.screenX + a.screenX) / 2) - h.vars.startX - removeFromTranslateX
-		translateY = parseInt((b.screenY + a.screenY) / 2) - h.vars.startY - removeFromTranslateY
+		translateX = parseInt((b.pageX + a.pageX) / 2) - h.vars.startX - removeFromTranslateX
+		translateY = parseInt((b.pageY + a.pageY) / 2) - h.vars.startY - removeFromTranslateY
 
 		# The real scale
 		scale *= h.vars.scaleMultiplier

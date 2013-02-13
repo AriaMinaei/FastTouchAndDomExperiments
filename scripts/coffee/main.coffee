@@ -24,21 +24,17 @@ document.addEventListener "DOMContentLoaded", ->
 				transforms[id] = t = dommy.styles.getTransform(id, el)
 			else t = transforms[id]
 
-			# Get a temporary transformation matrix handler
+			# Get a temporary transformation matrix handler,
 			t.temporarily()
-				# Set its rotation (not finished for now)
-				# ._setRotationY(e.translateX * Math.PI / 720)
-				# 
-				# Translate it
+				# then scale,
 				._scale(e.scale, e.scale, 1)
+				# and translate it.
 				.translate(e.translateX, e.translateY, 0)
 
 			# Apply the temp transformation matrix to the element
 			t.apply(el)
 
 		dommy.addEvent 'babs', 'instanttransform-end', (e, id, el) ->
-			# console.log 'received instantmove-end event for', e
-
 			# Commit the temp transformation as the current transformation.
 			# This way, the next time the user touches the element, the transformation
 			# will pick up from where we left it off.
@@ -46,7 +42,6 @@ document.addEventListener "DOMContentLoaded", ->
 
 			# Remove reference to transformation handler
 			transforms[id] = null if transforms[id]
-
 
 		# listen to 'instantmove', for all elements of 'babs' type
 		dommy.addEvent 'babs', 'instantmove', (e, id, el) ->
@@ -104,14 +99,6 @@ document.addEventListener "DOMContentLoaded", ->
 	# 			async: true
 
 	# 		return null
-
-	# All of that above, compared to this one below, gives the same
-	# performance on my iOS6 iPad3, so I guess the architecture isn't too bad.
-	# 
-	# el = document.querySelectorAll('.two.alone')[0]
-	# document.addEventListener 'touchmove', (e) ->
-	# 	e.stop()
-	# 	el.style.webkitTransform = 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, ' + parseInt(e.touches[0].clientX - 300) + ', ' + parseInt(e.touches[0].clientY - 300) + ', 0, 1)'
 	
 	# This is to test Graphics.FastMatrix, since its not ready yet.
 	# window.t = 
