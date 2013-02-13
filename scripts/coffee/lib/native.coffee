@@ -50,33 +50,36 @@ window.typeOf = (item) ->
 
 	return typeof item
 
-# cloneOf from MooTools
-cloneOf = (item) ->
-	switch typeOf(item)
-		when 'array' then return item.clone()
-		when 'object' then return Object.clone(item)
-		else return item;
+do ->
+	# cloneOf from MooTools
+	cloneOf = (item) ->
+		switch typeOf(item)
+			when 'array' then return item.clone()
+			when 'object' then return Object.clone(item)
+			else return item;
 
-# From MooTools
-Array::clone = ->
-	i = @length
-	clone = new Array(i)
-	while i--
-		clone[i] = cloneOf(@[i])
-		
-	clone
+	# From MooTools
+	Array::clone = ->
+		i = @length
+		clone = new Array(i)
+		while i--
+			clone[i] = cloneOf(@[i])
+			
+		clone
 
-Array::simpleClone = ->
-	@.slice(0)
+	Array::simpleClone = ->
+		@.slice(0)
 
-# From MooTools
-Object.clone = (object) ->
-	clone = {}
-	for key of object
-		clone[key] = cloneOf(object[key])
-	clone
+	# From MooTools
+	Object.clone = (object) ->
+		clone = {}
+		for key of object
+			clone[key] = cloneOf(object[key])
+		clone
 
-# Like console.log, but it clones the objects and arrays to make sure
-# if object changes, the log wouldn't change with it
-console.snap = (rest...) ->
-	console.log.apply(console, rest.clone())
+Math.square = (n) -> n * n
+Math.distance = (x1, y1, x2, y2) -> Math.sqrt( Math.square(x2 - x1) + Math.square(y2 - y1) )
+
+UIEvent::stop = () ->
+	this.stopPropagation()
+	this.preventDefault()

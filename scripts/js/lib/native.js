@@ -29,9 +29,7 @@
 		};
 	};
 
-  var cloneOf,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    __slice = [].slice;
+  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   Object.append = function(original, add) {
     var key;
@@ -69,44 +67,51 @@
     return typeof item;
   };
 
-  cloneOf = function(item) {
-    switch (typeOf(item)) {
-      case 'array':
-        return item.clone();
-      case 'object':
-        return Object.clone(item);
-      default:
-        return item;
-    }
+  (function() {
+    var cloneOf;
+    cloneOf = function(item) {
+      switch (typeOf(item)) {
+        case 'array':
+          return item.clone();
+        case 'object':
+          return Object.clone(item);
+        default:
+          return item;
+      }
+    };
+    Array.prototype.clone = function() {
+      var clone, i;
+      i = this.length;
+      clone = new Array(i);
+      while (i--) {
+        clone[i] = cloneOf(this[i]);
+      }
+      return clone;
+    };
+    Array.prototype.simpleClone = function() {
+      return this.slice(0);
+    };
+    return Object.clone = function(object) {
+      var clone, key;
+      clone = {};
+      for (key in object) {
+        clone[key] = cloneOf(object[key]);
+      }
+      return clone;
+    };
+  })();
+
+  Math.square = function(n) {
+    return n * n;
   };
 
-  Array.prototype.clone = function() {
-    var clone, i;
-    i = this.length;
-    clone = new Array(i);
-    while (i--) {
-      clone[i] = cloneOf(this[i]);
-    }
-    return clone;
+  Math.distance = function(x1, y1, x2, y2) {
+    return Math.sqrt(Math.square(x2 - x1) + Math.square(y2 - y1));
   };
 
-  Array.prototype.simpleClone = function() {
-    return this.slice(0);
-  };
-
-  Object.clone = function(object) {
-    var clone, key;
-    clone = {};
-    for (key in object) {
-      clone[key] = cloneOf(object[key]);
-    }
-    return clone;
-  };
-
-  console.snap = function() {
-    var rest;
-    rest = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return console.log.apply(console, rest.clone());
+  UIEvent.prototype.stop = function() {
+    this.stopPropagation();
+    return this.preventDefault();
   };
 
 }).call(this);

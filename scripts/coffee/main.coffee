@@ -4,7 +4,7 @@ document.addEventListener "DOMContentLoaded", ->
 	# Instantiate a new GestureHandler
 	# We only assign it to the topmost element, and it'll delegate
 	# the events to the descendants.
-	g = new GestureHandler html
+	g = new Gesture.Handler html
 
 	# Start listening for events
 	g.listen()
@@ -16,6 +16,32 @@ document.addEventListener "DOMContentLoaded", ->
 	do ->
 		# holds refrences to transform handler objects for each element
 		transforms = {}
+
+		dommy.addEvent 'babs', 'instanttransform', (e, id, el) ->
+			# If we don't have a reference to this element's transform handler
+			unless transforms[id]
+				# Get one
+				transforms[id] = t = dommy.styles.getTransform(id, el)
+			else t = transforms[id]
+
+			# Get a temporary transformation matrix handler,
+			t.temporarily()
+				# then scale,
+				._scale(e.scale, e.scale, 1)
+				# and translate it.
+				.translate(e.translateX, e.translateY, 0)
+
+			# Apply the temp transformation matrix to the element
+			t.apply(el)
+
+		dommy.addEvent 'babs', 'instanttransform-end', (e, id, el) ->
+			# Commit the temp transformation as the current transformation.
+			# This way, the next time the user touches the element, the transformation
+			# will pick up from where we left it off.
+			transforms[id].commit(el)
+
+			# Remove reference to transformation handler
+			transforms[id] = null if transforms[id]
 
 		# listen to 'instantmove', for all elements of 'babs' type
 		dommy.addEvent 'babs', 'instantmove', (e, id, el) ->
@@ -38,8 +64,7 @@ document.addEventListener "DOMContentLoaded", ->
 
 		# When instantmove-end fires
 		dommy.addEvent 'babs', 'instantmove-end', (e, id, el) ->
-			# Log it (cause I think it doesn't fire properly sometimes)
-			console.log 'received instantmove-end event for', e
+			# console.log 'received instantmove-end event for', e
 
 			# Commit the temp transformation as the current transformation.
 			# This way, the next time the user touches the element, the transformation
@@ -53,13 +78,27 @@ document.addEventListener "DOMContentLoaded", ->
 			# since the FastMatrix class isn't finished yet.
 
 
-	# All of that above, compared to this one below, gives the same
-	# performance on my iOS6 iPad3, so I guess the architecture isn't too bad.
-	# 
-	# el = document.querySelectorAll('.two.alone')[0]
-	# document.addEventListener 'touchmove', (e) ->
-	# 	e.stop()
-	# 	el.style.webkitTransform = 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, ' + parseInt(e.touches[0].clientX - 300) + ', ' + parseInt(e.touches[0].clientY - 300) + ', 0, 1)'
+
+	# To quickly benchmark different possible approaches on stuff
+	# do ->
+	# 	suite = new Benchmark.Suite
+
+	# 	suite.add 'case1', ->
+			
+
+	# 	suite.add 'case2', ->
+
+	# 	suite.on 'cycle', (e) ->
+	# 		console.log String(e.target)
+
+	# 	suite.on 'complete', ->
+	# 		console.log 'Fastest:', this
+
+	# 	window.run = ->
+	# 		suite.run
+	# 			async: true
+
+	# 		return null
 	
 	# This is to test Graphics.FastMatrix, since its not ready yet.
 	# window.t = 
