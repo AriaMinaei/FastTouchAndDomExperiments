@@ -1,13 +1,12 @@
-(function() {
-  var root;
 
-  root = this;
-
-  document.addEventListener("DOMContentLoaded", function() {
-    var g;
-    g = new Gesture.Handler(html);
+require(['domReady', 'gesture/handler', 'dommy/dommy'], function(dr, GestureHandler, Dommy) {
+  window.dommy = new Dommy;
+  return dr(function() {
+    var g, html;
+    html = document.querySelector('html');
+    g = new GestureHandler(html);
     g.listen();
-    root.g = g;
+    window.g = g;
     return (function() {
       var transforms;
       transforms = {};
@@ -45,5 +44,4 @@
       });
     })();
   });
-
-}).call(this);
+});

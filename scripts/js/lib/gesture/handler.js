@@ -1,8 +1,7 @@
-(function() {
-  var Definitions, Gesture, copyTouchEvent, copyTouchList;
 
-  Gesture = {};
-
+define(['gesture/definitions', 'native'], function(GestureDefinitions) {
+  var GestureDefinitionsList, Handler, copyTouchEvent, copyTouchList;
+  GestureDefinitionsList = GestureDefinitions.list;
   copyTouchList = function(list) {
     var copied, touch, _i, _len;
     copied = Array(0);
@@ -18,7 +17,6 @@
     }
     return copied;
   };
-
   copyTouchEvent = function(e) {
     var copied;
     copied = {
@@ -31,8 +29,7 @@
     };
     return copied;
   };
-
-  Gesture.Handler = (function() {
+  Handler = (function() {
 
     function Handler(root, dommy) {
       this.root = root;
@@ -224,7 +221,7 @@
       while (this.candidates.length !== 0) {
         set = this.candidates[0];
         gestureName = set.gestureName;
-        g = Definitions[gestureName];
+        g = GestureDefinitionsList[gestureName];
         switch (g.check(this)) {
           case -1:
             this.candidates.shift();
@@ -271,44 +268,5 @@
     return Handler;
 
   })();
-
-  Definitions = Gesture.Definitions = {};
-
-  Gesture.define = function(name, stuff) {
-    var bare;
-    if (stuff == null) {
-      stuff = {};
-    }
-    bare = {
-      check: function(h) {
-        return -1;
-      },
-      init: function() {},
-      start: function(h, e) {},
-      end: function(h, e) {},
-      move: function(h, e) {},
-      shouldFinish: function(h) {
-        return true;
-      },
-      finish: function(h) {}
-    };
-    bare.name = name;
-    bare = Object.append(bare, stuff);
-    Definitions[name] = bare;
-    return bare;
-  };
-
-  Gesture.extend = function(original, name, stuff) {
-    var o;
-    if (stuff == null) {
-      stuff = {};
-    }
-    stuff.name = name;
-    o = Object.append(Object.clone(Definitions[original]), stuff);
-    Definitions[name] = o;
-    return o;
-  };
-
-  window.Gesture = Gesture;
-
-}).call(this);
+  return Handler;
+});

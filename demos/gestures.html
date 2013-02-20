@@ -7,16 +7,13 @@
 	<meta name="apple-mobile-web-app-capable" content="yes"> 
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-	<script src="scripts/js/extras/benchmark.js"></script>
-
-	<script src="scripts/js/lib/native.js"></script>
-	<script src="scripts/js/lib/graphics.js"></script>
-	<script src="scripts/js/lib/dom.js"></script>
-
-	<script src="scripts/js/lib/dommy/gesture/gesture.js"></script>
-	<script src="scripts/js/lib/dommy/gesture/definitions.js"></script>
-	
-	<script src="scripts/js/main.js"></script>
+	<script src="../scripts/require.js"></script>
+	<script>
+		require.config({
+			baseUrl: '../scripts/js/lib'
+		});
+		require(['../scripts/js/demos/gestures.js']);
+	</script>
 
 	<link rel="stylesheet" href="styles/minimal.css">
 
