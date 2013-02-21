@@ -1,0 +1,88 @@
+/* I'm just gonna hack stuff together here for now.
+ * I'll do responsive when we get to the layout module.
+ */
+
+@font-face {
+    font-family: 'RobotoLight';
+    src: url('../fonts/Roboto-Light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoThin';
+    src: url('../fonts/Roboto-Thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+	margin: 0; padding: 0;
+}
+
+body {
+	font-family: "RobotoThin";
+	color: #F0F0F0;
+	font-size: 24px;
+}
+
+h2 {
+	font-weight: normal;
+	font-size: 56px;
+}
+
+.the-pan {
+	position: absolute;
+	left: 0; right: 0; top: 0;
+	height: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.the-pan > .scrollable {
+	position: relative;
+	left: 60px;
+	top: 100px;
+}
+
+@media (max-height: 1000px) {
+	.the-pan > .scrollable {
+		top: 80px;
+	}
+}
+
+.images {
+	/*margin-top: 10px;*/
+	/*height: 616px;*/
+	display: -webkit-box;
+}
+
+
+
+.images .img {
+	background-size: 440px 248px;
+	width: 440px;
+	height: 248px;
+	position: relative;
+	float: left;
+	margin: 10px;
+}
+
+.images .img:nth-child(2n) {
+	top: 268px;
+	left: -460px;
+	margin-right: -450px;
+}
+
+.images .img-1 { background-image: url('../images/tiles/1.jpg'); }
+.images .img-2 { background-image: url('../images/tiles/2.jpg'); }
+.images .img-3 { background-image: url('../images/tiles/3.jpg'); }
+.images .img-4 { background-image: url('../images/tiles/4.jpg'); }
+.images .img-5 { background-image: url('../images/tiles/5.jpg'); }
+.images .img-6 { background-image: url('../images/tiles/6.jpg'); }
+.images .img-7 { background-image: url('../images/tiles/7.jpg'); }
+.images .img-8 { background-image: url('../images/tiles/8.jpg'); }
+.images .img-9 { background-image: url('../images/tiles/9.jpg'); }
+.images .img-10 { background-image: url('../images/tiles/10.jpg'); }
+.images .img-11 { background-image: url('../images/tiles/11.jpg'); }
+.images .img-12 { background-image: url('../images/tiles/12.jpg'); }
