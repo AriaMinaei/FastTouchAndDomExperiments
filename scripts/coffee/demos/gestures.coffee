@@ -1,82 +1,82 @@
-require ['domReady', 'gesture/handler', 'dommy/dommy'], (dr, GestureHandler, Dommy) ->
+require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, GestureHandler, Dambo, Dommy) ->
+	window.dambo = new Dambo
 	window.dommy = new Dommy
+	# Instantiate a new GestureHandler
+	# We only assign it to the topmost element, and it'll delegate
+	# the events to the descendants.
+	g = new GestureHandler document
+
+	# Start listening for events
+	g.listen()
+
+	# for debugging
+	window.g = g
 	dr ->
-		html = document.querySelector 'html'
-		# Instantiate a new GestureHandler
-		# We only assign it to the topmost element, and it'll delegate
-		# the events to the descendants.
-		g = new GestureHandler html
-
-		# Start listening for events
-		g.listen()
-
-		# for debugging
-		window.g = g
-
 		# Wrap around an anonymous function
 		do ->
 			# holds refrences to transform handler objects for each element
 			transforms = {}
 
-			dommy.addEvent 'babs', 'instanttransform', (e, id, el) ->
-				# If we don't have a reference to this element's transform handler
-				unless transforms[id]
-					# Get one
-					transforms[id] = t = dommy.styles.getTransform(id, el)
-				else t = transforms[id]
+			dambo.forThe('babs')
+				.addEvent 'instant-transform', (e, id, el) ->
+					# If we don't have a reference to this element's transform handler
+					unless transforms[id]
+						# Get one
+						transforms[id] = t = dommy.styles.getTransform(id, el)
+					else t = transforms[id]
 
-				# Get a temporary transformation matrix handler,
-				t.temporarily()
-					# then scale,
-					._scale(e.scale, e.scale, 1)
-					# and translate it.
-					.translate(e.translateX, e.translateY, 0)
+					# Get a temporary transformation matrix handler,
+					t.temporarily()
+						# then scale,
+						._scale(e.scale, e.scale, 1)
+						# and translate it.
+						.translate(e.translateX, e.translateY, 0)
 
-				# Apply the temp transformation matrix to the element
-				t.apply(el)
+					# Apply the temp transformation matrix to the element
+					t.apply(el)
 
-			dommy.addEvent 'babs', 'instanttransform-end', (e, id, el) ->
-				# Commit the temp transformation as the current transformation.
-				# This way, the next time the user touches the element, the transformation
-				# will pick up from where we left it off.
-				transforms[id].commit(el)
+				.addEvent 'instant-transform-end', (e, id, el) ->
+					# Commit the temp transformation as the current transformation.
+					# This way, the next time the user touches the element, the transformation
+					# will pick up from where we left it off.
+					transforms[id].commit(el)
 
-				# Remove reference to transformation handler
-				transforms[id] = null if transforms[id]
+					# Remove reference to transformation handler
+					transforms[id] = null if transforms[id]
 
-			# listen to 'instantmove', for all elements of 'babs' type
-			dommy.addEvent 'babs', 'instantmove', (e, id, el) ->
-				# If we don't have a reference to this element's transform handler
-				unless transforms[id]
-					# Get one
-					transforms[id] = t = dommy.styles.getTransform(id, el)
-				else t = transforms[id]
+				# listen to 'instant-move', for all elements of 'babs' type
+				.addEvent 'instant-move', (e, id, el) ->
+					# If we don't have a reference to this element's transform handler
+					unless transforms[id]
+						# Get one
+						transforms[id] = t = dommy.styles.getTransform(id, el)
+					else t = transforms[id]
 
-				# Get a temporary transformation matrix handler
-				t.temporarily()
-					# Set its rotation (not finished for now)
-					# ._setRotationY(e.translateX * Math.PI / 720)
-					# 
-					# Translate it
-					.translate(e.translateX, e.translateY, 0)
+					# Get a temporary transformation matrix handler
+					t.temporarily()
+						# Set its rotation (not finished for now)
+						# ._setRotationY(e.translateX * Math.PI / 720)
+						# 
+						# Translate it
+						.translate(e.translateX, e.translateY, 0)
 
-				# Apply the temp transformation matrix to the element
-				t.apply(el)
+					# Apply the temp transformation matrix to the element
+					t.apply(el)
 
-			# When instantmove-end fires
-			dommy.addEvent 'babs', 'instantmove-end', (e, id, el) ->
-				# console.log 'received instantmove-end event for', e
+				# When instant-move-end fires
+				.addEvent 'instant-move-end', (e, id, el) ->
+					# console.log 'received instant-move-end event for', e
 
-				# Commit the temp transformation as the current transformation.
-				# This way, the next time the user touches the element, the transformation
-				# will pick up from where we left it off.
-				transforms[id].commit(el)
+					# Commit the temp transformation as the current transformation.
+					# This way, the next time the user touches the element, the transformation
+					# will pick up from where we left it off.
+					transforms[id].commit(el)
 
-				# Remove reference to transformation handler
-				transforms[id] = null if transforms[id]
+					# Remove reference to transformation handler
+					transforms[id] = null if transforms[id]
 
-				# Btw, the rotation doesn't work the way the user intents,
-				# since the FastMatrix class isn't finished yet.
+					# Btw, the rotation doesn't work the way the user intents,
+					# since the FastMatrix class isn't finished yet.
 
 
 

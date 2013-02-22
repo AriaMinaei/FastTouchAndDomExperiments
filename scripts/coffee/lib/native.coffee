@@ -58,21 +58,21 @@ define [], ->
 		# cloneOf from MooTools
 		cloneOf = (item) ->
 			switch typeOf(item)
-				when 'array' then return item.clone()
+				when 'array' then return Array.clone(item)
 				when 'object' then return Object.clone(item)
 				else return item;
 
 		# From MooTools
-		Array::clone = ->
-			i = @length
+		Array.clone = (array) ->
+			i = arraylength
 			clone = new Array(i)
 			while i--
-				clone[i] = cloneOf(@[i])
+				clone[i] = cloneOf(array[i])
 				
 			clone
 
-		Array::simpleClone = ->
-			@.slice(0)
+		Array.simpleClone = (array) ->
+			array.slice(0)
 
 		# From MooTools
 		Object.clone = (object) ->

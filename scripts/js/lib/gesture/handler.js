@@ -32,7 +32,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   Handler = (function() {
 
     function Handler(root, dommy) {
-      this.root = root;
+      this.root = root != null ? root : window.document;
       this.dommy = dommy != null ? dommy : window.dommy;
       this._reset();
       this.options = {
@@ -268,5 +268,17 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     return Handler;
 
   })();
+  Handler.create = function(root, dommy) {
+    var h;
+    if (root == null) {
+      root = window.document;
+    }
+    if (dommy == null) {
+      dommy = window.dommy;
+    }
+    h = new Handler(root, dommy);
+    h.listen();
+    return h;
+  };
   return Handler;
 });

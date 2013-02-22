@@ -38,7 +38,7 @@ define ->
 		# Move gestures
 		do ->
 			# Move gesture, always captures
-			Definitions.define 'instantmove',
+			Definitions.define 'instant-move',
 				check: (h) ->
 					return 1
 				init: (h) ->
@@ -68,11 +68,11 @@ define ->
 						translateX: e.touches[0].pageX - h.vars.startX
 						translateY: e.touches[0].pageY - h.vars.startY
 				finish: (h) ->
-					h.fireCustom 'instantmove-end', {}
+					h.fireCustom 'instant-move-end', {}
 
 			# Move gesture, waits to see if the user really intends a one-finger move gesture.
 			# If the user immediately starts with more than one finger, 'move' won't capture.
-			Definitions.extend 'instantmove', 'move',
+			Definitions.extend 'instant-move', 'move',
 				check: (h) ->
 					if not h.hadRealMove
 						if h.starts is 1 then return 0 
@@ -259,7 +259,7 @@ define ->
 				h.fireCustom 'transform-end', {}
 
 		# just like 'transform', only that this captures immediately
-		Definitions.extend 'transform', 'instanttransform',
+		Definitions.extend 'transform', 'instant-transform',
 			check: (h) -> 1
 
 			init: (h) ->
@@ -276,4 +276,4 @@ define ->
 					@_prepareForTransform(h, last.touches[0], last.touches[1])
 			
 			finish: (h) ->
-				h.fireCustom 'instanttransform-end', {}
+				h.fireCustom 'instant-transform-end', {}

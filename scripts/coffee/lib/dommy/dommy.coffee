@@ -1,12 +1,19 @@
-define ['graphics/fastMatrix'], (FastMatrix) ->
+define ['dommy/styles'], (DommyStyles) ->
 	# To store data on DOM, detached from it.
 	# Remember, you can't have custom IDs if you wanna use this ;)
 	# 
 	# Also, this is a loose class. It doesn't do any checking. It just assumes
 	# you feed it with the right arguments. That's to make sure it works fast.
-	class DommyContainer
+	class Dommy
 		# Just choose a namespace, or do with 'global'
-		constructor: (@ns = 'global-') ->
+		constructor: (@ns = 'global-', dambo) ->
+			if typeof dambo is 'object'
+				@dambo = dambo
+			else if typeof window.dambo is 'object'
+				@dambo = window.dambo
+			else
+				throw Error "Can't have a dommy without a dambo."
+
 			# Save namespace as a string
 			@ns = String(@ns)
 
@@ -19,11 +26,10 @@ define ['graphics/fastMatrix'], (FastMatrix) ->
 			# Everything stored for each el
 			@store = [{}]
 
-			# All the events for each type
-			@events = {}
-
 			# The styles helper
-			@styles = new DommyContainer.Styles @
+			@styles = new DommyStyles @
+
+			@lazies = {}
 
 		# Unique ID of el. Sets if not already set
 		uid: (el) ->
@@ -112,155 +118,80 @@ define ['graphics/fastMatrix'], (FastMatrix) ->
 
 		# Gets element type. Requires el, because it will try to fetch it from
 		# DOM if its not set
-		_getType: (fastId, el) ->
-			type = @_get fastId, '_type'
+		_getTypes: (fastId, el) ->
+			types = @_get fastId, '_types'
 
-			return type if type isnt undefined
+			return types if types isnt undefined
 				
 
 			# We have to fetch it
-			type = el.getAttribute 'data-type'
+			types = el.getAttribute 'data-types'
 
-			unless type
-				@_set fastId, '_type', null
+			unless types
+				@_set fastId, '_types', null
 				return null
 
-			type = type.trim()
+			types = types.split(',').map (s) -> s.trim()
 
-			@_set fastId, '_type', type
-			type
+			@_set fastId, '_types', types
+			types
 
 		# Gets element type
-		getType: (el) ->
+		getTypes: (el) ->
 			fastId = @nFastId(el)
 			return null if not fastId
 
-			@_getType(fastId, el)
-
-		# Add an event to the elements of 'type'
-		addEvent: (type, eventName, listener) ->
-			if not @events[type]
-				temp = {}
-				temp[eventName] = [listener]
-				@events[type] = temp
-				return @
-
-			if not @events[type][eventName]
-				@events[type][eventName] = [listener]
-				return @
-
-			@events[type].push listener
-			return @
-
-		# Get array of listeners for elements of 'type'
-		# Use getListener() if you need a listener for an element
-		_getListeners: (type, eventName) ->
-			forType = @events[type]
-			return [] unless forType
-			forName = @events[type][eventName]
-			return [] unless forName
-			forName
+			@_getTypes(fastId, el)
 		
 		# Returns a function, accepting (e) as the event object,
 		# when you run it, (e) will be sent to el as an event
 		getListener: (fastId, el, eventName) ->
-			type = @_getType(fastId, el)
+			types = @_getTypes(fastId, el)
 
-			unless type then return () ->
+			unless types then return () ->
 
-			listeners = @_getListeners(type, eventName)
+			listeners = do ->
+				listeners = []
+				for type in types
+					for listener in @dambo.forThe(type).getListeners(eventName)
+						listeners.push listener
+				listeners
 
 			if listeners.length is 0 then return () ->
 
-			return (e) ->
+			return (e) =>
 				for listener in listeners
-					listener(e, fastId, el, type, eventName)
+					listener(e, fastId, el, @)
 
 		# Quick n dirty event firing. Do it on one time events, like tap or click.
 		# For events that get fired regularly or many times in a row, its better to
-		# get a listener using DommyContainer.getListener(), and then firing on it.
+		# get a listener using Dommy.getListener(), and then firing on it.
 		# 
 		# This is not permissive at all. You should have fastId and reference to element,
 		# which is supposed to increase performance.
 		fireEvent: (fastId, el, eventName, e) ->
-			type = @_getType(fastId)
+			type = @_getTypes(fastId)
 			@getListener(fastId, el, eventName, e)
 			@
 
-	class DommyContainer.Styles
-		constructor: (@dommy) ->
-
-		getTransform: (fastId, el) ->
-			t = @dommy._get(fastId, 'style.transform')
-			unless t
-				t = new DommyContainer.Styles.Transform(@dommy, fastId, el)
-				@dommy._set(fastId, 'style.transform', t)
-			t
-
-
-	class DommyContainer.Styles.Transform
-		constructor: (@dommy, @fastId, el) ->
-			if @original = @dommy._get(@fastId, 'style.transform.original')
-				@current = @dommy._get(@fastId, 'style.transform.current')
-				@temp 	 = @dommy._get(@fastId, 'style.transform.temp')
+		getLazy: (fastId, name) ->
+			if not @lazies[fastId]
+				@lazies[fastId] = forId = {}
 			else
-				@original = new FastMatrix(getComputedStyle(el).webkitTransform)
-				@dommy._set(@fastId, 'style.transform.original', @original)
+				forId = @lazies[fastId]
 
-				@current = @original.copy()
-				@dommy._set(@fastId, 'style.transform.current', @current)
+			if forId[name] is undefined
+				el = @el(fastId)
+				lazy = do =>
+					for type in @_getTypes fastId, el
+						l = @dambo.forThe(type).getLazy(name)
+						return l if l
 
-				@temp = @original.copy()
-				@dommy._set(@fastId, 'style.transform.temp', @temp)
+				unless lazy
+					forId[name] = null
+					return null
 
-			# 0 for temp
-			# 1 for current
-			# 2 for original
-			@active = 1
+				forId[name] = ret = lazy(fastId, @)
+				return ret
 
-		temporarily: ->
-			# Load current matrix into our temp matrix
-			@temp.fromMatrix @current
-
-			# Remember that temp is active
-			@active = 0
-
-			# Let the user manipulate it
-			@temp
-
-		originally: ->
-			@active = 2
-			@original
-
-		currently: ->
-			@active = 1
-			@current
-
-		apply: (el) ->
-			switch @active
-				when 0 then el.style.webkitTransform = @temp.toString()
-				when 1 then el.style.webkitTransform = @current.toString()
-				when 2 then el.style.webkitTransform = @original.toString()
-			@
-
-		commit: (el) ->
-			@apply(el)
-
-			switch @active
-				when 0
-					@current.fromMatrix @temp
-				when 2
-					@current.fromMatrix @original
-
-			@active = 1
-			@
-
-		revertToCurrent: (el) ->
-			@currently()
-			@commit(el)
-
-		revertToOriginal: (el) ->
-			@originally()
-			@commit(el)
-
-	DommyContainer
+			return forId[name]

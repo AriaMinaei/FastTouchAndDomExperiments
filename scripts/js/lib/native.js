@@ -69,24 +69,24 @@ define([], function() {
     cloneOf = function(item) {
       switch (typeOf(item)) {
         case 'array':
-          return item.clone();
+          return Array.clone(item);
         case 'object':
           return Object.clone(item);
         default:
           return item;
       }
     };
-    Array.prototype.clone = function() {
+    Array.clone = function(array) {
       var clone, i;
-      i = this.length;
+      i = arraylength;
       clone = new Array(i);
       while (i--) {
-        clone[i] = cloneOf(this[i]);
+        clone[i] = cloneOf(array[i]);
       }
       return clone;
     };
-    Array.prototype.simpleClone = function() {
-      return this.slice(0);
+    Array.simpleClone = function(array) {
+      return array.slice(0);
     };
     return Object.clone = function(object) {
       var clone, key;

@@ -33,7 +33,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 	# to child elements.
 	class Handler
 		# Just specify the root element. document.body usually works
-		constructor: (@root, @dommy = window.dommy) ->
+		constructor: (@root = window.document, @dommy = window.dommy) ->
 			@_reset()
 
 			@options =
@@ -225,7 +225,6 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			gestures = @dommy._get(fastId, 'gestures')
 			return gestures if gestures isnt undefined
 
-			#console.log 'DOM! for', fastId, gestures, el
 			gestures = el.getAttribute 'data-gestures' if el.getAttribute
 			if !gestures
 				@dommy._set(fastId, 'gestures', null)
@@ -300,5 +299,10 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			@elCustomEventListeners[name](e)
 			# #console.groupEnd()
+
+	Handler.create = (root = window.document, dommy = window.dommy) ->
+		h = new Handler root, dommy
+		h.listen()
+		h
 
 	Handler

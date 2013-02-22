@@ -35,7 +35,7 @@ define(function() {
       }
     });
     (function() {
-      Definitions.define('instantmove', {
+      Definitions.define('instant-move', {
         check: function(h) {
           return 1;
         },
@@ -62,10 +62,10 @@ define(function() {
           });
         },
         finish: function(h) {
-          return h.fireCustom('instantmove-end', {});
+          return h.fireCustom('instant-move-end', {});
         }
       });
-      return Definitions.extend('instantmove', 'move', {
+      return Definitions.extend('instant-move', 'move', {
         check: function(h) {
           if (!h.hadRealMove) {
             if (h.starts === 1) {
@@ -200,7 +200,7 @@ define(function() {
         return h.fireCustom('transform-end', {});
       }
     });
-    return Definitions.extend('transform', 'instanttransform', {
+    return Definitions.extend('transform', 'instant-transform', {
       check: function(h) {
         return 1;
       },
@@ -217,7 +217,7 @@ define(function() {
         }
       },
       finish: function(h) {
-        return h.fireCustom('instanttransform-end', {});
+        return h.fireCustom('instant-transform-end', {});
       }
     });
   };
