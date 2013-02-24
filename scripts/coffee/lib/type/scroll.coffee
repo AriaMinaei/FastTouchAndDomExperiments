@@ -111,8 +111,17 @@ define ['native'], ->
 			@_outOfBoundScrollBeginX = 0
 			@_outOfBoundScrollEndX = - (@_childWidth - @_width)
 
-			# Scroll coords for the last time commit() was called
+			# Note:
+			# When the user moves their fingers around to scroll, the scroller
+			# doesn't always follow the fingers. Forexample, if the scroll goes
+			# out of the parent's boundries, it slows down.
+			# 
+			# We hold references to the movement of the user's fingers in variables
+			# prefixed with '_lastIntended', and the actual movements will be held in
+			# variables prefixed with '_last'
 			@_lastCommitedScrollX = 0
+			@_lastIntendedScrollX = 0
+			@_lastCommitedIntendedScrollX = 0
 
 			# Current scroll
 			@x = 0
@@ -122,32 +131,40 @@ define ['native'], ->
 		# Called when fingers are on screen, moving around.
 		scroll: (x, y) ->
 
-			intendedScrollX = @_lastCommitedScrollX + x
+			# - I don't like the variable names either. I'll come up with something
+			# better later ;)
+			intendedScrollX = @_lastIntendedScrollX = @_lastCommitedIntendedScrollX + x
 
+			# If we're scrolling out of bounds to the right:
 			if intendedScrollX > @_outOfBoundScrollBeginX
 				realX = @_outOfBoundScrollBeginX +
 					@_curveOutOfBoundScroll intendedScrollX - @_outOfBoundScrollBeginX
 
+			# ... or to the left:
 			else if intendedScrollX < @_outOfBoundScrollEndX
 				realX = @_outOfBoundScrollEndX -
 					@_curveOutOfBoundScroll(-(intendedScrollX - @_outOfBoundScrollEndX))
 
+			# We're inside the boundries
 			else
+				# Follow user's finger
 				realX = intendedScrollX
 
-
+			# Translate the child element
 			@_setTranslate(realX, 0)
 
+		# Curving the movement when going out of bounds
 		_curveOutOfBoundScroll: (n) ->
 
-			temp = Math.limit n, 0, 800
-			curve = Math.sin Math.PI / 2 * temp / 800
+			temp = Math.limit n, 0, 1500
+			curve = Math.square(1 + temp / 1500) - 1
 			temp / (1 + ( 2 * curve ) )
 
 		# Called when touch is released. It will do the slipping thing.
 		release: () ->
 
 			@_lastCommitedScrollX = @x
+			@_lastCommitedIntendedScrollX = @_lastIntendedScrollX
 
 			@_transform.commit(@_child)
 
@@ -159,6 +176,7 @@ define ['native'], ->
 			@_transform.temporarily().translate(x, 0)
 			@_transform.apply(@_child)
 
+		# transform.setTranslate the child element to x/y
 		_setTranslate: (x, y) ->
 
 			@x = x

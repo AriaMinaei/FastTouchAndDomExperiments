@@ -128,12 +128,14 @@ define(['native'], function() {
       this._outOfBoundScrollBeginX = 0;
       this._outOfBoundScrollEndX = -(this._childWidth - this._width);
       this._lastCommitedScrollX = 0;
+      this._lastIntendedScrollX = 0;
+      this._lastCommitedIntendedScrollX = 0;
       this.x = 0;
     }
 
     Scroll.prototype.scroll = function(x, y) {
       var intendedScrollX, realX;
-      intendedScrollX = this._lastCommitedScrollX + x;
+      intendedScrollX = this._lastIntendedScrollX = this._lastCommitedIntendedScrollX + x;
       if (intendedScrollX > this._outOfBoundScrollBeginX) {
         realX = this._outOfBoundScrollBeginX + this._curveOutOfBoundScroll(intendedScrollX - this._outOfBoundScrollBeginX);
       } else if (intendedScrollX < this._outOfBoundScrollEndX) {
@@ -146,13 +148,14 @@ define(['native'], function() {
 
     Scroll.prototype._curveOutOfBoundScroll = function(n) {
       var curve, temp;
-      temp = Math.limit(n, 0, 800);
-      curve = Math.sin(Math.PI / 2 * temp / 800);
+      temp = Math.limit(n, 0, 1500);
+      curve = Math.square(1 + temp / 1500) - 1;
       return temp / (1 + (2 * curve));
     };
 
     Scroll.prototype.release = function() {
       this._lastCommitedScrollX = this.x;
+      this._lastCommitedIntendedScrollX = this._lastIntendedScrollX;
       return this._transform.commit(this._child);
     };
 
