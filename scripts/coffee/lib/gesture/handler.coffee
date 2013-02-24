@@ -5,6 +5,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 	# Some wbekit versions update a TouchEvent object
 	# if subsequent events are dispatched. This is a simple workaround.
 	copyTouchList = (list) ->
+
 		copied = Array(0)
 		for touch in list
 			copied.push
@@ -13,10 +14,12 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 				screenX: touch.screenX
 				screenY: touch.screenY
 				identifier: touch.identifier
+
 		copied
 
 	# Copies a TouchEvent
 	copyTouchEvent = (e) ->
+
 		copied = 
 			target: e.target
 			timeStamp: e.timeStamp
@@ -24,6 +27,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			changedTouches: copyTouchList(e.changedTouches)
 			scale: e.scale
 			rotation: e.rotation
+
 		copied
 
 	# Listens to touch events on an element and sends Dommy Events as gesture
@@ -34,13 +38,15 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 	class Handler
 		# Just specify the root element. document.body usually works
 		constructor: (@root = window.document, @dommy = window.dommy) ->
+
 			@_reset()
 
 			@options =
-				real_move_distance	: 16
+				real_move_distance: 16
 				
 		# Resets the whole object, but keeps the root el
 		_reset: ->
+
 			# Binding our few listeners to 'this'
 			@_boundListeners =
 				start: @_touchstartListener.bind @
@@ -85,6 +91,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# Event listener function for el
 			@elEventListener = () ->
 
+			# Have we retrieved an eventListener for the current element from the dommy?
 			@elEventListenerInitialized = false
 
 			# Element event listeners for event with custom names
@@ -93,24 +100,21 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# Current active gesture can use this to store its variables
 			@vars = {}
 
-			null
-
 		# Start listening to touch events
 		listen: ->
 			@root.addEventListener 'touchstart', @_boundListeners.start
 			@root.addEventListener 'touchend'  , @_boundListeners.end
 			@root.addEventListener 'touchmove' , @_boundListeners.move
-			@
 
 		# Stop listening to touch events
 		quit: ->
 			@root.removeEventListener 'touchstart', @_boundListeners.start
 			@root.removeEventListener 'touchend'  , @_boundListeners.end
 			@root.removeEventListener 'touchmove' , @_boundListeners.move
-			@
 
 		# Listener for touchstart
 		_touchstartListener: (e) ->
+
 			e.stop()
 
 			@lastEvents.start = copyTouchEvent(e)
@@ -129,6 +133,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Listener for touchend
 		_touchendListener: (e) ->
+
 			e.stop()
 			@lastEventType = 'end'
 			@lastEvents.end = copyTouchEvent(e)
@@ -142,6 +147,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Listener for touchmove
 		_touchmoveListener: (e) ->
+
 			e.stop()
 			@lastEvents.move = copyTouchEvent(e)
 			@lastEventType = 'move'
@@ -163,6 +169,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 		# Runs when there are no touches left.
 		# If the gesture allows, it will finish
 		_shouldFinish: ->
+
 			shouldFinish = true
 			
 			shouldFinish = @gesture.shouldFinish(@) if @gesture
@@ -173,6 +180,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Final method that runs when the gesture ends.
 		finish: ->
+
 			@gesture.finish(@) if @gesture
 
 			#console.info 'finished with: ' + @gestureName if @gestureName
@@ -181,6 +189,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			
 		# Determines the potential targets and gestures for the current gesture
 		_findCandidates: ->
+
 			# The innermost target
 			target = @firstEvent.target
 
@@ -222,6 +231,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 		# Gets El's gestures either from its data-gestures attribute, or a chached
 		# one from dommy.
 		_getElGestures: (fastId, el) ->
+
 			gestures = @dommy._get(fastId, 'gestures')
 			return gestures if gestures isnt undefined
 
@@ -237,6 +247,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 		
 		# For when we haven't determined the gesture's type yet
 		_checkForType: ->
+
 			return if @candidates.length is 0
 			# console.group('Type')
 			# Coffee doesn't support labels and stuff, so I gotta use this hack
@@ -282,6 +293,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Fires event on our elements
 		fire: (e) ->
+
 			# #console.group('Firing for', @gestureName)
 			unless @elEventListenerInitialized
 				@elEventListener = dommy.getListener(@elFastId, @el, @gestureName)
@@ -292,6 +304,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Fires an event with a custom name
 		fireCustom: (name, e) ->
+
 			# #console.group('Custom Firing', name, 'for', @gestureName)
 
 			unless @elCustomEventListeners[name] isnt undefined
@@ -301,6 +314,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# #console.groupEnd()
 
 	Handler.create = (root = window.document, dommy = window.dommy) ->
+		
 		h = new Handler root, dommy
 		h.listen()
 		h

@@ -88,6 +88,9 @@ define([], function() {
     Array.simpleClone = function(array) {
       return array.slice(0);
     };
+    Array.from = function(r) {
+      return Array.prototype.slice.call(r);
+    };
     return Object.clone = function(object) {
       var clone, key;
       clone = {};

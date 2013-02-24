@@ -40,9 +40,11 @@ define(function() {
           return 1;
         },
         init: function(h) {
-          h.vars.startX = h.firstEvent.touches[0].pageX;
-          h.vars.startY = h.firstEvent.touches[0].pageY;
-          return h.vars.id = h.firstEvent.touches[0].identifier;
+          var e;
+          e = h.lastEvents[h.lastEventType];
+          h.vars.startX = e.touches[0].pageX;
+          h.vars.startY = e.touches[0].pageY;
+          return h.vars.id = e.touches[0].identifier;
         },
         end: function(h, e) {
           if (e.touches.length === 0) {

@@ -42,12 +42,14 @@ define ->
 				check: (h) ->
 					return 1
 				init: (h) ->
+					e = h.lastEvents[h.lastEventType]
+					
 					# Hold the starting position
-					h.vars.startX = h.firstEvent.touches[0].pageX
-					h.vars.startY = h.firstEvent.touches[0].pageY
+					h.vars.startX = e.touches[0].pageX
+					h.vars.startY = e.touches[0].pageY
 
 					# Remember id of the main touch
-					h.vars.id = h.firstEvent.touches[0].identifier
+					h.vars.id = e.touches[0].identifier
 				end: (h, e) ->
 					# Do nothing if there are no fingers left on screen
 					return if e.touches.length is 0

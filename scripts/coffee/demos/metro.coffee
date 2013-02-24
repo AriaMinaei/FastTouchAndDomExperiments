@@ -1,21 +1,17 @@
-require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'benchmark'], (dr, GestureHandler, Dambo, Dommy, Benchmark) ->
+require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scroll', 'benchmark'], (dr, GestureHandler, Dambo, Dommy, Scroll, Benchmark) ->
 	window.dambo = new Dambo
 	window.dommy = new Dommy
+	GestureHandler.create()
 
-	dambo.forThe('scroll-wrapper')
+	dambo.forThe('scroll')
 		.addLazy 'scroll', (id, dommy) ->
-			console.log('initializing scroller')
-			{
-				baloon: 'is mine'
-			}
+			new Scroll(id, dommy)
 
 		.addEvent 'move', (e, id, el, dommy) ->
 			dommy.getLazy(id, 'scroll').scroll(e.translateX, e.translateY)
 
 		.addEvent 'move-end', (e, id, el, dommy) ->
-			dommy.getLazy(id, 'scroll').commit()
-
-	GestureHandler.create()
+			dommy.getLazy(id, 'scroll').release()
 
 	dr ->
 

@@ -74,6 +74,9 @@ define [], ->
 		Array.simpleClone = (array) ->
 			array.slice(0)
 
+		Array.from = (r) ->
+			Array.prototype.slice.call(r)
+
 		# From MooTools
 		Object.clone = (object) ->
 			clone = {}

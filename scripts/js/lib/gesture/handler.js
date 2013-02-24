@@ -63,22 +63,19 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
       this.elEventListener = function() {};
       this.elEventListenerInitialized = false;
       this.elCustomEventListeners = {};
-      this.vars = {};
-      return null;
+      return this.vars = {};
     };
 
     Handler.prototype.listen = function() {
       this.root.addEventListener('touchstart', this._boundListeners.start);
       this.root.addEventListener('touchend', this._boundListeners.end);
-      this.root.addEventListener('touchmove', this._boundListeners.move);
-      return this;
+      return this.root.addEventListener('touchmove', this._boundListeners.move);
     };
 
     Handler.prototype.quit = function() {
       this.root.removeEventListener('touchstart', this._boundListeners.start);
       this.root.removeEventListener('touchend', this._boundListeners.end);
-      this.root.removeEventListener('touchmove', this._boundListeners.move);
-      return this;
+      return this.root.removeEventListener('touchmove', this._boundListeners.move);
     };
 
     Handler.prototype._touchstartListener = function(e) {

@@ -37,12 +37,17 @@ h2 {
 	height: 100%;
 	overflow: hidden;
 	box-sizing: border-box;
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
 }
 
-.the-pan > .scrollable {
+.the-pan > .scroll-content {
 	position: relative;
 	left: 60px;
 	top: 100px;
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+	float: left;
 }
 
 @media (max-height: 1000px) {
@@ -52,26 +57,23 @@ h2 {
 }
 
 .images {
-	/*margin-top: 10px;*/
-	/*height: 616px;*/
-	display: -webkit-box;
+	float: left;
 }
 
-
+.images > div {
+	height: 248px;
+	margin-bottom: 20px;
+	white-space: nowrap;
+	float: left;
+}
 
 .images .img {
 	background-size: 440px 248px;
 	width: 440px;
 	height: 248px;
 	position: relative;
-	float: left;
+	display: inline-block;
 	margin: 10px;
-}
-
-.images .img:nth-child(2n) {
-	top: 268px;
-	left: -460px;
-	margin-right: -450px;
 }
 
 .images .img-1 { background-image: url('../images/tiles/1.jpg'); }
