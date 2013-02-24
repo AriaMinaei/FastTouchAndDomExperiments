@@ -122,8 +122,6 @@ define ['native'], ->
 		# Called when fingers are on screen, moving around.
 		scroll: (x, y) ->
 
-			
-
 			intendedScrollX = @_lastCommitedScrollX + x
 
 			if intendedScrollX > @_outOfBoundScrollBeginX
