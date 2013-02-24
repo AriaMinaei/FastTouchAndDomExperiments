@@ -66,53 +66,6 @@ define ['native'], ->
 			return num - @to   if num > @to
 			return 0
 
-	class Range.ScrollInside extends Range
-		scroll: (starting, howMuch) ->
-			# console.log 'inside'
-			unless @includes starting
-				# console.log 'starting ' + starting + ' is out of our range.'
-				return @ranges.get(starting).scroll(starting, howMuch, @ranges)
-
-			outside = @_howMuchOutside starting + howMuch
-
-			return howMuch if not outside
-			# console.log "we're " + outside + " pixels out of range"
-			return howMuch
-
-			# return @ranges.get(starting + howMuch - outside).scroll(starting + howMuch - outside, outside, @ranges)
-		
-	class Range.ScrollOutside extends Range
-		# direction is either 1 (rightward motion will be slowed down),
-		# or -1 (leftward motion gets slowed down).
-		constructor: (@from, @to, @slowDirection = 1) ->
-			super
-
-		_multiplier: 0.1
-
-		_determineMovement: (howMuch) ->
-
-			if howMuch * @slowDirection >= 0
-				return howMuch * @_multiplier
-			else
-				return howMuch
-
-		scroll: (starting, howMuch) ->
-			# console.log 'outside ' + howMuch + ', ' + @_determineMovement howMuch
-			return @_determineMovement howMuch
-
-			unless @includes starting
-				return @ranges.get(starting).scroll(starting, howMuch, @ranges)
-
-			movement = @_determineMovement howMuch
-
-			outside = @_howMuchOutside starting + movement
-
-			return movement if not outside
-
-			startsNext = starting + movement - outside
-
-			return @ranges.get(startsNext).scroll(startsNext, starting + howMuch - startsNext, @ranges)
-
 
 	class Scroll
 		constructor: (@id, @dommy) ->
@@ -149,71 +102,68 @@ define ['native'], ->
 			@_childId = @dommy.fastId @_child
 			@_transform = @dommy.styles.getTransform @_childId, @_child
 
+			# Child element's dimensions
 			childRects = @_child.getBoundingClientRect()
 			@_childWidth = childRects.width
 			@_childHeight = childRects.height
 
-			@_determinescrollModifiers()
+			# Where does the scroll get out of bounds (gets harder to pull)
+			@_outOfBoundScrollBeginX = 0
+			@_outOfBoundScrollEndX = - (@_childWidth - @_width)
 
+			# Scroll coords for the last time commit() was called
+			@_lastCommitedScrollX = 0
+
+			# Current scroll
 			@x = 0
-			@y = 0
-			@_lastTranslateX = 0
-			@_lastTranslateY = 0
-			@_lastScrollX = 0
-			@_lastScrollY = 0
 
 			# console.log @scrollModifiersX
 
-		_determinescrollModifiers: ->
-
-			@scrollModifiersX = new Ranges()
-
-
-			inRangeX = @_childWidth  - @_width
-
-			if inRangeX < 0 then inRangeX = 0
-
-			@scrollModifiersX.add new Range.ScrollOutside -inRangeX - 5000, -inRangeX - 1, -1
-
-			@scrollModifiersX.add new Range.ScrollInside -inRangeX, 0
-
-			@scrollModifiersX.add new Range.ScrollOutside 0, 5000, 1
-
 		# Called when fingers are on screen, moving around.
-		scroll: (x, y) ->		
+		scroll: (x, y) ->
 
-			diffX = x - @_lastScrollX
-			@_lastScrollX = x
+			
 
-			diffX *= @_axisMultiplier.x
+			intendedScrollX = @_lastCommitedScrollX + x
 
-			realX = 0
-			if diffX
-				# console.log 'Scrolling X from ' + @x + ' by ' + diffX
-				realX = @scrollModifiersX.get(@x).scroll(@x, diffX)
-				# console.log 'returned', diffX, realX
-				# realX = diffX
-				@x += realX
+			if intendedScrollX > @_outOfBoundScrollBeginX
+				realX = @_outOfBoundScrollBeginX +
+					@_curveOutOfBoundScroll intendedScrollX - @_outOfBoundScrollBeginX
+
+			else if intendedScrollX < @_outOfBoundScrollEndX
+				realX = @_outOfBoundScrollEndX -
+					@_curveOutOfBoundScroll(-(intendedScrollX - @_outOfBoundScrollEndX))
+
+			else
+				realX = intendedScrollX
 
 
-			@_translate(realX, 0)
+			@_setTranslate(realX, 0)
+
+		_curveOutOfBoundScroll: (n) ->
+
+			temp = Math.limit n, 0, 800
+			curve = Math.sin Math.PI / 2 * temp / 800
+			temp / (1 + ( 2 * curve ) )
 
 		# Called when touch is released. It will do the slipping thing.
 		release: () ->
 
-			@_lastTranslateX = 0
-			@_lastTranslateY = 0
-
-			@_lastScrollX = 0
-			@_lastScrollY = 0
+			@_lastCommitedScrollX = @x
 
 			@_transform.commit(@_child)
 
-		# transform.translate the child element X/Y pixels to the left
+		# transform.translate the child element by x/y pixels to the left/bottom
 		_translate: (x, y) ->
 
-			@_lastTranslateX += x
-			@_lastTranslateY += y
+			@x = @_lastCommitedScrollX + x
 
-			@_transform.temporarily().translate(@_lastTranslateX, @_lastTranslateY)
+			@_transform.temporarily().translate(x, 0)
+			@_transform.apply(@_child)
+
+		_setTranslate: (x, y) ->
+
+			@x = x
+
+			@_transform.temporarily().setTranslate(x, 0)
 			@_transform.apply(@_child)

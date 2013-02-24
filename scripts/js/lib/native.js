@@ -106,6 +106,15 @@ define([], function() {
   Math.distance = function(x1, y1, x2, y2) {
     return Math.sqrt(Math.square(x2 - x1) + Math.square(y2 - y1));
   };
+  Math.limit = function(n, from, to) {
+    if (n > to) {
+      return to;
+    }
+    if (n < from) {
+      return from;
+    }
+    return n;
+  };
   UIEvent.prototype.stop = function() {
     this.stopPropagation();
     return this.preventDefault();

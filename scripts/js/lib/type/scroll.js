@@ -1,5 +1,3 @@
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 define(['native'], function() {
   var Range, Ranges, Scroll;
@@ -98,68 +96,6 @@ define(['native'], function() {
     return Range;
 
   })();
-  Range.ScrollInside = (function(_super) {
-
-    __extends(ScrollInside, _super);
-
-    function ScrollInside() {
-      return ScrollInside.__super__.constructor.apply(this, arguments);
-    }
-
-    ScrollInside.prototype.scroll = function(starting, howMuch) {
-      var outside;
-      if (!this.includes(starting)) {
-        return this.ranges.get(starting).scroll(starting, howMuch, this.ranges);
-      }
-      outside = this._howMuchOutside(starting + howMuch);
-      if (!outside) {
-        return howMuch;
-      }
-      return howMuch;
-    };
-
-    return ScrollInside;
-
-  })(Range);
-  Range.ScrollOutside = (function(_super) {
-
-    __extends(ScrollOutside, _super);
-
-    function ScrollOutside(from, to, slowDirection) {
-      this.from = from;
-      this.to = to;
-      this.slowDirection = slowDirection != null ? slowDirection : 1;
-      ScrollOutside.__super__.constructor.apply(this, arguments);
-    }
-
-    ScrollOutside.prototype._multiplier = 0.1;
-
-    ScrollOutside.prototype._determineMovement = function(howMuch) {
-      if (howMuch * this.slowDirection >= 0) {
-        return howMuch * this._multiplier;
-      } else {
-        return howMuch;
-      }
-    };
-
-    ScrollOutside.prototype.scroll = function(starting, howMuch) {
-      var movement, outside, startsNext;
-      return this._determineMovement(howMuch);
-      if (!this.includes(starting)) {
-        return this.ranges.get(starting).scroll(starting, howMuch, this.ranges);
-      }
-      movement = this._determineMovement(howMuch);
-      outside = this._howMuchOutside(starting + movement);
-      if (!outside) {
-        return movement;
-      }
-      startsNext = starting + movement - outside;
-      return this.ranges.get(startsNext).scroll(startsNext, starting + howMuch - startsNext, this.ranges);
-    };
-
-    return ScrollOutside;
-
-  })(Range);
   return Scroll = (function() {
 
     function Scroll(id, dommy) {
@@ -189,52 +125,46 @@ define(['native'], function() {
       childRects = this._child.getBoundingClientRect();
       this._childWidth = childRects.width;
       this._childHeight = childRects.height;
-      this._determinescrollModifiers();
+      this._outOfBoundScrollBeginX = 0;
+      this._outOfBoundScrollEndX = -(this._childWidth - this._width);
+      this._lastCommitedScrollX = 0;
       this.x = 0;
-      this.y = 0;
-      this._lastTranslateX = 0;
-      this._lastTranslateY = 0;
-      this._lastScrollX = 0;
-      this._lastScrollY = 0;
     }
 
-    Scroll.prototype._determinescrollModifiers = function() {
-      var inRangeX;
-      this.scrollModifiersX = new Ranges();
-      inRangeX = this._childWidth - this._width;
-      if (inRangeX < 0) {
-        inRangeX = 0;
+    Scroll.prototype.scroll = function(x, y) {
+      var intendedScrollX, realX;
+      intendedScrollX = this._lastCommitedScrollX + x;
+      if (intendedScrollX > this._outOfBoundScrollBeginX) {
+        realX = this._outOfBoundScrollBeginX + this._curveOutOfBoundScroll(intendedScrollX - this._outOfBoundScrollBeginX);
+      } else if (intendedScrollX < this._outOfBoundScrollEndX) {
+        realX = this._outOfBoundScrollEndX - this._curveOutOfBoundScroll(-(intendedScrollX - this._outOfBoundScrollEndX));
+      } else {
+        realX = intendedScrollX;
       }
-      this.scrollModifiersX.add(new Range.ScrollOutside(-inRangeX - 5000, -inRangeX - 1, -1));
-      this.scrollModifiersX.add(new Range.ScrollInside(-inRangeX, 0));
-      return this.scrollModifiersX.add(new Range.ScrollOutside(0, 5000, 1));
+      return this._setTranslate(realX, 0);
     };
 
-    Scroll.prototype.scroll = function(x, y) {
-      var diffX, realX;
-      diffX = x - this._lastScrollX;
-      this._lastScrollX = x;
-      diffX *= this._axisMultiplier.x;
-      realX = 0;
-      if (diffX) {
-        realX = this.scrollModifiersX.get(this.x).scroll(this.x, diffX);
-        this.x += realX;
-      }
-      return this._translate(realX, 0);
+    Scroll.prototype._curveOutOfBoundScroll = function(n) {
+      var curve, temp;
+      temp = Math.limit(n, 0, 800);
+      curve = Math.sin(Math.PI / 2 * temp / 800);
+      return temp / (1 + (2 * curve));
     };
 
     Scroll.prototype.release = function() {
-      this._lastTranslateX = 0;
-      this._lastTranslateY = 0;
-      this._lastScrollX = 0;
-      this._lastScrollY = 0;
+      this._lastCommitedScrollX = this.x;
       return this._transform.commit(this._child);
     };
 
     Scroll.prototype._translate = function(x, y) {
-      this._lastTranslateX += x;
-      this._lastTranslateY += y;
-      this._transform.temporarily().translate(this._lastTranslateX, this._lastTranslateY);
+      this.x = this._lastCommitedScrollX + x;
+      this._transform.temporarily().translate(x, 0);
+      return this._transform.apply(this._child);
+    };
+
+    Scroll.prototype._setTranslate = function(x, y) {
+      this.x = x;
+      this._transform.temporarily().setTranslate(x, 0);
       return this._transform.apply(this._child);
     };
 

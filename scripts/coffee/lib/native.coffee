@@ -86,6 +86,10 @@ define [], ->
 
 	Math.square = (n) -> n * n
 	Math.distance = (x1, y1, x2, y2) -> Math.sqrt( Math.square(x2 - x1) + Math.square(y2 - y1) )
+	Math.limit = (n, from, to) ->
+		return to if n > to
+		return from if n < from
+		return n
 
 	UIEvent::stop = () ->
 		this.stopPropagation()
