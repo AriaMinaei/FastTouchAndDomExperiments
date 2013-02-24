@@ -1,4 +1,4 @@
-define ['native'], ->
+define ['native', 'dom'], ->
 	# A collection of Range-s, with some useful methods.
 	class Ranges
 		constructor: (toAdd) ->
@@ -66,6 +66,117 @@ define ['native'], ->
 			return num - @to   if num > @to
 			return 0
 
+	class OneDirectionalScroller
+
+		# pixels/milliseconds
+		velocityThreshold: 2
+
+		constructor: (@scroller, @containerWidth, @childWidth) ->
+
+			# Where does the scroll get out of bounds (gets harder to pull)
+			@freeScrollFrom = - (@childWidth - @containerWidth)
+			@freeScrollTo = 0
+
+			# Note:
+			# When the user moves their fingers around to scroll, the scroller
+			# doesn't always follow the fingers. Forexample, if the scroll goes
+			# out of the parent's boundries, it slows down.
+			# 
+			# We hold references to the movement of the user's fingers in variables
+			# prefixed with 'lastIntended', and the actual movements will be held in
+			# variables prefixed with 'last'
+			@lastCommited = 0
+			@lastIntended = 0
+			@lastCommitedIntended = 0
+
+			# Current scroll
+			@current = 0
+
+			@_velocityRecords = []
+			@_lastVelocity =
+				t: 0
+				v: 0
+
+			# 0 -> scrolling
+			# 1 -> slipping
+			@mode = 0
+
+		scroll: (howMuch) ->
+
+			@mode = 0
+
+			@_recordForVelocity howMuch
+			
+			intended = @lastIntended = @lastCommitedIntended + howMuch
+
+			# If we're scrolling out of bounds to the right:
+			if intended > @freeScrollTo
+				current = @freeScrollTo +
+					@_makeSticky intended - @freeScrollTo
+
+			# ... or to the left:
+			else if intended < @freeScrollFrom
+				current = @freeScrollFrom -
+					@_makeSticky(-(intended - @freeScrollFrom))
+
+			# We're inside the boundries
+			else
+				# Follow user's finger
+				current = intended
+
+			@current = current
+			current
+
+		_recordForVelocity: (howMuch) ->
+
+			if @_velocityRecords.length > 2
+				@_velocityRecords.shift()
+
+			@_velocityRecords.push
+				x: howMuch
+				t: Date.now()
+
+		_recordedVelocity: () ->
+
+			if @_velocityRecords.length < 2
+				return 0
+			else
+				first = @_velocityRecords[0]
+				last = @_velocityRecords[@_velocityRecords.length - 1]
+				v = (last.x - first.x) / (last.t - first.t)
+				return 0 if (Math.abs v) < @velocityThreshold
+				return v
+
+		release: () ->
+
+			v = @_recordedVelocity()
+			if v
+				@_lastVelocity.v = v
+				@_lastVelocity.t = Date.now()
+
+				@scroller.needAnimation()
+
+			@lastCommited = @current
+			@lastCommitedIntended = @lastIntended
+
+		animate: () ->
+			@scroller.needAnimation()
+
+			x = 1
+
+			@current += x
+
+			x
+
+		# Curving the movement when going out of bounds
+		_makeSticky: (n) ->
+
+			# There is absolutely no logical reason why these values and
+			# formulas are used! I just played around with some different
+			# combinations, and this one felt better!
+			temp = Math.limit n, 0, 1500
+			curve = Math.square(1 + temp / 1500) - 1
+			temp / (1 + ( 2 * curve ) )
 
 	class Scroll
 		constructor: (@id, @dommy) ->
@@ -84,13 +195,13 @@ define ['native'], ->
 				JSON.parse '{' + @el.getAttribute('data-scroll-options') + '}'
 
 			# To make sure we only scroll in the desired axis
-			@_axisMultiplier =
+			@axis =
 				x: 1
 				y: 1
 
 			# for x/y -only axis configs
-			if @options.axis is 'x' then @_axisMultiplier.y = 0
-			else if @options.axis is 'y' then @_axisMultiplier.x = 0
+			if @options.axis is 'x' then @axis.y = 0
+			else if @options.axis is 'y' then @axis.x = 0
 
 			# Reference to dimensions
 			@_rects = rects = @el.getBoundingClientRect()
@@ -107,79 +218,73 @@ define ['native'], ->
 			@_childWidth = childRects.width
 			@_childHeight = childRects.height
 
-			# Where does the scroll get out of bounds (gets harder to pull)
-			@_outOfBoundScrollBeginX = 0
-			@_outOfBoundScrollEndX = - (@_childWidth - @_width)
+			@scrollerX = new OneDirectionalScroller @, @_width , @_childWidth
+			@scrollerY = new OneDirectionalScroller @, @_height, @_childHeight
 
-			# Note:
-			# When the user moves their fingers around to scroll, the scroller
-			# doesn't always follow the fingers. Forexample, if the scroll goes
-			# out of the parent's boundries, it slows down.
-			# 
-			# We hold references to the movement of the user's fingers in variables
-			# prefixed with '_lastIntended', and the actual movements will be held in
-			# variables prefixed with '_last'
-			@_lastCommitedScrollX = 0
-			@_lastIntendedScrollX = 0
-			@_lastCommitedIntendedScrollX = 0
-
-			# Current scroll
-			@x = 0
-
-			# console.log @scrollModifiersX
+			@_animFrame = 0
+			@_boundAnimFunction = @_animFunction.bind @
 
 		# Called when fingers are on screen, moving around.
 		scroll: (x, y) ->
 
-			# - I don't like the variable names either. I'll come up with something
-			# better later ;)
-			intendedScrollX = @_lastIntendedScrollX = @_lastCommitedIntendedScrollX + x
+			@cancelAnimation()
 
-			# If we're scrolling out of bounds to the right:
-			if intendedScrollX > @_outOfBoundScrollBeginX
-				realX = @_outOfBoundScrollBeginX +
-					@_curveOutOfBoundScroll intendedScrollX - @_outOfBoundScrollBeginX
+			if not @axis.x
+				x = 0
+			else x = @scrollerX.scroll(x)
 
-			# ... or to the left:
-			else if intendedScrollX < @_outOfBoundScrollEndX
-				realX = @_outOfBoundScrollEndX -
-					@_curveOutOfBoundScroll(-(intendedScrollX - @_outOfBoundScrollEndX))
-
-			# We're inside the boundries
-			else
-				# Follow user's finger
-				realX = intendedScrollX
+			if not @axis.y
+				y = 0
+			else y = @scrollerY.scroll(y)
 
 			# Translate the child element
-			@_setTranslate(realX, 0)
-
-		# Curving the movement when going out of bounds
-		_curveOutOfBoundScroll: (n) ->
-
-			temp = Math.limit n, 0, 1500
-			curve = Math.square(1 + temp / 1500) - 1
-			temp / (1 + ( 2 * curve ) )
+			@_setTranslate x, y
 
 		# Called when touch is released. It will do the slipping thing.
 		release: () ->
 
-			@_lastCommitedScrollX = @x
-			@_lastCommitedIntendedScrollX = @_lastIntendedScrollX
+			if @axis.x
+				@scrollerX.release()
 
+			if @axis.y
+				@scrollerY.release()
+
+			@_transform.commit(@_child)
+
+		needAnimation: () ->
+
+			unless @_animFrame
+				@_animFrame = requestAnimationFrame @_boundAnimFunction
+
+		cancelAnimation: () ->
+
+			if @_animFrame
+				cancelAnimationFrame(@_animFrame)
+				@_animFrame = 0
+
+		_animFunction: () ->
+
+			@_animFrame = 0
+
+			x = 0
+			if @axis.x
+				x = @scrollerX.animate()
+
+			y = 0
+			if @axis.y
+				y = @scrollerY.animate()
+
+			@_translate x, y
 			@_transform.commit(@_child)
 
 		# transform.translate the child element by x/y pixels to the left/bottom
 		_translate: (x, y) ->
 
-			@x = @_lastCommitedScrollX + x
-
-			@_transform.temporarily().translate(x, 0)
+			@_transform.temporarily().translate(x, y)
 			@_transform.apply(@_child)
 
 		# transform.setTranslate the child element to x/y
 		_setTranslate: (x, y) ->
 
-			@x = x
-
-			@_transform.temporarily().setTranslate(x, 0)
+			@_transform.temporarily().setTranslate(x, y)
 			@_transform.apply(@_child)

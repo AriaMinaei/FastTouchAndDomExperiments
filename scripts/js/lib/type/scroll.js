@@ -1,6 +1,6 @@
 
-define(['native'], function() {
-  var Range, Ranges, Scroll;
+define(['native', 'dom'], function() {
+  var OneDirectionalScroller, Range, Ranges, Scroll;
   Ranges = (function() {
 
     function Ranges(toAdd) {
@@ -96,6 +96,99 @@ define(['native'], function() {
     return Range;
 
   })();
+  OneDirectionalScroller = (function() {
+
+    OneDirectionalScroller.prototype.velocityThreshold = 2;
+
+    function OneDirectionalScroller(scroller, containerWidth, childWidth) {
+      this.scroller = scroller;
+      this.containerWidth = containerWidth;
+      this.childWidth = childWidth;
+      this.freeScrollFrom = -(this.childWidth - this.containerWidth);
+      this.freeScrollTo = 0;
+      this.lastCommited = 0;
+      this.lastIntended = 0;
+      this.lastCommitedIntended = 0;
+      this.current = 0;
+      this._velocityRecords = [];
+      this._lastVelocity = {
+        t: 0,
+        v: 0
+      };
+      this.mode = 0;
+    }
+
+    OneDirectionalScroller.prototype.scroll = function(howMuch) {
+      var current, intended;
+      this.mode = 0;
+      this._recordForVelocity(howMuch);
+      intended = this.lastIntended = this.lastCommitedIntended + howMuch;
+      if (intended > this.freeScrollTo) {
+        current = this.freeScrollTo + this._makeSticky(intended - this.freeScrollTo);
+      } else if (intended < this.freeScrollFrom) {
+        current = this.freeScrollFrom - this._makeSticky(-(intended - this.freeScrollFrom));
+      } else {
+        current = intended;
+      }
+      this.current = current;
+      return current;
+    };
+
+    OneDirectionalScroller.prototype._recordForVelocity = function(howMuch) {
+      if (this._velocityRecords.length > 2) {
+        this._velocityRecords.shift();
+      }
+      return this._velocityRecords.push({
+        x: howMuch,
+        t: Date.now()
+      });
+    };
+
+    OneDirectionalScroller.prototype._recordedVelocity = function() {
+      var first, last, v;
+      if (this._velocityRecords.length < 2) {
+        return 0;
+      } else {
+        first = this._velocityRecords[0];
+        last = this._velocityRecords[this._velocityRecords.length - 1];
+        v = (last.x - first.x) / (last.t - first.t);
+        if ((Math.abs(v)) < this.velocityThreshold) {
+          return 0;
+        }
+        return v;
+      }
+    };
+
+    OneDirectionalScroller.prototype.release = function() {
+      var v;
+      v = this._recordedVelocity();
+      if (v) {
+        this._lastVelocity.v = v;
+        this._lastVelocity.t = Date.now();
+        this.scroller.needAnimation();
+      }
+      this.lastCommited = this.current;
+      return this.lastCommitedIntended = this.lastIntended;
+    };
+
+    OneDirectionalScroller.prototype.animate = function() {
+      var x;
+      this.scroller.needAnimation();
+      x = 1;
+      this.current += x;
+      return x;
+    };
+
+    OneDirectionalScroller.prototype._makeSticky = function(n) {
+      var curve, temp;
+      temp = Math.limit(n, 0, 1500);
+      curve = Math.square(1 + temp / 1500) - 1;
+      return temp / (1 + (2 * curve));
+    };
+
+    return OneDirectionalScroller;
+
+  })();
   return Scroll = (function() {
 
     function Scroll(id, dommy) {
@@ -107,14 +200,14 @@ define(['native'], function() {
         axis: 'both'
       };
       this.options = Object.append(this.options, JSON.parse('{' + this.el.getAttribute('data-scroll-options') + '}'));
-      this._axisMultiplier = {
+      this.axis = {
         x: 1,
         y: 1
       };
       if (this.options.axis === 'x') {
-        this._axisMultiplier.y = 0;
+        this.axis.y = 0;
       } else if (this.options.axis === 'y') {
-        this._axisMultiplier.x = 0;
+        this.axis.x = 0;
       }
       this._rects = rects = this.el.getBoundingClientRect();
       this._width = rects.width;
@@ -125,49 +218,72 @@ define(['native'], function() {
       childRects = this._child.getBoundingClientRect();
       this._childWidth = childRects.width;
       this._childHeight = childRects.height;
-      this._outOfBoundScrollBeginX = 0;
-      this._outOfBoundScrollEndX = -(this._childWidth - this._width);
-      this._lastCommitedScrollX = 0;
-      this._lastIntendedScrollX = 0;
-      this._lastCommitedIntendedScrollX = 0;
-      this.x = 0;
+      this.scrollerX = new OneDirectionalScroller(this, this._width, this._childWidth);
+      this.scrollerY = new OneDirectionalScroller(this, this._height, this._childHeight);
+      this._animFrame = 0;
+      this._boundAnimFunction = this._animFunction.bind(this);
     }
 
     Scroll.prototype.scroll = function(x, y) {
-      var intendedScrollX, realX;
-      intendedScrollX = this._lastIntendedScrollX = this._lastCommitedIntendedScrollX + x;
-      if (intendedScrollX > this._outOfBoundScrollBeginX) {
-        realX = this._outOfBoundScrollBeginX + this._curveOutOfBoundScroll(intendedScrollX - this._outOfBoundScrollBeginX);
-      } else if (intendedScrollX < this._outOfBoundScrollEndX) {
-        realX = this._outOfBoundScrollEndX - this._curveOutOfBoundScroll(-(intendedScrollX - this._outOfBoundScrollEndX));
+      this.cancelAnimation();
+      if (!this.axis.x) {
+        x = 0;
       } else {
-        realX = intendedScrollX;
+        x = this.scrollerX.scroll(x);
       }
-      return this._setTranslate(realX, 0);
-    };
-
-    Scroll.prototype._curveOutOfBoundScroll = function(n) {
-      var curve, temp;
-      temp = Math.limit(n, 0, 1500);
-      curve = Math.square(1 + temp / 1500) - 1;
-      return temp / (1 + (2 * curve));
+      if (!this.axis.y) {
+        y = 0;
+      } else {
+        y = this.scrollerY.scroll(y);
+      }
+      return this._setTranslate(x, y);
     };
 
     Scroll.prototype.release = function() {
-      this._lastCommitedScrollX = this.x;
-      this._lastCommitedIntendedScrollX = this._lastIntendedScrollX;
+      if (this.axis.x) {
+        this.scrollerX.release();
+      }
+      if (this.axis.y) {
+        this.scrollerY.release();
+      }
+      return this._transform.commit(this._child);
+    };
+
+    Scroll.prototype.needAnimation = function() {
+      if (!this._animFrame) {
+        return this._animFrame = requestAnimationFrame(this._boundAnimFunction);
+      }
+    };
+
+    Scroll.prototype.cancelAnimation = function() {
+      if (this._animFrame) {
+        cancelAnimationFrame(this._animFrame);
+        return this._animFrame = 0;
+      }
+    };
+
+    Scroll.prototype._animFunction = function() {
+      var x, y;
+      this._animFrame = 0;
+      x = 0;
+      if (this.axis.x) {
+        x = this.scrollerX.animate();
+      }
+      y = 0;
+      if (this.axis.y) {
+        y = this.scrollerY.animate();
+      }
+      this._translate(x, y);
       return this._transform.commit(this._child);
     };
 
     Scroll.prototype._translate = function(x, y) {
-      this.x = this._lastCommitedScrollX + x;
-      this._transform.temporarily().translate(x, 0);
+      this._transform.temporarily().translate(x, y);
       return this._transform.apply(this._child);
     };
 
     Scroll.prototype._setTranslate = function(x, y) {
-      this.x = x;
-      this._transform.temporarily().setTranslate(x, 0);
+      this._transform.temporarily().setTranslate(x, y);
       return this._transform.apply(this._child);
     };
 
