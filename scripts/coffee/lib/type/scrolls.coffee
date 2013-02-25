@@ -1,5 +1,7 @@
 define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
+	emptyFunction = ->
+
 	class Scrolls
 
 		constructor: (@id, @dommy) ->
@@ -41,7 +43,7 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			boundNeedAnimation = @_scrollerAskedForAnimation.bind @
 
 			@propsX = 
-				d: 0
+				delta: 0
 				stretch: 0
 
 			@_scrollerX = new SingleAxisScroller @propsX, boundNeedAnimation, 
@@ -51,7 +53,7 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			@_lastScrollX = 0
 
 			@propsY = 
-				d: 0
+				delta: 0
 				stretch: 0
 
 			@_scrollerY = new SingleAxisScroller @propsY, boundNeedAnimation, 
@@ -65,11 +67,16 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			# This function gets called by window.requestAnimationFrame()
 			@_boundAnimFunction = @_animFunction.bind @
-			
+
+			# If we are listening to a persistent gesture, we have to call its
+			# finish() method when animation is over. This will be a reference to
+			# that finish() method.
+			@_finishCallback = emptyFunction
+
+			@_finishCallbackWaiting = false
 
 		# Called when fingers are on screen, moving around.
 		scroll: (x, y) ->
-
 
 			@_cancelAnimation()
 
@@ -86,7 +93,9 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			do @_transformElement
 
 		# Called when touch is released. It will do the slipping thing.
-		release: () ->
+		release: (finish) ->
+
+			@_cancelAnimation()
 
 			if @_enabledAxis.x
 				@_scrollerX.release()
@@ -96,6 +105,13 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 				@_scrollerY.release()
 				@_lastScrollY = 0
 
+			if finish
+				if @_animFrame
+					@_finishCallback = -> finish()
+					@_finishCallbackWaiting = true
+				else
+					finish()
+				
 		_scrollerAskedForAnimation: () ->
 
 			unless @_animFrame
@@ -120,15 +136,23 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			# Translate the child element
 			do @_transformElement
 
+			if @_finishCallbackWaiting
+				unless @_animFrame
+					@_finishCallback()
+					@_finishCallback = emptyFunction
+					@_finishCallbackWaiting = false
+
 		_transformElement: () ->
 
 			x = 0
 			if @_enabledAxis.x
-				x = @propsX.d
+				x = @propsX.delta
+				x += @_stretchToTranslate @propsX.stretch
 
 			y = 0
 			if @_enabledAxis.y
-				y = @propsY.d
+				y = @propsY.delta
+				y += @_stretchToTranslate @propsY.stretch
 
 			@_setTranslate x, y
 
@@ -137,3 +161,9 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			@_transform.currently().setTranslate(x, y)
 			@_transform.commit(@_childEl)
+
+		_stretchToTranslate: (from) ->
+
+			if from < 0 then m = -1 else m = 1
+			from = Math.abs from
+			m * from / ( Math.pow(from / 1000 + 1, 4) )

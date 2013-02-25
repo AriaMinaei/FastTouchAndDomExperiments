@@ -1,6 +1,7 @@
 
 define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScroller) {
-  var Scrolls;
+  var Scrolls, emptyFunction;
+  emptyFunction = function() {};
   return Scrolls = (function() {
 
     function Scrolls(id, dommy) {
@@ -28,7 +29,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       childRects = this._childEl.getBoundingClientRect();
       boundNeedAnimation = this._scrollerAskedForAnimation.bind(this);
       this.propsX = {
-        d: 0,
+        delta: 0,
         stretch: 0
       };
       this._scrollerX = new SingleAxisScroller(this.propsX, boundNeedAnimation, {
@@ -37,7 +38,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       });
       this._lastScrollX = 0;
       this.propsY = {
-        d: 0,
+        delta: 0,
         stretch: 0
       };
       this._scrollerY = new SingleAxisScroller(this.propsY, boundNeedAnimation, {
@@ -47,6 +48,8 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this._lastScrollY = 0;
       this._animFrame = 0;
       this._boundAnimFunction = this._animFunction.bind(this);
+      this._finishCallback = emptyFunction;
+      this._finishCallbackWaiting = false;
     }
 
     Scrolls.prototype.scroll = function(x, y) {
@@ -62,14 +65,25 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       return this._transformElement();
     };
 
-    Scrolls.prototype.release = function() {
+    Scrolls.prototype.release = function(finish) {
+      this._cancelAnimation();
       if (this._enabledAxis.x) {
         this._scrollerX.release();
         this._lastScrollX = 0;
       }
       if (this._enabledAxis.y) {
         this._scrollerY.release();
-        return this._lastScrollY = 0;
+        this._lastScrollY = 0;
+      }
+      if (finish) {
+        if (this._animFrame) {
+          this._finishCallback = function() {
+            return finish();
+          };
+          return this._finishCallbackWaiting = true;
+        } else {
+          return finish();
+        }
       }
     };
 
@@ -94,18 +108,27 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       if (this._enabledAxis.y) {
         this._scrollerY.animate();
       }
-      return this._transformElement();
+      this._transformElement();
+      if (this._finishCallbackWaiting) {
+        if (!this._animFrame) {
+          this._finishCallback();
+          this._finishCallback = emptyFunction;
+          return this._finishCallbackWaiting = false;
+        }
+      }
     };
 
     Scrolls.prototype._transformElement = function() {
       var x, y;
       x = 0;
       if (this._enabledAxis.x) {
-        x = this.propsX.d;
+        x = this.propsX.delta;
+        x += this._stretchToTranslate(this.propsX.stretch);
       }
       y = 0;
       if (this._enabledAxis.y) {
-        y = this.propsY.d;
+        y = this.propsY.delta;
+        y += this._stretchToTranslate(this.propsY.stretch);
       }
       return this._setTranslate(x, y);
     };
@@ -113,6 +136,17 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
     Scrolls.prototype._setTranslate = function(x, y) {
       this._transform.currently().setTranslate(x, y);
       return this._transform.commit(this._childEl);
+    };
+
+    Scrolls.prototype._stretchToTranslate = function(from) {
+      var m;
+      if (from < 0) {
+        m = -1;
+      } else {
+        m = 1;
+      }
+      from = Math.abs(from);
+      return m * from / (Math.pow(from / 1000 + 1, 4));
     };
 
     return Scrolls;

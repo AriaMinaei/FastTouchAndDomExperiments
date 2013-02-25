@@ -41,6 +41,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     }
 
     Handler.prototype._reset = function() {
+      var _this = this;
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
@@ -63,7 +64,10 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
       this.elEventListener = function() {};
       this.elEventListenerInitialized = false;
       this.elCustomEventListeners = {};
-      return this.vars = {};
+      this.vars = {};
+      return this.forceFinish = function() {
+        return _this.finish();
+      };
     };
 
     Handler.prototype.listen = function() {

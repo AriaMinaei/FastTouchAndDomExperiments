@@ -24,13 +24,25 @@ define ['native'], ->
 			if @size > @space
 				@minDelta = - ( @size - @space )
 
+			@maxDelta = 0
+
+			@realMinDelta = @minDelta - 1000
+			@realMaxDelta = @maxDelta + 1000
+
 			# Current delta
-			if options.d
-				@props.d = parseInt d
+			if options.delta
+				@props.delta = parseInt options.delta
+
+			if not @props.delta then @props.delta = 0
+
+			# Real delta
+			@realDelta = @props.delta
 
 			# Current stretch
 			if options.stretch
-				@props.stretch = parseInt stretch
+				@props.stretch = parseInt options.stretch
+
+			if not @props.stretch then @props.stretch = 0
 
 			# If velocity is lower than this number, it'll be considered zero.
 			# In pixels/milliseconds
@@ -50,25 +62,19 @@ define ['native'], ->
 
 			@_recordForVelocity delta
 
-			newDelta = @props.d + delta
+			@realDelta = @_limitReal @realDelta + delta
 
-			if newDelta > 0
-				@props.stretch += newDelta
-				newDelta = 0
-			else if newDelta < @minDelta
-				@props.stretch += newDelta - @minDelta
-				newDelta = @minDelta
+			newProps = @_realToSticky @realDelta
+			@props.delta = newProps.delta
+			@props.stretch = newProps.stretch
 
-			@props.d = newDelta
-
-		
 		# For when the finger is released. It'll calculate velocity, and
 		# if it should still be moving, it'll call @scroller.needAnimation()
 		release: () ->
 
 			v = do @_getRecordedVelocity
 
-			console.log v
+			# console.log v
 
 			if v
 				@_lastVelocity.v = v
@@ -82,26 +88,59 @@ define ['native'], ->
 			v = @_lastVelocity.v
 			deltaT = Date.now() - @_lastVelocity.t
 
-			@_setLastVelocity v
+			
 
-			newDelta = @props.d +  v * deltaT
+			friction = 0.002
+			if v > 0
+				friction = -friction
+
+			return if v is 0
+
+			@realDelta +=  v * deltaT + (0.5 * friction * Math.pow(deltaT, 2))
+
+			newV = deltaT * friction + v
+			return if newV * v < 0 or Math.abs(newV) < 0.1
+			@_setLastVelocity newV
+
+			limitedRealDelta = @_limitReal @realDelta
 
 			needMoreAnimation = yes
 
-			if newDelta > 0
-				@props.stretch += newDelta
-				newDelta = 0
+			if @realDelta isnt limitedRealDelta
 				needMoreAnimation = no
 
-			else if newDelta < @minDelta
-				@props.stretch += newDelta - @minDelta
-				newDelta = @minDelta
-				needMoreAnimation = no
-
-			@props.d = newDelta
+			newProps = @_realToSticky @realDelta
+			@props.delta = newProps.delta
+			@props.stretch = newProps.stretch
 
 			do @askForAnimation if needMoreAnimation
 
+		_limitReal: (real) ->
+
+			if real > @realMaxDelta
+				@realMaxDelta
+			else if real < @realMinDelta
+				@realMinDelta
+			else
+				real
+
+		_realToSticky: (real) ->
+			sticky = 
+				delta: 0
+				stretch: 0
+
+			if real > 0
+				sticky.stretch = @_stretch real
+			else if real < @minDelta
+				sticky.stretch = @_stretch( real - @minDelta )
+				sticky.delta = @minDelta
+			else
+				sticky.delta = real
+
+			sticky
+
+		_stretch: (real) ->
+			real / 2
 
 		_recordForVelocity: (delta) ->
 

@@ -25,11 +25,21 @@ define(['native'], function() {
       if (this.size > this.space) {
         this.minDelta = -(this.size - this.space);
       }
-      if (options.d) {
-        this.props.d = parseInt(d);
+      this.maxDelta = 0;
+      this.realMinDelta = this.minDelta - 1000;
+      this.realMaxDelta = this.maxDelta + 1000;
+      if (options.delta) {
+        this.props.delta = parseInt(options.delta);
       }
+      if (!this.props.delta) {
+        this.props.delta = 0;
+      }
+      this.realDelta = this.props.delta;
       if (options.stretch) {
-        this.props.stretch = parseInt(stretch);
+        this.props.stretch = parseInt(options.stretch);
+      }
+      if (!this.props.stretch) {
+        this.props.stretch = 0;
       }
       this.velocityThreshold = 1;
       this._velocityRecords = [];
@@ -41,23 +51,17 @@ define(['native'], function() {
     }
 
     SingleAxisScroller.prototype.scroll = function(delta) {
-      var newDelta;
+      var newProps;
       this._recordForVelocity(delta);
-      newDelta = this.props.d + delta;
-      if (newDelta > 0) {
-        this.props.stretch += newDelta;
-        newDelta = 0;
-      } else if (newDelta < this.minDelta) {
-        this.props.stretch += newDelta - this.minDelta;
-        newDelta = this.minDelta;
-      }
-      return this.props.d = newDelta;
+      this.realDelta = this._limitReal(this.realDelta + delta);
+      newProps = this._realToSticky(this.realDelta);
+      this.props.delta = newProps.delta;
+      return this.props.stretch = newProps.stretch;
     };
 
     SingleAxisScroller.prototype.release = function() {
       var v;
       v = this._getRecordedVelocity();
-      console.log(v);
       if (v) {
         this._lastVelocity.v = v;
         this._lastVelocity.t = Date.now();
@@ -66,25 +70,64 @@ define(['native'], function() {
     };
 
     SingleAxisScroller.prototype.animate = function() {
-      var deltaT, needMoreAnimation, newDelta, v;
+      var deltaT, friction, limitedRealDelta, needMoreAnimation, newProps, newV, v;
       v = this._lastVelocity.v;
       deltaT = Date.now() - this._lastVelocity.t;
-      this._setLastVelocity(v);
-      newDelta = this.props.d + v * deltaT;
+      friction = 0.002;
+      if (v > 0) {
+        friction = -friction;
+      }
+      if (v === 0) {
+        return;
+      }
+      this.realDelta += v * deltaT + (0.5 * friction * Math.pow(deltaT, 2));
+      newV = deltaT * friction + v;
+      if (newV * v < 0 || Math.abs(newV) < 0.1) {
+        return;
+      }
+      this._setLastVelocity(newV);
+      limitedRealDelta = this._limitReal(this.realDelta);
       needMoreAnimation = true;
-      if (newDelta > 0) {
-        this.props.stretch += newDelta;
-        newDelta = 0;
-        needMoreAnimation = false;
-      } else if (newDelta < this.minDelta) {
-        this.props.stretch += newDelta - this.minDelta;
-        newDelta = this.minDelta;
+      if (this.realDelta !== limitedRealDelta) {
         needMoreAnimation = false;
       }
-      this.props.d = newDelta;
+      newProps = this._realToSticky(this.realDelta);
+      this.props.delta = newProps.delta;
+      this.props.stretch = newProps.stretch;
       if (needMoreAnimation) {
         return this.askForAnimation();
       }
+    };
+
+    SingleAxisScroller.prototype._limitReal = function(real) {
+      if (real > this.realMaxDelta) {
+        return this.realMaxDelta;
+      } else if (real < this.realMinDelta) {
+        return this.realMinDelta;
+      } else {
+        return real;
+      }
+    };
+
+    SingleAxisScroller.prototype._realToSticky = function(real) {
+      var sticky;
+      sticky = {
+        delta: 0,
+        stretch: 0
+      };
+      if (real > 0) {
+        sticky.stretch = this._stretch(real);
+      } else if (real < this.minDelta) {
+        sticky.stretch = this._stretch(real - this.minDelta);
+        sticky.delta = this.minDelta;
+      } else {
+        sticky.delta = real;
+      }
+      return sticky;
+    };
+
+    SingleAxisScroller.prototype._stretch = function(real) {
+      return real / 2;
     };
 
     SingleAxisScroller.prototype._recordForVelocity = function(delta) {

@@ -18,7 +18,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 			transforms = {}
 
 			dambo.forThe('babs')
-				.addEvent 'instant-transform', (e, id, el) ->
+				.addEvent 'transform-instant', (e, id, el) ->
 					# If we don't have a reference to this element's transform handler
 					unless transforms[id]
 						# Get one
@@ -35,7 +35,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					# Apply the temp transformation matrix to the element
 					t.apply(el)
 
-				.addEvent 'instant-transform-end', (e, id, el) ->
+				.addEvent 'transform-instant:end', (e, id, el) ->
 					# Commit the temp transformation as the current transformation.
 					# This way, the next time the user touches the element, the transformation
 					# will pick up from where we left it off.

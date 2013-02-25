@@ -100,6 +100,9 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# Current active gesture can use this to store its variables
 			@vars = {}
 
+			@forceFinish = =>
+				@finish()
+
 		# Start listening to touch events
 		listen: ->
 			@root.addEventListener 'touchstart', @_boundListeners.start
