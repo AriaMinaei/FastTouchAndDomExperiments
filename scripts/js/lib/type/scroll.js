@@ -106,9 +106,9 @@ define(['native', 'dom'], function() {
       this.childWidth = childWidth;
       this.freeScrollFrom = -(this.childWidth - this.containerWidth);
       this.freeScrollTo = 0;
-      this.lastCommited = 0;
-      this.lastIntended = 0;
-      this.lastCommitedIntended = 0;
+      this.lastCommitedSticky = 0;
+      this.lastCommitedReal = 0;
+      this.lastReal = 0;
       this.current = 0;
       this._velocityRecords = [];
       this._lastVelocity = {
@@ -118,28 +118,33 @@ define(['native', 'dom'], function() {
       this.mode = 0;
     }
 
-    OneDirectionalScroller.prototype.scroll = function(howMuch) {
-      var current, intended;
+    OneDirectionalScroller.prototype.scroll = function(delta) {
+      var sticky;
       this.mode = 0;
-      this._recordForVelocity(howMuch);
-      intended = this.lastIntended = this.lastCommitedIntended + howMuch;
-      if (intended > this.freeScrollTo) {
-        current = this.freeScrollTo + this._makeSticky(intended - this.freeScrollTo);
-      } else if (intended < this.freeScrollFrom) {
-        current = this.freeScrollFrom - this._makeSticky(-(intended - this.freeScrollFrom));
-      } else {
-        current = intended;
-      }
-      this.current = current;
-      return current;
+      this._recordForVelocity(delta);
+      this.lastReal = this.lastCommitedReal + delta;
+      sticky = this._realToSticky(this.lastReal);
+      return this.current = sticky;
     };
 
-    OneDirectionalScroller.prototype._recordForVelocity = function(howMuch) {
+    OneDirectionalScroller.prototype._realToSticky = function(real) {
+      var sticky;
+      if (real > this.freeScrollTo) {
+        sticky = this.freeScrollTo + this._makeSticky(real - this.freeScrollTo);
+      } else if (real < this.freeScrollFrom) {
+        sticky = this.freeScrollFrom - this._makeSticky(-(real - this.freeScrollFrom));
+      } else {
+        sticky = real;
+      }
+      return sticky;
+    };
+
+    OneDirectionalScroller.prototype._recordForVelocity = function(delta) {
       if (this._velocityRecords.length > 2) {
         this._velocityRecords.shift();
       }
       return this._velocityRecords.push({
-        x: howMuch,
+        x: delta,
         t: Date.now()
       });
     };
@@ -147,11 +152,13 @@ define(['native', 'dom'], function() {
     OneDirectionalScroller.prototype._recordedVelocity = function() {
       var first, last, v;
       if (this._velocityRecords.length < 2) {
+        this._velocityRecords.length = 0;
         return 0;
       } else {
         first = this._velocityRecords[0];
         last = this._velocityRecords[this._velocityRecords.length - 1];
         v = (last.x - first.x) / (last.t - first.t);
+        this._velocityRecords.length = 0;
         if ((Math.abs(v)) < this.velocityThreshold) {
           return 0;
         }
@@ -165,10 +172,8 @@ define(['native', 'dom'], function() {
       if (v) {
         this._lastVelocity.v = v;
         this._lastVelocity.t = Date.now();
-        this.scroller.needAnimation();
       }
-      this.lastCommited = this.current;
-      return this.lastCommitedIntended = this.lastIntended;
+      return this._commit();
     };
 
     OneDirectionalScroller.prototype.animate = function() {
@@ -176,14 +181,25 @@ define(['native', 'dom'], function() {
       this.scroller.needAnimation();
       x = 1;
       this.current += x;
+      this._commit();
       return x;
+    };
+
+    OneDirectionalScroller.prototype._commit = function() {
+      this.lastCommitedReal = this.lastReal;
+      return this.lastReal = 0;
     };
 
     OneDirectionalScroller.prototype._makeSticky = function(n) {
       var curve, temp;
-      temp = Math.limit(n, 0, 1500);
-      curve = Math.square(1 + temp / 1500) - 1;
-      return temp / (1 + (2 * curve));
+      temp = Math.limit(n, 0, 800);
+      curve = Math.pow(1 + temp / 800, 2);
+      return temp / (4 * curve);
+    };
+
+    OneDirectionalScroller.prototype._makeReal = function(result) {
+      var temp;
+      return temp = result * cuvra;
     };
 
     return OneDirectionalScroller;

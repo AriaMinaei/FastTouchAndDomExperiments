@@ -77,17 +77,12 @@ define ['native', 'dom'], ->
 			@freeScrollFrom = - (@childWidth - @containerWidth)
 			@freeScrollTo = 0
 
-			# Note:
-			# When the user moves their fingers around to scroll, the scroller
-			# doesn't always follow the fingers. Forexample, if the scroll goes
-			# out of the parent's boundries, it slows down.
-			# 
-			# We hold references to the movement of the user's fingers in variables
-			# prefixed with 'lastIntended', and the actual movements will be held in
-			# variables prefixed with 'last'
-			@lastCommited = 0
-			@lastIntended = 0
-			@lastCommitedIntended = 0
+			# Last commited scroll
+			@lastCommitedSticky = 0
+
+			@lastCommitedReal = 0
+
+			@lastReal = 0
 
 			# Current scroll
 			@current = 0
@@ -101,49 +96,55 @@ define ['native', 'dom'], ->
 			# 1 -> slipping
 			@mode = 0
 
-		scroll: (howMuch) ->
+		scroll: (delta) ->
 
 			@mode = 0
 
-			@_recordForVelocity howMuch
-			
-			intended = @lastIntended = @lastCommitedIntended + howMuch
+			@_recordForVelocity delta
 
+			@lastReal = @lastCommitedReal + delta
+
+			sticky = @_realToSticky @lastReal
+
+			@current = sticky
+
+		_realToSticky: (real) ->
 			# If we're scrolling out of bounds to the right:
-			if intended > @freeScrollTo
-				current = @freeScrollTo +
-					@_makeSticky intended - @freeScrollTo
+			if real > @freeScrollTo
+				sticky = @freeScrollTo +
+					@_makeSticky real - @freeScrollTo
 
 			# ... or to the left:
-			else if intended < @freeScrollFrom
-				current = @freeScrollFrom -
-					@_makeSticky(-(intended - @freeScrollFrom))
+			else if real < @freeScrollFrom
+				sticky = @freeScrollFrom -
+					@_makeSticky( -(real - @freeScrollFrom) )
 
 			# We're inside the boundries
 			else
 				# Follow user's finger
-				current = intended
+				sticky = real
 
-			@current = current
-			current
+			sticky
 
-		_recordForVelocity: (howMuch) ->
+		_recordForVelocity: (delta) ->
 
 			if @_velocityRecords.length > 2
 				@_velocityRecords.shift()
 
 			@_velocityRecords.push
-				x: howMuch
+				x: delta
 				t: Date.now()
 
 		_recordedVelocity: () ->
 
 			if @_velocityRecords.length < 2
+				@_velocityRecords.length = 0
 				return 0
 			else
 				first = @_velocityRecords[0]
 				last = @_velocityRecords[@_velocityRecords.length - 1]
 				v = (last.x - first.x) / (last.t - first.t)
+				@_velocityRecords.length = 0
 				return 0 if (Math.abs v) < @velocityThreshold
 				return v
 
@@ -154,19 +155,24 @@ define ['native', 'dom'], ->
 				@_lastVelocity.v = v
 				@_lastVelocity.t = Date.now()
 
-				@scroller.needAnimation()
+				# @scroller.needAnimation()
 
-			@lastCommited = @current
-			@lastCommitedIntended = @lastIntended
+			@_commit()
 
 		animate: () ->
+
 			@scroller.needAnimation()
 
 			x = 1
-
 			@current += x
+			@_commit()
 
 			x
+
+		_commit: () ->
+
+			@lastCommitedReal = @lastReal
+			@lastReal = 0
 
 		# Curving the movement when going out of bounds
 		_makeSticky: (n) ->
@@ -174,9 +180,13 @@ define ['native', 'dom'], ->
 			# There is absolutely no logical reason why these values and
 			# formulas are used! I just played around with some different
 			# combinations, and this one felt better!
-			temp = Math.limit n, 0, 1500
-			curve = Math.square(1 + temp / 1500) - 1
-			temp / (1 + ( 2 * curve ) )
+			temp = Math.limit n, 0, 800
+			curve = Math.pow(1 + temp / 800, 2)
+			temp / ( 4 * curve )
+
+		_makeReal: (result) ->
+			# cuvra = Math.sqrt(  )
+			temp = result * cuvra
 
 	class Scroll
 		constructor: (@id, @dommy) ->
