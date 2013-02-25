@@ -1,17 +1,17 @@
-require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scroll', 'benchmark'], (dr, GestureHandler, Dambo, Dommy, Scroll, Benchmark) ->
+require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], (dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark) ->
 	window.dambo = new Dambo
 	window.dommy = new Dommy
 	GestureHandler.create()
 
-	dambo.forThe('scroll')
-		.addLazy 'scroll', (id, dommy) ->
-			new Scroll(id, dommy)
+	dambo.forThe('scrolls')
+		.addLazy 'scrolls', (id, dommy) ->
+			new Scrolls(id, dommy)
 
 		.addEvent 'move', (e, id, el, dommy) ->
-			dommy.getLazy(id, 'scroll').scroll(e.translateX, e.translateY)
+			dommy.getLazy(id, 'scrolls').scroll(e.translateX, e.translateY)
 
 		.addEvent 'move-end', (e, id, el, dommy) ->
-			dommy.getLazy(id, 'scroll').release()
+			dommy.getLazy(id, 'scrolls').release()
 
 	dr ->
 

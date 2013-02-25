@@ -1,14 +1,14 @@
 
-require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scroll', 'benchmark'], function(dr, GestureHandler, Dambo, Dommy, Scroll, Benchmark) {
+require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], function(dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark) {
   window.dambo = new Dambo;
   window.dommy = new Dommy;
   GestureHandler.create();
-  dambo.forThe('scroll').addLazy('scroll', function(id, dommy) {
-    return new Scroll(id, dommy);
+  dambo.forThe('scrolls').addLazy('scrolls', function(id, dommy) {
+    return new Scrolls(id, dommy);
   }).addEvent('move', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scroll').scroll(e.translateX, e.translateY);
+    return dommy.getLazy(id, 'scrolls').scroll(e.translateX, e.translateY);
   }).addEvent('move-end', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scroll').release();
+    return dommy.getLazy(id, 'scrolls').release();
   });
   return dr(function() {});
 });
