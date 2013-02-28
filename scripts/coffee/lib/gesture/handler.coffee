@@ -125,14 +125,16 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			@lastEventType = 'start'
 			@starts++
 
+			first = no
 			unless @firstEvent
+				first = yes
 				@firstEvent = copyTouchEvent(e)
 				@_findCandidates()
 
-			if @gesture then @gesture.start(@, e)
+			if @gesture then @gesture.start(@, e, first)
 			else
 				@_checkForType()
-				if @gesture then @gesture.start(@, e)
+				if @gesture then @gesture.start(@, e, first)
 
 		# Listener for touchend
 		_touchendListener: (e) ->
@@ -315,6 +317,31 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			@elCustomEventListeners[name](e)
 			# #console.groupEnd()
+
+		# Checks to see if touch of an event is inside
+		# the current element
+		isTouchInsideElement: (touch) ->
+
+			target = touch.target
+
+			while target?
+
+				return true if target is @el
+				
+				break if target is @root
+
+				target = target.parentNode
+
+			return false
+
+		# Forces a finish, and then starts another event
+		# with 'e' as its first touchstart
+		restartFromEvent: (e) ->
+
+			do @finish
+
+			@_touchstartListener e
+
 
 	Handler.create = (root = window.document, dommy = window.dommy) ->
 		

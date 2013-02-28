@@ -6,9 +6,14 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   dambo.forThe('scrolls').addLazy('scrolls', function(id, dommy) {
     return new Scrolls(id, dommy);
   }).addEvent('move-persistent', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scrolls').scroll(e.translateX, e.translateY);
+    return dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY);
   }).addEvent('move-persistent:end', function(e, id, el, dommy) {
     return dommy.getLazy(id, 'scrolls').release(e.finish);
+  }).addEvent('move-persistent:finish', function(e, id, el, dommy) {
+    return dommy.getLazy(id, 'scrolls').finish();
+  });
+  dambo.forThe('dummy').addEvent('tap', function(e, id, el, dommy) {
+    return console.log('tap on', id);
   });
   return dr(function() {});
 });

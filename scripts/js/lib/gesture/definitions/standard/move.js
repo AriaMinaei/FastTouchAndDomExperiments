@@ -14,9 +14,9 @@ define(['./move/instant', './move/persistent'], function(setupInstant, setupPers
         return 1;
       },
       init: function(h) {
-        return this._initOnEvent(h, h.lastEvents.move);
+        return this._initFromEvent(h, h.lastEvents.move);
       },
-      _initOnEvent: function(h, e) {
+      _initFromEvent: function(h, e) {
         h.vars.startX = e.touches[0].pageX;
         h.vars.startY = e.touches[0].pageY;
         h.vars.id = e.touches[0].identifier;

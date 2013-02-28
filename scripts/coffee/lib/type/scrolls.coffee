@@ -44,7 +44,6 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			@propsX = 
 				delta: 0
-				stretch: 0
 
 			@_scrollerX = new SingleAxisScroller @propsX, boundNeedAnimation, 
 				size: childRects.width
@@ -54,7 +53,6 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			@propsY = 
 				delta: 0
-				stretch: 0
 
 			@_scrollerY = new SingleAxisScroller @propsY, boundNeedAnimation, 
 				size: childRects.height
@@ -76,17 +74,17 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			@_finishCallbackWaiting = false
 
 		# Called when fingers are on screen, moving around.
-		scroll: (x, y) ->
+		drag: (x, y) ->
 
 			@_cancelAnimation()
 
 			if @_enabledAxis.x
-				@_scrollerX.scroll x - @_lastScrollX
+				@_scrollerX.drag x - @_lastScrollX
 				@_lastScrollX = x
 
 
 			if @_enabledAxis.y
-				@_scrollerY.scroll y - @_lastScrollY
+				@_scrollerY.drag y - @_lastScrollY
 				@_lastScrollY = y
 
 			# Translate the child element
@@ -94,8 +92,6 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 		# Called when touch is released. It will do the slipping thing.
 		release: (finish) ->
-
-			@_cancelAnimation()
 
 			if @_enabledAxis.x
 				@_scrollerX.release()
@@ -139,20 +135,22 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			if @_finishCallbackWaiting
 				unless @_animFrame
 					@_finishCallback()
-					@_finishCallback = emptyFunction
-					@_finishCallbackWaiting = false
+					do @finish
+
+		finish: ->
+
+			@_finishCallback = emptyFunction
+			@_finishCallbackWaiting = false
 
 		_transformElement: () ->
 
 			x = 0
 			if @_enabledAxis.x
 				x = @propsX.delta
-				x += @_stretchToTranslate @propsX.stretch
 
 			y = 0
 			if @_enabledAxis.y
 				y = @propsY.delta
-				y += @_stretchToTranslate @propsY.stretch
 
 			@_setTranslate x, y
 
@@ -162,8 +160,4 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			@_transform.currently().setTranslate(x, y)
 			@_transform.commit(@_childEl)
 
-		_stretchToTranslate: (from) ->
-
-			if from < 0 then m = -1 else m = 1
-			from = Math.abs from
-			m * from / ( Math.pow(from / 1000 + 1, 4) )
+		

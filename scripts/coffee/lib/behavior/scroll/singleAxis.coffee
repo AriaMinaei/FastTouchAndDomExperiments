@@ -5,7 +5,7 @@ define ['native'], ->
 		###
 		 * @param  {Object} @props 	Reference to an object where
 		 * this scroller can keep and update the current
-		 * delta and stretch.
+		 * delta.
 		 *                                 
 		 * @param  {Function} @askForAnimation This function gets called when
 		 * this scroller needs to request an animation.
@@ -20,53 +20,82 @@ define ['native'], ->
 			# How big is the scrolling element (the child one)
 			@size = parseInt options.size
 
-			@minDelta = 0
+			@min = 0
 			if @size > @space
-				@minDelta = - ( @size - @space )
+				@min = - ( @size - @space )
 
-			@maxDelta = 0
+			@max = 0
 
-			@realMinDelta = @minDelta - 1000
-			@realMaxDelta = @maxDelta + 1000
+			@pullerMin = @min - 1000
+			@pullerMax = @max + 1000
 
 			# Current delta
 			if options.delta
 				@props.delta = parseInt options.delta
 
-			if not @props.delta then @props.delta = 0
+			@props.delta = 0 if not @props.delta
 
-			# Real delta
-			@realDelta = @props.delta
+			# Note:
+			# 
+			# We have a @puller and a @props.delta.
+			# 
+			# @props.delta is the actual amount of scrolling
+			# the current element has. It doesn't always increase/decrease
+			# with touch movement, as the element might be getting pulled
+			# out of its bounds.
+			# 
+			# But @puller always follows user's fingers. The its value will
+			# be converted to @props.delta using a function that simulates
+			# the sticky effect.
 
-			# Current stretch
-			if options.stretch
-				@props.stretch = parseInt options.stretch
+			# puller delta
+			@puller = @props.delta
 
-			if not @props.stretch then @props.stretch = 0
+			# If we converted puller to delta, would it give the same
+			# result as the current delta?
+			@_pullerInSync = yes
 
 			# If velocity is lower than this number, it'll be considered zero.
 			# In pixels/milliseconds
-			@velocityThreshold = 1
+			@velocityThreshold = 0.1
 
 			# To guess current velocity based on the last three moves
 			@_velocityRecords = []
 
 			# Last velocity on the last animation frame
-			@_lastVelocity = 
-				v: 0
-				t: 0
+			@_lastV = 0
+			@_lastT = 0
 			
-			null
+			return null
 
-		scroll: (delta) ->
+		drag: (delta) ->
+
+			do @_syncPuller if not @_pullerInSync
 
 			@_recordForVelocity delta
 
-			@realDelta = @_limitReal @realDelta + delta
+			@puller = @_limitPuller @puller + delta
 
-			newProps = @_realToSticky @realDelta
-			@props.delta = newProps.delta
-			@props.stretch = newProps.stretch
+			@props.delta = @_pullerToSticky @puller
+
+		_pullerToSticky: (puller) ->
+
+			if puller > @max
+				return @max + @_stretch puller
+
+			else if puller < @min
+				return @min - @_stretch( - (puller - @min) )
+
+			else
+				return puller
+
+		_stretch: (extra) ->
+
+			extra / 5
+
+		_syncPuller: ->
+
+
 
 		# For when the finger is released. It'll calculate velocity, and
 		# if it should still be moving, it'll call @scroller.needAnimation()
@@ -74,21 +103,19 @@ define ['native'], ->
 
 			v = do @_getRecordedVelocity
 
-			# console.log v
-
 			if v
-				@_lastVelocity.v = v
-				@_lastVelocity.t = Date.now()
+				@_lastV = v
+				@_lastT = Date.now()
 
 				do @askForAnimation
+
+				@_pullerInSync = no
 
 		# Called by a scroller's animationFrame function
 		animate: () ->
 
-			v = @_lastVelocity.v
-			deltaT = Date.now() - @_lastVelocity.t
-
-			
+			v = @_lastV
+			deltaT = Date.now() - @_lastT
 
 			friction = 0.002
 			if v > 0
@@ -96,51 +123,31 @@ define ['native'], ->
 
 			return if v is 0
 
-			@realDelta +=  v * deltaT + (0.5 * friction * Math.pow(deltaT, 2))
+			@puller +=  v * deltaT + (0.5 * friction * Math.pow(deltaT, 2))
 
 			newV = deltaT * friction + v
+
 			return if newV * v < 0 or Math.abs(newV) < 0.1
+
 			@_setLastVelocity newV
 
-			limitedRealDelta = @_limitReal @realDelta
+			if @_numberInsidePullerBounds @puller
+				do @askForAnimation
 
-			needMoreAnimation = yes
+			@props.delta = @_pullerToSticky @puller
 
-			if @realDelta isnt limitedRealDelta
-				needMoreAnimation = no
+		_limitPuller: (puller) ->
 
-			newProps = @_realToSticky @realDelta
-			@props.delta = newProps.delta
-			@props.stretch = newProps.stretch
-
-			do @askForAnimation if needMoreAnimation
-
-		_limitReal: (real) ->
-
-			if real > @realMaxDelta
-				@realMaxDelta
-			else if real < @realMinDelta
-				@realMinDelta
+			if puller > @pullerMax
+				@pullerMax
+			else if puller < @pullerMin
+				@pullerMin
 			else
-				real
+				puller
 
-		_realToSticky: (real) ->
-			sticky = 
-				delta: 0
-				stretch: 0
+		_numberInsidePullerBounds: (puller) ->
 
-			if real > 0
-				sticky.stretch = @_stretch real
-			else if real < @minDelta
-				sticky.stretch = @_stretch( real - @minDelta )
-				sticky.delta = @minDelta
-			else
-				sticky.delta = real
-
-			sticky
-
-		_stretch: (real) ->
-			real / 2
+			return puller is @_limitPuller puller
 
 		_recordForVelocity: (delta) ->
 
@@ -179,5 +186,11 @@ define ['native'], ->
 			@_velocityRecords.length = 0
 
 		_setLastVelocity: (v) ->
-			@_lastVelocity.v = v
-			@_lastVelocity.t = Date.now()
+			@_lastV = v
+			@_lastT = Date.now()
+
+		# _stretchToTranslate: (from) ->
+
+		# 	if from < 0 then m = -1 else m = 1
+		# 	from = Math.abs from
+		# 	m * from / ( Math.pow(from / 1000 + 1, 4) )

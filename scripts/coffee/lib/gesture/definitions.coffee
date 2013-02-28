@@ -51,8 +51,10 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 
 		# Called by gestureHandler to inform that gesture is ending.
 		# Look at shouldFinish() too
-		finish: (h) -> 
+		finish: (h) ->
+			
 			h.fireCustom @name + ':end', {}
+
 
 	Definitions =
 		# List of all gesture definitions (instantiated)
@@ -79,6 +81,11 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 			# Add the methods from structure to the class
 			for key of structure
 				NewGesture::[key] = structure[key]
+
+			# Debug
+			# console.group name
+			# console.log key for key of NewGesture::
+			# console.groupEnd name
 
 			# Hold a reference to the class
 			classes[name] = NewGesture

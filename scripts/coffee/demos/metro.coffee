@@ -6,14 +6,28 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 	dambo.forThe('scrolls')
 		.addLazy 'scrolls', (id, dommy) ->
+
 			new Scrolls(id, dommy)
 
 		.addEvent 'move-persistent', (e, id, el, dommy) ->
-			dommy.getLazy(id, 'scrolls').scroll(e.translateX, e.translateY)
+
+			dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY)
 
 		.addEvent 'move-persistent:end', (e, id, el, dommy) ->
+
 			# dommy.getLazy(id, 'scrolls').release(e.finish)
 			dommy.getLazy(id, 'scrolls').release(e.finish)
+
+		.addEvent 'move-persistent:finish', (e, id, el, dommy) ->
+
+			# dommy.getLazy(id, 'scrolls').release(e.finish)
+			# dommy.getLazy(id, 'scrolls').release(e.finish)
+			dommy.getLazy(id, 'scrolls').finish()
+
+	dambo.forThe('dummy')
+		.addEvent 'tap', (e, id, el, dommy) ->
+			
+			console.log 'tap on', id
 
 
 	dr ->

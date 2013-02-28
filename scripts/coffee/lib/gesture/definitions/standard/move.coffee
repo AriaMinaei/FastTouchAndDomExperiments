@@ -18,9 +18,9 @@ define ['./move/instant', './move/persistent'], (setupInstant, setupPersistent) 
 			
 			init: (h) ->
 
-				@_initOnEvent h, h.lastEvents.move
+				@_initFromEvent h, h.lastEvents.move
 
-			_initOnEvent: (h, e) ->
+			_initFromEvent: (h, e) ->
 
 				# Hold the starting position
 				h.vars.startX = e.touches[0].pageX

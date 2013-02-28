@@ -31,10 +31,20 @@ h2 {
 	font-size: 56px;
 }
 
+.button {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50px;
+	height: 50px;
+	background: #fff;
+	display: none;
+}
+
 .the-pan {
 	position: absolute;
-	left: 0; right: 0; top: 0;
-	height: 100%;
+	left: 0; right: 0; top: 50px; bottom: 0;
+	
 	overflow: hidden;
 	box-sizing: border-box;
 	-webkit-perspective: 1000;
@@ -44,7 +54,7 @@ h2 {
 .the-pan > .scroll-content {
 	position: relative;
 	/*left: 60px;*/
-	top: 100px;
+	top: 50px;
 	padding-right: 120px;
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;

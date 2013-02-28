@@ -12,4 +12,4 @@ define ->
 
 			init: (h) ->
 
-				@_initOnEvent h.lastEvents[h.lastEventType]
+				@_initFromEvent h.lastEvents[h.lastEventType]

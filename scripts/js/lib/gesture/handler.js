@@ -83,20 +83,23 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     };
 
     Handler.prototype._touchstartListener = function(e) {
+      var first;
       e.stop();
       this.lastEvents.start = copyTouchEvent(e);
       this.lastEventType = 'start';
       this.starts++;
+      first = false;
       if (!this.firstEvent) {
+        first = true;
         this.firstEvent = copyTouchEvent(e);
         this._findCandidates();
       }
       if (this.gesture) {
-        return this.gesture.start(this, e);
+        return this.gesture.start(this, e, first);
       } else {
         this._checkForType();
         if (this.gesture) {
-          return this.gesture.start(this, e);
+          return this.gesture.start(this, e, first);
         }
       }
     };
@@ -264,6 +267,26 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
         this.elCustomEventListeners[name] = dommy.getListener(this.elFastId, this.el, name);
       }
       return this.elCustomEventListeners[name](e);
+    };
+
+    Handler.prototype.isTouchInsideElement = function(touch) {
+      var target;
+      target = touch.target;
+      while (target != null) {
+        if (target === this.el) {
+          return true;
+        }
+        if (target === this.root) {
+          break;
+        }
+        target = target.parentNode;
+      }
+      return false;
+    };
+
+    Handler.prototype.restartFromEvent = function(e) {
+      this.finish();
+      return this._touchstartListener(e);
     };
 
     return Handler;

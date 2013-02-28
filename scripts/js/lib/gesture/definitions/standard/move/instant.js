@@ -8,7 +8,7 @@ define(function() {
         return 1;
       },
       init: function(h) {
-        return this._initOnEvent(h.lastEvents[h.lastEventType]);
+        return this._initFromEvent(h.lastEvents[h.lastEventType]);
       }
     });
   };
