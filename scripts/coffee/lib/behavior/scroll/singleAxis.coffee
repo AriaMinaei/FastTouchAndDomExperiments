@@ -26,9 +26,6 @@ define ['native'], ->
 
 			@max = 0
 
-			@pullerMin = @min - 1000
-			@pullerMax = @max + 1000
-
 			# Current delta
 			if options.delta
 				@props.delta = parseInt options.delta
@@ -37,19 +34,19 @@ define ['native'], ->
 
 			# Note:
 			# 
-			# We have a @puller and a @props.delta.
+			# We have a @_puller and a @props.delta.
 			# 
 			# @props.delta is the actual amount of scrolling
 			# the current element has. It doesn't always increase/decrease
 			# with touch movement, as the element might be getting pulled
 			# out of its bounds.
 			# 
-			# But @puller always follows user's fingers. The its value will
+			# But @_puller always follows user's fingers. The its value will
 			# be converted to @props.delta using a function that simulates
 			# the sticky effect.
 
 			# puller delta
-			@puller = @props.delta
+			@_puller = @props.delta
 
 			# If we converted puller to delta, would it give the same
 			# result as the current delta?
@@ -74,14 +71,14 @@ define ['native'], ->
 
 			@_recordForVelocity delta
 
-			@puller = @_limitPuller @puller + delta
+			@_puller = @_puller + delta
 
-			@props.delta = @_pullerToSticky @puller
+			@props.delta = @_pullerToSticky @_puller
 
 		_pullerToSticky: (puller) ->
 
 			if puller > @max
-				return @max + @_stretch puller
+				return @max + @_stretch( puller - @max )
 
 			else if puller < @min
 				return @min - @_stretch( - (puller - @min) )
@@ -89,19 +86,35 @@ define ['native'], ->
 			else
 				return puller
 
+		_stickyToPuller: (sticky) ->
+
+			if sticky > @max
+				return @max + @_unstretch( sticky - @max )
+
+			else if sticky < @min
+				return @min - @_unstretch( - ( sticky - @min ) )
+
+			else
+				return sticky
+
 		_stretch: (extra) ->
 
 			extra / 5
 
+		_unstretch: (stretched) ->
+
+			stretched * 5
+
 		_syncPuller: ->
 
-
+			@_puller = @_stickyToPuller @props.delta
+			@_pullerInSync = yes
 
 		# For when the finger is released. It'll calculate velocity, and
 		# if it should still be moving, it'll call @scroller.needAnimation()
 		release: () ->
 
-			v = do @_getRecordedVelocity
+			v = @_getRecordedVelocity()
 
 			if v
 				@_lastV = v
@@ -117,37 +130,28 @@ define ['native'], ->
 			v = @_lastV
 			deltaT = Date.now() - @_lastT
 
-			friction = 0.002
+			friction = 0.001
 			if v > 0
 				friction = -friction
 
 			return if v is 0
 
-			@puller +=  v * deltaT + (0.5 * friction * Math.pow(deltaT, 2))
+			currentDelta = @props.delta + v * deltaT + (0.5 * friction * Math.pow(deltaT, 2))
+
+			if currentDelta < @min - 100
+				currentDelta = @min - 100
+			else if currentDelta > @max + 100
+				currentDelta = @max + 100
 
 			newV = deltaT * friction + v
 
-			return if newV * v < 0 or Math.abs(newV) < 0.1
+			return if newV * v < 0
 
 			@_setLastVelocity newV
 
-			if @_numberInsidePullerBounds @puller
-				do @askForAnimation
+			do @askForAnimation
 
-			@props.delta = @_pullerToSticky @puller
-
-		_limitPuller: (puller) ->
-
-			if puller > @pullerMax
-				@pullerMax
-			else if puller < @pullerMin
-				@pullerMin
-			else
-				puller
-
-		_numberInsidePullerBounds: (puller) ->
-
-			return puller is @_limitPuller puller
+			@props.delta = currentDelta
 
 		_recordForVelocity: (delta) ->
 
@@ -164,33 +168,30 @@ define ['native'], ->
 				if @_velocityRecords.length > 3
 					do @_velocityRecords.shift
 
-		_getRecordedVelocity: () ->
+		_getRecordedVelocity: ->
 
 			length = @_velocityRecords.length
 
-			if length < 2
-				v = 0
-			else
+			v = 0
+			if length > 1
 				first = @_velocityRecords[0]
 				last  = @_velocityRecords[length - 1]
-				v = (last.d - first.d) / (last.t - first.t)
+
+				# only calculate v if the there  has been at least one
+				# touchmove in the last 50 milliseconds.
+				if Date.now() - last.t < 50
+					v = (last.d - first.d) / (last.t - first.t)
 
 			do @_clearVelocityRecords
 
 			v = 0 unless (Math.abs v) > @velocityThreshold
 				
-			v
+			return v
 
-		_clearVelocityRecords: () ->
+		_clearVelocityRecords: ->
 
 			@_velocityRecords.length = 0
 
 		_setLastVelocity: (v) ->
 			@_lastV = v
 			@_lastT = Date.now()
-
-		# _stretchToTranslate: (from) ->
-
-		# 	if from < 0 then m = -1 else m = 1
-		# 	from = Math.abs from
-		# 	m * from / ( Math.pow(from / 1000 + 1, 4) )

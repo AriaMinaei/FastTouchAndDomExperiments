@@ -26,15 +26,13 @@ define(['native'], function() {
         this.min = -(this.size - this.space);
       }
       this.max = 0;
-      this.pullerMin = this.min - 1000;
-      this.pullerMax = this.max + 1000;
       if (options.delta) {
         this.props.delta = parseInt(options.delta);
       }
       if (!this.props.delta) {
         this.props.delta = 0;
       }
-      this.puller = this.props.delta;
+      this._puller = this.props.delta;
       this._pullerInSync = true;
       this.velocityThreshold = 0.1;
       this._velocityRecords = [];
@@ -48,13 +46,13 @@ define(['native'], function() {
         this._syncPuller();
       }
       this._recordForVelocity(delta);
-      this.puller = this._limitPuller(this.puller + delta);
-      return this.props.delta = this._pullerToSticky(this.puller);
+      this._puller = this._puller + delta;
+      return this.props.delta = this._pullerToSticky(this._puller);
     };
 
     SingleAxisScroller.prototype._pullerToSticky = function(puller) {
       if (puller > this.max) {
-        return this.max + this._stretch(puller);
+        return this.max + this._stretch(puller - this.max);
       } else if (puller < this.min) {
         return this.min - this._stretch(-(puller - this.min));
       } else {
@@ -62,11 +60,28 @@ define(['native'], function() {
       }
     };
 
+    SingleAxisScroller.prototype._stickyToPuller = function(sticky) {
+      if (sticky > this.max) {
+        return this.max + this._unstretch(sticky - this.max);
+      } else if (sticky < this.min) {
+        return this.min - this._unstretch(-(sticky - this.min));
+      } else {
+        return sticky;
+      }
+    };
+
     SingleAxisScroller.prototype._stretch = function(extra) {
       return extra / 5;
     };
 
-    SingleAxisScroller.prototype._syncPuller = function() {};
+    SingleAxisScroller.prototype._unstretch = function(stretched) {
+      return stretched * 5;
+    };
+
+    SingleAxisScroller.prototype._syncPuller = function() {
+      this._puller = this._stickyToPuller(this.props.delta);
+      return this._pullerInSync = true;
+    };
 
     SingleAxisScroller.prototype.release = function() {
       var v;
@@ -80,40 +95,29 @@ define(['native'], function() {
     };
 
     SingleAxisScroller.prototype.animate = function() {
-      var deltaT, friction, newV, v;
+      var currentDelta, deltaT, friction, newV, v;
       v = this._lastV;
       deltaT = Date.now() - this._lastT;
-      friction = 0.002;
+      friction = 0.001;
       if (v > 0) {
         friction = -friction;
       }
       if (v === 0) {
         return;
       }
-      this.puller += v * deltaT + (0.5 * friction * Math.pow(deltaT, 2));
+      currentDelta = this.props.delta + v * deltaT + (0.5 * friction * Math.pow(deltaT, 2));
+      if (currentDelta < this.min - 100) {
+        currentDelta = this.min - 100;
+      } else if (currentDelta > this.max + 100) {
+        currentDelta = this.max + 100;
+      }
       newV = deltaT * friction + v;
-      if (newV * v < 0 || Math.abs(newV) < 0.1) {
+      if (newV * v < 0) {
         return;
       }
       this._setLastVelocity(newV);
-      if (this._numberInsidePullerBounds(this.puller)) {
-        this.askForAnimation();
-      }
-      return this.props.delta = this._pullerToSticky(this.puller);
-    };
-
-    SingleAxisScroller.prototype._limitPuller = function(puller) {
-      if (puller > this.pullerMax) {
-        return this.pullerMax;
-      } else if (puller < this.pullerMin) {
-        return this.pullerMin;
-      } else {
-        return puller;
-      }
-    };
-
-    SingleAxisScroller.prototype._numberInsidePullerBounds = function(puller) {
-      return puller === this._limitPuller(puller);
+      this.askForAnimation();
+      return this.props.delta = currentDelta;
     };
 
     SingleAxisScroller.prototype._recordForVelocity = function(delta) {
@@ -136,12 +140,13 @@ define(['native'], function() {
     SingleAxisScroller.prototype._getRecordedVelocity = function() {
       var first, last, length, v;
       length = this._velocityRecords.length;
-      if (length < 2) {
-        v = 0;
-      } else {
+      v = 0;
+      if (length > 1) {
         first = this._velocityRecords[0];
         last = this._velocityRecords[length - 1];
-        v = (last.d - first.d) / (last.t - first.t);
+        if (Date.now() - last.t < 50) {
+          v = (last.d - first.d) / (last.t - first.t);
+        }
       }
       this._clearVelocityRecords();
       if (!((Math.abs(v)) > this.velocityThreshold)) {
