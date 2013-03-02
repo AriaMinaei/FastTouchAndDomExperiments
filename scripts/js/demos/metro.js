@@ -1,5 +1,5 @@
 
-require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], function(dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark) {
+require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark', 'graphics/transitions'], function(dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark, Transitions) {
   window.dambo = new Dambo;
   window.dommy = new Dommy;
   GestureHandler.create();

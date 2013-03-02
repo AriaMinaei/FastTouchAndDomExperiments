@@ -91,6 +91,10 @@ define [], ->
 		return from if n < from
 		return n
 
+	Math.unit = (n) ->
+		return -1 if n < 0
+		return 1
+
 	UIEvent::stop = () ->
 		this.stopPropagation()
 		this.preventDefault()

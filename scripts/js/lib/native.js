@@ -115,6 +115,12 @@ define([], function() {
     }
     return n;
   };
+  Math.unit = function(n) {
+    if (n < 0) {
+      return -1;
+    }
+    return 1;
+  };
   UIEvent.prototype.stop = function() {
     this.stopPropagation();
     return this.preventDefault();

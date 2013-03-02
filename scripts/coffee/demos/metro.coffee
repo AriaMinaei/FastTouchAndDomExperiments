@@ -1,4 +1,4 @@
-require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], (dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark) ->
+require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark', 'graphics/transitions'], (dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark, Transitions) ->
 	window.dambo = new Dambo
 	window.dommy = new Dommy
 	GestureHandler.create()
@@ -37,18 +37,8 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 		# do ->
 		# 	suite = new Benchmark.Suite
 
-		# 	el = document.getElementById 'rogue-130'
 
-
-		# 	suite.add 'both', ->
-		# 		c = el.className
-		# 		c = document.getElementById('rogue-130').className
-
-		# 	suite.add 'ref', ->
-		# 		c = el.className
-
-		# 	suite.add 'id', ->
-		# 		c = document.getElementById('rogue-130').className
+		# 	suite.add 'stretch', ->
 
 		# 	suite.on 'cycle', (e) ->
 		# 		console.log String(e.target)
