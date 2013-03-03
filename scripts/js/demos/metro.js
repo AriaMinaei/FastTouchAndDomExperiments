@@ -7,7 +7,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
     return new Scrolls(id, dommy);
   }).addEvent('move-persistent', function(e, id, el, dommy) {
     return dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY);
-  }).addEvent('move-persistent:end', function(e, id, el, dommy) {
+  }).addEvent('move-persistent:release', function(e, id, el, dommy) {
     return dommy.getLazy(id, 'scrolls').release(e.finish);
   }).addEvent('move-persistent:finish', function(e, id, el, dommy) {
     return dommy.getLazy(id, 'scrolls').finish();

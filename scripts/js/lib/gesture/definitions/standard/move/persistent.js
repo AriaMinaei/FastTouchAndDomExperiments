@@ -23,7 +23,7 @@ define(function() {
       },
       end: function(h, e) {
         if (e.touches.length === 0) {
-          h.fireCustom(this.name + ':end', {
+          h.fireCustom(this.name + ':release', {
             finish: h.forceFinish
           });
         }

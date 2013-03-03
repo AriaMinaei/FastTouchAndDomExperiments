@@ -35,7 +35,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					# Apply the temp transformation matrix to the element
 					t.apply(el)
 
-				.addEvent 'transform-instant:end', (e, id, el) ->
+				.addEvent 'transform-instant:finish', (e, id, el) ->
 					# Commit the temp transformation as the current transformation.
 					# This way, the next time the user touches the element, the transformation
 					# will pick up from where we left it off.
@@ -44,8 +44,8 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					# Remove reference to transformation handler
 					transforms[id] = null if transforms[id]
 
-				# listen to 'instant-move', for all elements of 'babs' type
-				.addEvent 'instant-move', (e, id, el) ->
+				# listen to 'move-instant', for all elements of 'babs' type
+				.addEvent 'move-instant', (e, id, el) ->
 					# If we don't have a reference to this element's transform handler
 					unless transforms[id]
 						# Get one
@@ -63,9 +63,9 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					# Apply the temp transformation matrix to the element
 					t.apply(el)
 
-				# When instant-move-end fires
-				.addEvent 'instant-move-end', (e, id, el) ->
-					# console.log 'received instant-move-end event for', e
+				# When move-instant-end fires
+				.addEvent 'move-instant:finish', (e, id, el) ->
+					# console.log 'received move-instant-end event for', e
 
 					# Commit the temp transformation as the current transformation.
 					# This way, the next time the user touches the element, the transformation

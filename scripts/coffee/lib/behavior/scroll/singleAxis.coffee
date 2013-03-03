@@ -1,8 +1,10 @@
 define ['graphics/transitions', 'native'], (Transitions) ->
 
 	cache = 
-		stretch: {}
-		unstretch: {}
+		stretch: 
+			0: 0
+		unstretch: 
+			0: 0
 
 	class SingleAxisScroller
 
@@ -56,10 +58,6 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 			# result as the current delta?
 			@_pullerInSync = yes
 
-			# If velocity is lower than this number, it'll be considered zero.
-			# In pixels/milliseconds.
-			@velocityThreshold = 0.1
-
 			# To guess current velocity based on the last three moves.
 			@_velocityRecords = []
 
@@ -83,7 +81,7 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 
 			@_unstretchCache = cache.unstretch[@_maxStretch]
 
-			@_stretchedMax = @_stretch @_maxStretch
+			@_stretchedMax = 0
 			
 			return null
 
@@ -128,17 +126,31 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 
 			if cached is undefined
 
-				stretched = @_stretchCache[puller] = @_stretchFunc puller
+				do @_cacheStretches
 
-				@_unstretchCache[stretched] = puller
-
-				return stretched
+				return @_stretchCache[puller] || 0
 
 			else
 
-				cached
+				return cached
 
-		_stretchFunc: (puller) ->
+		_unstretch: (stretched) ->
+
+			stretched = Math.min Math.round(stretched), @_stretchedMax
+
+			cached = @_unstretchCache[stretched]
+
+			if cached is undefined
+
+				do @_cacheStretches
+
+				return @_unstretchCache[stretched] || 0
+
+			else
+
+				return cached
+
+		_cacheStretches:  ->
 
 			# The stretched delta
 			stretched = 0
@@ -148,37 +160,17 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 
 			loop
 
-				current += 1
-
-				break if current > puller
+				break if current > @_maxStretch
 
 				stretched += 1.0 - @_stretchEasingFunction(current / @_maxStretch)
 
-			Math.round stretched
-			
-		_unstretch: (stretched) ->
+				@_stretchCache[current] = stretched
 
-			stretched = Math.min Math.round(stretched), @_stretchedMax
+				@_unstretchCache[Math.round stretched] = current
 
-			cache = @_unstretchCache[stretched]
+				current++
 
-			if cache is undefined
-
-				for i in [0..@_maxStretch]
-
-					if @_unstretchCache[i] is undefined
-
-						testedStretch = @_stretch i
-						
-						if testedStretch is stretched
-
-							unstretched = i
-
-				return unstretched
-
-			else
-
-				cache
+			@_stretchedMax = stretched
 
 		_syncPuller: ->
 
@@ -189,51 +181,91 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 		# if it should still be moving, it'll call @scroller.needAnimation()
 		release: () ->
 
-			v = @_getRecordedVelocity()
+			@_setLastVelocity @_getRecordedVelocity()
 
-			if v
+			@_pullerInSync = no
 
-				@_setLastVelocity v
-
-				do @askForAnimation
-
-				@_pullerInSync = no
+			do @animate
 
 		# Called by a scroller's animationFrame function
 		animate: () ->
 
-			# Last x
+			# Last x.
 			x0 = @props.delta
 
-			# Last velocity
+			# Last velocity.
 			v0 = @_lastV
 
-			# Elapsed time
+			# Elapsed time.
 			deltaT = Date.now() - @_lastT
 
+			# Do a step with the current deltaT.
+			{x, v} = @_animStep x0, v0, deltaT
+
+			# If the movement has been more than 10pixels...
+			if x - x0 > 10
+
+				# ... we should calculate the movement in smaller steps to
+				# get more accurate results.
+				smallerDeltaT = deltaT / 4
+
+				x = x0
+
+				v = v0
+
+				for i in [1..4]
+
+					{x, v} = @_animStep x, v, smallerDeltaT
+
+			# Update the velocity.
+			@_setLastVelocity v
+
+			# Update the delta.
+			@props.delta = x
+
+			# Only not ask for animation if:
+			# 
+			# we're inside the bounds, AND
+			# 	velocity is close to zero, OR
+			# 	there has been change in velocity direction.
+			# 	
+			unless @min < x < @max and v * v0 < 0.001
+
+				do @askForAnimation
+
+			null
+
+		_animStep: (x0, v0, deltaT) ->
+
+			ret = 
+				x: 0
+				v: 0
+			
 			if x0 < @min
-				deltaX = 0
+
+				ret.x = x0
+
 			else if x0 > @max
-				deltaX = 0
+
+				
+
 			else
 
 				deltas = @_deltasForInside v0, deltaT
 
-				# If velocity is significant and there is no change in direction
-				if (deltas.deltaV + v0) * v0 > 0.001
+				ret.x = x0 + deltas.deltaX
 
-					@_setLastVelocity deltas.deltaV + v0
-					do @askForAnimation
+				ret.v = v0 + deltas.deltaV
 
-				deltaX = deltas.deltaX
+			ret
 
-			@props.delta = deltaX + x0
 
 		_deltasForInside: (v0, deltaT) ->
 
-			direction = Math.unit v0
+			direction = parseFloat(Math.unit v0)
 
-			friction = -direction * 0.03 * Math.min Math.abs(v0), 0.1
+			friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1)
+			# friction = -direction * 0.003
 
 			deltaV = friction * deltaT
 

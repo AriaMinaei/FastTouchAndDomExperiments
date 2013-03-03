@@ -4,7 +4,7 @@ define ->
 		# Move gesture, always captures
 		defineGesture
 
-			name: 'instant-move'
+			name: 'move-instant'
 
 			extends: 'move'
 		

@@ -53,7 +53,7 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 		# Look at shouldFinish() too
 		finish: (h) ->
 			
-			h.fireCustom @name + ':end', {}
+			h.fireCustom @name + ':finish', {}
 
 
 	Definitions =

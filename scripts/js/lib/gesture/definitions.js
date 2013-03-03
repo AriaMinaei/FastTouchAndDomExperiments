@@ -25,7 +25,7 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
     };
 
     BasicGesture.prototype.finish = function(h) {
-      return h.fireCustom(this.name + ':end', {});
+      return h.fireCustom(this.name + ':finish', {});
     };
 
     return BasicGesture;

@@ -100,8 +100,9 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			if @_enabledAxis.y
 				@_scrollerY.release()
 				@_lastScrollY = 0
-
+			
 			if finish
+
 				if @_animFrame
 					@_finishCallback = -> finish()
 					@_finishCallbackWaiting = true

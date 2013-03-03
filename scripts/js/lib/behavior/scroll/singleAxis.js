@@ -2,8 +2,12 @@
 define(['graphics/transitions', 'native'], function(Transitions) {
   var SingleAxisScroller, cache;
   cache = {
-    stretch: {},
-    unstretch: {}
+    stretch: {
+      0: 0
+    },
+    unstretch: {
+      0: 0
+    }
   };
   return SingleAxisScroller = (function() {
     /*
@@ -38,7 +42,6 @@ define(['graphics/transitions', 'native'], function(Transitions) {
       }
       this._puller = this.props.delta;
       this._pullerInSync = true;
-      this.velocityThreshold = 0.1;
       this._velocityRecords = [];
       this._lastV = 0;
       this._lastT = 0;
@@ -52,7 +55,7 @@ define(['graphics/transitions', 'native'], function(Transitions) {
         cache.unstretch[this._maxStretch] = {};
       }
       this._unstretchCache = cache.unstretch[this._maxStretch];
-      this._stretchedMax = this._stretch(this._maxStretch);
+      this._stretchedMax = 0;
       return null;
     }
 
@@ -86,49 +89,43 @@ define(['graphics/transitions', 'native'], function(Transitions) {
     };
 
     SingleAxisScroller.prototype._stretch = function(puller) {
-      var cached, stretched;
+      var cached;
       puller = Math.min(puller, this._maxStretch);
       cached = this._stretchCache[puller];
       if (cached === void 0) {
-        stretched = this._stretchCache[puller] = this._stretchFunc(puller);
-        this._unstretchCache[stretched] = puller;
-        return stretched;
+        this._cacheStretches();
+        return this._stretchCache[puller] || 0;
       } else {
         return cached;
       }
     };
 
-    SingleAxisScroller.prototype._stretchFunc = function(puller) {
+    SingleAxisScroller.prototype._unstretch = function(stretched) {
+      var cached;
+      stretched = Math.min(Math.round(stretched), this._stretchedMax);
+      cached = this._unstretchCache[stretched];
+      if (cached === void 0) {
+        this._cacheStretches();
+        return this._unstretchCache[stretched] || 0;
+      } else {
+        return cached;
+      }
+    };
+
+    SingleAxisScroller.prototype._cacheStretches = function() {
       var current, stretched;
       stretched = 0;
       current = 0;
       while (true) {
-        current += 1;
-        if (current > puller) {
+        if (current > this._maxStretch) {
           break;
         }
         stretched += 1.0 - this._stretchEasingFunction(current / this._maxStretch);
+        this._stretchCache[current] = stretched;
+        this._unstretchCache[Math.round(stretched)] = current;
+        current++;
       }
-      return Math.round(stretched);
-    };
-
-    SingleAxisScroller.prototype._unstretch = function(stretched) {
-      var i, testedStretch, unstretched, _i, _ref;
-      stretched = Math.min(Math.round(stretched), this._stretchedMax);
-      cache = this._unstretchCache[stretched];
-      if (cache === void 0) {
-        for (i = _i = 0, _ref = this._maxStretch; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-          if (this._unstretchCache[i] === void 0) {
-            testedStretch = this._stretch(i);
-            if (testedStretch === stretched) {
-              unstretched = i;
-            }
-          }
-        }
-        return unstretched;
-      } else {
-        return cache;
-      }
+      return this._stretchedMax = stretched;
     };
 
     SingleAxisScroller.prototype._syncPuller = function() {
@@ -137,39 +134,55 @@ define(['graphics/transitions', 'native'], function(Transitions) {
     };
 
     SingleAxisScroller.prototype.release = function() {
-      var v;
-      v = this._getRecordedVelocity();
-      if (v) {
-        this._setLastVelocity(v);
-        this.askForAnimation();
-        return this._pullerInSync = false;
-      }
+      this._setLastVelocity(this._getRecordedVelocity());
+      this._pullerInSync = false;
+      return this.animate();
     };
 
     SingleAxisScroller.prototype.animate = function() {
-      var deltaT, deltaX, deltas, v0, x0;
+      var deltaT, i, smallerDeltaT, v, v0, x, x0, _i, _ref, _ref1;
       x0 = this.props.delta;
       v0 = this._lastV;
       deltaT = Date.now() - this._lastT;
+      _ref = this._animStep(x0, v0, deltaT), x = _ref.x, v = _ref.v;
+      if (x - x0 > 10) {
+        smallerDeltaT = deltaT / 4;
+        x = x0;
+        v = v0;
+        for (i = _i = 1; _i <= 4; i = ++_i) {
+          _ref1 = this._animStep(x, v, smallerDeltaT), x = _ref1.x, v = _ref1.v;
+        }
+      }
+      this._setLastVelocity(v);
+      this.props.delta = x;
+      if (!((this.min < x && x < this.max) && v * v0 < 0.001)) {
+        this.askForAnimation();
+      }
+      return null;
+    };
+
+    SingleAxisScroller.prototype._animStep = function(x0, v0, deltaT) {
+      var deltas, ret;
+      ret = {
+        x: 0,
+        v: 0
+      };
       if (x0 < this.min) {
-        deltaX = 0;
+        ret.x = x0;
       } else if (x0 > this.max) {
-        deltaX = 0;
+
       } else {
         deltas = this._deltasForInside(v0, deltaT);
-        if ((deltas.deltaV + v0) * v0 > 0.001) {
-          this._setLastVelocity(deltas.deltaV + v0);
-          this.askForAnimation();
-        }
-        deltaX = deltas.deltaX;
+        ret.x = x0 + deltas.deltaX;
+        ret.v = v0 + deltas.deltaV;
       }
-      return this.props.delta = deltaX + x0;
+      return ret;
     };
 
     SingleAxisScroller.prototype._deltasForInside = function(v0, deltaT) {
       var deltaV, direction, friction, ret;
-      direction = Math.unit(v0);
-      friction = -direction * 0.03 * Math.min(Math.abs(v0), 0.1);
+      direction = parseFloat(Math.unit(v0));
+      friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1);
       deltaV = friction * deltaT;
       return ret = {
         deltaX: 0.5 * deltaV * deltaT + v0 * deltaT,

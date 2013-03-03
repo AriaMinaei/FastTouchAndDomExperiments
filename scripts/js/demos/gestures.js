@@ -19,12 +19,12 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         }
         t.temporarily()._scale(e.scale, e.scale, 1).translate(e.translateX, e.translateY, 0);
         return t.apply(el);
-      }).addEvent('transform-instant:end', function(e, id, el) {
+      }).addEvent('transform-instant:finish', function(e, id, el) {
         transforms[id].commit(el);
         if (transforms[id]) {
           return transforms[id] = null;
         }
-      }).addEvent('instant-move', function(e, id, el) {
+      }).addEvent('move-instant', function(e, id, el) {
         var t;
         if (!transforms[id]) {
           transforms[id] = t = dommy.styles.getTransform(id, el);
@@ -33,7 +33,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         }
         t.temporarily().translate(e.translateX, e.translateY, 0);
         return t.apply(el);
-      }).addEvent('instant-move-end', function(e, id, el) {
+      }).addEvent('move-instant:finish', function(e, id, el) {
         transforms[id].commit(el);
         if (transforms[id]) {
           return transforms[id] = null;

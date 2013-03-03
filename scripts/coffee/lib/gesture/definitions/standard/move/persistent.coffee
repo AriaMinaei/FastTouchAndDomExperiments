@@ -36,7 +36,7 @@ define ->
 
 				if e.touches.length is 0
 
-					h.fireCustom @name + ':end',
+					h.fireCustom @name + ':release',
 
 						finish: h.forceFinish
 				

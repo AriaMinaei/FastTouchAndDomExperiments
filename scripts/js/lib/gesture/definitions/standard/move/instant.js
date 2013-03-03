@@ -2,7 +2,7 @@
 define(function() {
   return function(defineGesture) {
     return defineGesture({
-      name: 'instant-move',
+      name: 'move-instant',
       "extends": 'move',
       check: function(h) {
         return 1;

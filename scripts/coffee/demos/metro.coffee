@@ -13,7 +13,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 			dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY)
 
-		.addEvent 'move-persistent:end', (e, id, el, dommy) ->
+		.addEvent 'move-persistent:release', (e, id, el, dommy) ->
 
 			# dommy.getLazy(id, 'scrolls').release(e.finish)
 			dommy.getLazy(id, 'scrolls').release(e.finish)
