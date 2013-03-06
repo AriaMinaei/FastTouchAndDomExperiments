@@ -53,13 +53,14 @@ h2 {
 
 .the-pan > .scroll-content {
 	position: relative;
-	/*left: 60px;*/
+	left: 60px;
 	top: 50px;
 	padding-right: 120px;
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;
 	float: left;
 }
+
 
 @media (max-height: 1000px) {
 	.the-pan > .scrollable {

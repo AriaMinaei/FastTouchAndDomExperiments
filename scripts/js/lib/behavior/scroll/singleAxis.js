@@ -1,5 +1,5 @@
 
-define(['graphics/transitions', 'native'], function(Transitions) {
+define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitions, Bezier) {
   var SingleAxisScroller, cache;
   cache = {
     stretch: {
@@ -43,10 +43,11 @@ define(['graphics/transitions', 'native'], function(Transitions) {
       this._puller = this.props.delta;
       this._pullerInSync = true;
       this._velocityRecords = [];
+      this._velocityThreshold = 0.01;
       this._lastV = 0;
       this._lastT = 0;
       this._stretchEasingFunction = Transitions.quint.easeOut;
-      this._maxStretch = 1200;
+      this._maxStretch = 1800;
       if (cache.stretch[this._maxStretch] === void 0) {
         cache.stretch[this._maxStretch] = {};
       }
@@ -56,6 +57,12 @@ define(['graphics/transitions', 'native'], function(Transitions) {
       }
       this._unstretchCache = cache.unstretch[this._maxStretch];
       this._stretchedMax = 0;
+      this._bounce = {
+        ing: false,
+        t: 0,
+        x: 0,
+        duration: 0
+      };
       return null;
     }
 
@@ -63,6 +70,7 @@ define(['graphics/transitions', 'native'], function(Transitions) {
       if (!this._pullerInSync) {
         this._syncPuller();
       }
+      this._bounce.ing = false;
       this._recordForVelocity(delta);
       this._puller = this._puller + delta;
       return this.props.delta = this._pullerToSticky(this._puller);
@@ -168,15 +176,53 @@ define(['graphics/transitions', 'native'], function(Transitions) {
         v: 0
       };
       if (x0 < this.min) {
-        ret.x = x0;
+        deltas = this._deltasForOutside(this.min - x0, -v0, deltaT);
+        ret.x = x0 - deltas.deltaX;
+        ret.v = v0 - deltas.deltaV;
       } else if (x0 > this.max) {
-
+        deltas = this._deltasForOutside(x0 - this.max, v0, deltaT);
+        ret.x = x0 + deltas.deltaX;
+        ret.v = v0 + deltas.deltaV;
       } else {
         deltas = this._deltasForInside(v0, deltaT);
         ret.x = x0 + deltas.deltaX;
         ret.v = v0 + deltas.deltaV;
       }
       return ret;
+    };
+
+    SingleAxisScroller.prototype._deltasForOutside = function(x0, v0, deltaT) {
+      var deltaV, ease, func, newX, pullback, ret;
+      if (v0 < 0.15) {
+        if (!this._bounce.ing) {
+          this._bounce.ing = true;
+          this._bounce.t = Date.now();
+          this._bounce.x = x0;
+          this._bounce.duration = 750;
+        }
+        func = new Bezier(.11, .02, .1, .98);
+        ease = func.solve((Date.now() - this._bounce.t) / this._bounce.duration, Bezier.prototype.epsilon);
+        newX = this._bounce.x - this._bounce.x * ease;
+        if (newX < 0.1) {
+          ret = {
+            deltaX: -x0,
+            deltaV: -v0
+          };
+          this._bounce.ing = false;
+        } else {
+          ret = {
+            deltaX: newX - x0,
+            deltaV: -v0
+          };
+        }
+        return ret;
+      }
+      pullback = -0.03 * v0;
+      deltaV = pullback * deltaT;
+      return ret = {
+        deltaX: 0.5 * deltaV * deltaT + v0 * deltaT,
+        deltaV: deltaV
+      };
     };
 
     SingleAxisScroller.prototype._deltasForInside = function(v0, deltaT) {
@@ -219,7 +265,7 @@ define(['graphics/transitions', 'native'], function(Transitions) {
         }
       }
       this._clearVelocityRecords();
-      if (!((Math.abs(v)) > this.velocityThreshold)) {
+      if (!((Math.abs(v)) > this._velocityThreshold)) {
         v = 0;
       }
       return v;

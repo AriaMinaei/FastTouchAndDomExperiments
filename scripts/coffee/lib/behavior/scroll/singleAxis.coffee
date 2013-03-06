@@ -1,4 +1,4 @@
-define ['graphics/transitions', 'native'], (Transitions) ->
+define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezier) ->
 
 	cache = 
 		stretch: 
@@ -61,6 +61,8 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 			# To guess current velocity based on the last three moves.
 			@_velocityRecords = []
 
+			@_velocityThreshold = 0.01
+
 			# Last velocity on the last animation frame.
 			@_lastV = 0
 			@_lastT = 0
@@ -69,7 +71,7 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 			# of bounds.
 			@_stretchEasingFunction = Transitions.quint.easeOut
 
-			@_maxStretch = 1200
+			@_maxStretch = 1800
 
 			if cache.stretch[@_maxStretch] is undefined
 				cache.stretch[@_maxStretch] = {}
@@ -82,12 +84,20 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 			@_unstretchCache = cache.unstretch[@_maxStretch]
 
 			@_stretchedMax = 0
+
+			@_bounce = 
+				ing: no
+				t: 0
+				x: 0
+				duration: 0
 			
 			return null
 
 		drag: (delta) ->
 
 			do @_syncPuller if not @_pullerInSync
+
+			@_bounce.ing = no
 
 			@_recordForVelocity delta
 
@@ -243,11 +253,19 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 			
 			if x0 < @min
 
-				ret.x = x0
+				deltas = @_deltasForOutside @min - x0, -v0, deltaT
+
+				ret.x = x0 - deltas.deltaX
+
+				ret.v = v0 - deltas.deltaV
 
 			else if x0 > @max
 
-				
+				deltas = @_deltasForOutside x0 - @max, v0, deltaT
+
+				ret.x = x0 + deltas.deltaX
+
+				ret.v = v0 + deltas.deltaV
 
 			else
 
@@ -259,6 +277,61 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 
 			ret
 
+		_deltasForOutside: (x0, v0, deltaT) ->
+
+			if v0 < 0.15
+
+				if not @_bounce.ing
+
+					@_bounce.ing = yes
+
+					@_bounce.t = Date.now()
+
+					@_bounce.x = x0
+
+					@_bounce.duration = 750
+					
+					# @_bounce.duration = x0 * 2
+
+
+				# ease = Transitions.circ.easeOut( ( Date.now() - @_bounce.t ) / totalTime )
+				# ease = Easie.cubicOut(Date.now() - @_bounce.t, 0, 1, @_bounce.duration)
+				
+
+				# func = new Bezier .11,.28,.03,.86
+				# func = new Bezier .18,.1,.13,1
+				# func = new Bezier .18,.1,.02,.99
+				func = new Bezier .11,.02,.1,.98
+
+				ease = func.solve( ( Date.now() - @_bounce.t ) / @_bounce.duration, Bezier::epsilon )
+
+
+				newX = @_bounce.x - @_bounce.x * ease
+
+				if newX < 0.1
+
+					ret = 
+						deltaX: -x0
+						deltaV: -v0
+
+					@_bounce.ing = no
+
+				else
+
+					ret = 
+						deltaX: newX - x0
+						deltaV: - v0
+				
+
+				return ret
+
+			pullback = - 0.03 * v0
+
+			deltaV = pullback * deltaT
+
+			ret = 
+				deltaX: 0.5 * deltaV * deltaT + v0 * deltaT
+				deltaV: deltaV
 
 		_deltasForInside: (v0, deltaT) ->
 
@@ -306,7 +379,7 @@ define ['graphics/transitions', 'native'], (Transitions) ->
 
 			do @_clearVelocityRecords
 
-			v = 0 unless (Math.abs v) > @velocityThreshold
+			v = 0 unless (Math.abs v) > @_velocityThreshold
 				
 			return v
 

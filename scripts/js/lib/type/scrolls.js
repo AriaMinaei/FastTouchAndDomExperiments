@@ -48,6 +48,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this._boundAnimFunction = this._animFunction.bind(this);
       this._finishCallback = emptyFunction;
       this._finishCallbackWaiting = false;
+      this._cacheInGPU();
     }
 
     Scrolls.prototype.drag = function(x, y) {
@@ -136,6 +137,8 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this._transform.currently().setTranslate(x, y);
       return this._transform.commit(this._childEl);
     };
+
+    Scrolls.prototype._cacheInGPU = function() {};
 
     return Scrolls;
 
