@@ -22,6 +22,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
     */
 
     function SingleAxisScroller(props, askForAnimation, options) {
+      var _this = this;
       this.props = props;
       this.askForAnimation = askForAnimation;
       if (options == null) {
@@ -63,6 +64,13 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
         x: 0,
         duration: 0
       };
+      (function() {
+        var bezier;
+        bezier = new Bezier(.11, .02, .1, .98);
+        return _this._outsideCurve = function(t) {
+          return bezier.solve(t, Bezier.prototype.epsilon);
+        };
+      })();
       return null;
     }
 
@@ -144,6 +152,9 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
     SingleAxisScroller.prototype.release = function() {
       this._setLastVelocity(this._getRecordedVelocity());
       this._pullerInSync = false;
+      if ((this._puller < this.min && this._lastV > 0) || (this._puller > this.max && this._lastV < 0)) {
+        this._bounce.skip = true;
+      }
       return this.animate();
     };
 
@@ -153,7 +164,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       v0 = this._lastV;
       deltaT = Date.now() - this._lastT;
       _ref = this._animStep(x0, v0, deltaT), x = _ref.x, v = _ref.v;
-      if (x - x0 > 10) {
+      if ((x - x0 > 10 && !(x < this.min)) || (x - x0 < -10 && !(x > this.max))) {
         smallerDeltaT = deltaT / 4;
         x = x0;
         v = v0;
@@ -192,17 +203,14 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
     };
 
     SingleAxisScroller.prototype._deltasForOutside = function(x0, v0, deltaT) {
-      var deltaV, ease, func, newX, pullback, ret;
-      if (v0 < 0.15) {
+      var deltaV, newX, pullback, ret;
+      if (v0 < 0.15 && !this._bounce.skip) {
         if (!this._bounce.ing) {
           this._bounce.ing = true;
           this._bounce.t = Date.now();
           this._bounce.x = x0;
-          this._bounce.duration = 750;
         }
-        func = new Bezier(.11, .02, .1, .98);
-        ease = func.solve((Date.now() - this._bounce.t) / this._bounce.duration, Bezier.prototype.epsilon);
-        newX = this._bounce.x - this._bounce.x * ease;
+        newX = this._bounce.x - this._bounce.x * this._outsideCurve((Date.now() - this._bounce.t) / 750);
         if (newX < 0.1) {
           ret = {
             deltaX: -x0,
@@ -227,6 +235,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._deltasForInside = function(v0, deltaT) {
       var deltaV, direction, friction, ret;
+      this._bounce.skip = false;
       direction = parseFloat(Math.unit(v0));
       friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1);
       deltaV = friction * deltaT;

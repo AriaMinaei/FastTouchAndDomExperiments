@@ -90,6 +90,13 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 				t: 0
 				x: 0
 				duration: 0
+
+			do =>
+				bezier = new Bezier .11,.02,.1,.98
+
+				@_outsideCurve = (t) ->
+
+					bezier.solve t, Bezier::epsilon
 			
 			return null
 
@@ -195,6 +202,12 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 
 			@_pullerInSync = no
 
+			# If we're out of bounds, and the user has swiped inbound
+			if (@_puller < @min and @_lastV > 0) or (@_puller > @max and @_lastV < 0)
+
+				# Don't bounce
+				@_bounce.skip = yes
+
 			do @animate
 
 		# Called by a scroller's animationFrame function
@@ -212,8 +225,10 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# Do a step with the current deltaT.
 			{x, v} = @_animStep x0, v0, deltaT
 
-			# If the movement has been more than 10pixels...
-			if x - x0 > 10
+			# If the movement has been more than 10pixels,
+			# and if x is currently outside the bounds, and the movement isn't
+			# inbounds (Because inbound movement doesn't need higher resolutions)...
+			if (x - x0 > 10 and not (x < @min)) or (x - x0 < -10 and not (x > @max))
 
 				# ... we should calculate the movement in smaller steps to
 				# get more accurate results.
@@ -279,35 +294,28 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 
 		_deltasForOutside: (x0, v0, deltaT) ->
 
-			if v0 < 0.15
+			# If we're almost moving inbounds and we shouldn't skip a bounce.
+			if v0 < 0.15 and not @_bounce.skip
 
+				# If bounce isn't initialized yet.
 				if not @_bounce.ing
 
+					# Initialize it.
 					@_bounce.ing = yes
 
+					# Bounce time.
 					@_bounce.t = Date.now()
 
+					# How far out of bounds were we when we started
+					# the bounce.
 					@_bounce.x = x0
 
-					@_bounce.duration = 750
-					
-					# @_bounce.duration = x0 * 2
+				# Bounce back based on elapsed time and a bezier timing
+				# function.
+				newX = @_bounce.x - @_bounce.x *
+					@_outsideCurve( ( Date.now() - @_bounce.t ) / 750 )
 
-
-				# ease = Transitions.circ.easeOut( ( Date.now() - @_bounce.t ) / totalTime )
-				# ease = Easie.cubicOut(Date.now() - @_bounce.t, 0, 1, @_bounce.duration)
-				
-
-				# func = new Bezier .11,.28,.03,.86
-				# func = new Bezier .18,.1,.13,1
-				# func = new Bezier .18,.1,.02,.99
-				func = new Bezier .11,.02,.1,.98
-
-				ease = func.solve( ( Date.now() - @_bounce.t ) / @_bounce.duration, Bezier::epsilon )
-
-
-				newX = @_bounce.x - @_bounce.x * ease
-
+				# If we're too close to the edges, just don't do the bounce.
 				if newX < 0.1
 
 					ret = 
@@ -325,25 +333,40 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 
 				return ret
 
+			# We're moving outbounds.
+
+			# Slow down based on v0
 			pullback = - 0.03 * v0
 
+			# Calculate deltaV
 			deltaV = pullback * deltaT
 
 			ret = 
+
+				# DeltaX based on Euler's integrator
 				deltaX: 0.5 * deltaV * deltaT + v0 * deltaT
+
 				deltaV: deltaV
 
 		_deltasForInside: (v0, deltaT) ->
 
+			# When we're inside the bounds, disable bounce-skipping.
+			@_bounce.skip = no
+
+			# Direction of the initial velocity.
 			direction = parseFloat(Math.unit v0)
 
+			# Friction based on direction and velocity.
 			friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1)
-			# friction = -direction * 0.003
 
+			# Calculate the deltaV/
 			deltaV = friction * deltaT
 
 			ret = 
+
+				# DeltaX based on Euler's integrator/
 				deltaX: 0.5 * deltaV * deltaT + v0 * deltaT
+
 				deltaV: deltaV
 
 		_recordForVelocity: (delta) ->
