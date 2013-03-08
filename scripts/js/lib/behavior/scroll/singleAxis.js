@@ -48,7 +48,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       this._lastV = 0;
       this._lastT = 0;
       this._stretchEasingFunction = Transitions.quint.easeOut;
-      this._maxStretch = 1800;
+      this._maxStretch = parseInt(options.maxStretch) || 1800;
       if (cache.stretch[this._maxStretch] === void 0) {
         cache.stretch[this._maxStretch] = {};
       }
@@ -58,6 +58,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       }
       this._unstretchCache = cache.unstretch[this._maxStretch];
       this._stretchedMax = 0;
+      this._bounceTime = parseInt(options.bounceTime) || 750;
       this._bounce = {
         ing: false,
         t: 0,
@@ -153,6 +154,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       this._setLastVelocity(this._getRecordedVelocity());
       this._pullerInSync = false;
       if ((this._puller < this.min && this._lastV > 0) || (this._puller > this.max && this._lastV < 0)) {
+        console.log('skip');
         this._bounce.skip = true;
       }
       return this.animate();
@@ -174,7 +176,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       }
       this._setLastVelocity(v);
       this.props.delta = x;
-      if (!((this.min < x && x < this.max) && v * v0 < 0.001)) {
+      if (!((this.min <= x && x <= this.max) && v * v0 < 0.001)) {
         this.askForAnimation();
       }
       return null;
@@ -204,13 +206,16 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._deltasForOutside = function(x0, v0, deltaT) {
       var deltaV, newX, pullback, ret;
+      if ((-0.0001 < v0 && v0 < 0.0001)) {
+        this._bounce.skip = false;
+      }
       if (v0 < 0.15 && !this._bounce.skip) {
         if (!this._bounce.ing) {
           this._bounce.ing = true;
           this._bounce.t = Date.now();
           this._bounce.x = x0;
         }
-        newX = this._bounce.x - this._bounce.x * this._outsideCurve((Date.now() - this._bounce.t) / 750);
+        newX = this._bounce.x - this._bounce.x * this._outsideCurve((Date.now() - this._bounce.t) / this._bounceTime);
         if (newX < 0.1) {
           ret = {
             deltaX: -x0,

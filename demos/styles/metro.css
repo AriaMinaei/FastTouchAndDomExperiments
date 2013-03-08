@@ -43,9 +43,9 @@ h2 {
 
 .the-pan {
 	position: absolute;
-	left: 0; right: 0; top: 50px; bottom: 0;
+	left: 0; right: 0; top: 50px;
 	
-	overflow: hidden;
+	overflow: visible;
 	box-sizing: border-box;
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;
@@ -54,7 +54,7 @@ h2 {
 .the-pan > .scroll-content {
 	position: relative;
 	left: 60px;
-	top: 50px;
+	/*top: 50px;*/
 	padding-right: 120px;
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;

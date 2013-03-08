@@ -37,6 +37,8 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 		# touchmove events get throttled for every animation frame.
 		move: (h, e) -> #console.log 'Caught touchmove for "' + name + '"'
 
+		cancel: (h, e) -> console.log 'cancel'
+
 		# Called by Gesture.Handler's shouldFinish(), which usually happens
 		# when all fingers are off screen.
 		# 

@@ -45,12 +45,14 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
-        move: this._touchmoveListener.bind(this)
+        move: this._touchmoveListener.bind(this),
+        cancel: this._touchcancelListener.bind(this)
       };
       this.lastEvents = {
         start: null,
         move: null,
-        end: null
+        end: null,
+        cancel: null
       };
       this.firstEvent = null;
       this.lastEventType = null;
@@ -73,13 +75,15 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     Handler.prototype.listen = function() {
       this.root.addEventListener('touchstart', this._boundListeners.start);
       this.root.addEventListener('touchend', this._boundListeners.end);
-      return this.root.addEventListener('touchmove', this._boundListeners.move);
+      this.root.addEventListener('touchmove', this._boundListeners.move);
+      return this.root.addEventListener('touchcancel', this._boundListeners.cancel);
     };
 
     Handler.prototype.quit = function() {
       this.root.removeEventListener('touchstart', this._boundListeners.start);
       this.root.removeEventListener('touchend', this._boundListeners.end);
-      return this.root.removeEventListener('touchmove', this._boundListeners.move);
+      this.root.removeEventListener('touchmove', this._boundListeners.move);
+      return this.root.removeEventListener('touchcancel', this._boundListeners.cancel);
     };
 
     Handler.prototype._touchstartListener = function(e) {
@@ -115,6 +119,18 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
         if (this.gesture) {
           this.gesture.end(this, e);
         }
+      }
+      if (e.touches.length === 0) {
+        return this._shouldFinish();
+      }
+    };
+
+    Handler.prototype._touchcancelListener = function(e) {
+      e.stop();
+      this.lastEventType = 'cancel';
+      this.lastEvents.cancel = copyTouchEvent(e);
+      if (this.gesture) {
+        this.gesture.cancel(this, e);
       }
       if (e.touches.length === 0) {
         return this._shouldFinish();

@@ -45,18 +45,34 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			@propsX = 
 				delta: 0
 
-			@_scrollerX = new SingleAxisScroller @propsX, boundNeedAnimation, 
-				size: childRects.width
-				space: parentRects.width
+			@_scrollerX = new SingleAxisScroller @propsX, boundNeedAnimation, do =>
+
+				ops = 
+					size: childRects.width
+					space: parentRects.width
+
+				if @options.x?
+
+					Object.append ops, @options.x
+
+				ops
 
 			@_lastScrollX = 0
 
 			@propsY = 
 				delta: 0
 
-			@_scrollerY = new SingleAxisScroller @propsY, boundNeedAnimation, 
-				size: childRects.height
-				space: parentRects.height
+			@_scrollerY = new SingleAxisScroller @propsY, boundNeedAnimation, do =>
+
+				ops = 
+					size: childRects.height
+					space: parentRects.height
+
+				if @options.y?
+
+					Object.append ops, @options.y
+
+				ops
 
 			@_lastScrollY = 0
 

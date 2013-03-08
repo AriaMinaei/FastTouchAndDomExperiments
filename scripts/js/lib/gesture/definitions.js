@@ -20,6 +20,10 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
 
     BasicGesture.prototype.move = function(h, e) {};
 
+    BasicGesture.prototype.cancel = function(h, e) {
+      return console.log('cancel');
+    };
+
     BasicGesture.prototype.shouldFinish = function(h) {
       return true;
     };

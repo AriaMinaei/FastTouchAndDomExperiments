@@ -71,7 +71,7 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# of bounds.
 			@_stretchEasingFunction = Transitions.quint.easeOut
 
-			@_maxStretch = 1800
+			@_maxStretch = parseInt(options.maxStretch) or 1800
 
 			if cache.stretch[@_maxStretch] is undefined
 				cache.stretch[@_maxStretch] = {}
@@ -84,6 +84,8 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			@_unstretchCache = cache.unstretch[@_maxStretch]
 
 			@_stretchedMax = 0
+
+			@_bounceTime = parseInt(options.bounceTime) or 750
 
 			@_bounce = 
 				ing: no
@@ -205,13 +207,17 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# If we're out of bounds, and the user has swiped inbound
 			if (@_puller < @min and @_lastV > 0) or (@_puller > @max and @_lastV < 0)
 
+				console.log 'skip'
 				# Don't bounce
 				@_bounce.skip = yes
+
 
 			do @animate
 
 		# Called by a scroller's animationFrame function
 		animate: () ->
+
+
 
 			# Last x.
 			x0 = @props.delta
@@ -254,10 +260,10 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# 	velocity is close to zero, OR
 			# 	there has been change in velocity direction.
 			# 	
-			unless @min < x < @max and v * v0 < 0.001
+			unless @min <= x <= @max and v * v0 < 0.001
 
 				do @askForAnimation
-
+				
 			null
 
 		_animStep: (x0, v0, deltaT) ->
@@ -294,6 +300,11 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 
 		_deltasForOutside: (x0, v0, deltaT) ->
 
+			# Shouldn't skip a bounce if we're moving too slowly
+			if -0.0001 < v0 < 0.0001
+
+				@_bounce.skip = no
+
 			# If we're almost moving inbounds and we shouldn't skip a bounce.
 			if v0 < 0.15 and not @_bounce.skip
 
@@ -313,7 +324,7 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 				# Bounce back based on elapsed time and a bezier timing
 				# function.
 				newX = @_bounce.x - @_bounce.x *
-					@_outsideCurve( ( Date.now() - @_bounce.t ) / 750 )
+					@_outsideCurve( ( Date.now() - @_bounce.t ) / @_bounceTime )
 
 				# If we're too close to the edges, just don't do the bounce.
 				if newX < 0.1

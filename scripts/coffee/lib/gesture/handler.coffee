@@ -52,12 +52,14 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 				start: @_touchstartListener.bind @
 				end: @_touchendListener.bind @
 				move: @_touchmoveListener.bind @
+				cancel: @_touchcancelListener.bind @
 
 			# Latest touch events
 			@lastEvents =
 				start: null
 				move: null
 				end: null
+				cancel: null
 
 			# First Event (which is, of course, a touchstart)
 			@firstEvent = null
@@ -108,12 +110,14 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			@root.addEventListener 'touchstart', @_boundListeners.start
 			@root.addEventListener 'touchend'  , @_boundListeners.end
 			@root.addEventListener 'touchmove' , @_boundListeners.move
+			@root.addEventListener 'touchcancel' , @_boundListeners.cancel
 
 		# Stop listening to touch events
 		quit: ->
 			@root.removeEventListener 'touchstart', @_boundListeners.start
 			@root.removeEventListener 'touchend'  , @_boundListeners.end
 			@root.removeEventListener 'touchmove' , @_boundListeners.move
+			@root.removeEventListener 'touchcancel' , @_boundListeners.cancel
 
 		# Listener for touchstart
 		_touchstartListener: (e) ->
@@ -147,6 +151,16 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			else 
 				@_checkForType()
 				if @gesture then @gesture.end(@, e)
+
+			@_shouldFinish() if e.touches.length is 0
+
+		_touchcancelListener: (e) ->
+
+			e.stop()
+			@lastEventType = 'cancel'
+			@lastEvents.cancel = copyTouchEvent(e)
+
+			if @gesture then @gesture.cancel(@, e)
 
 			@_shouldFinish() if e.touches.length is 0
 

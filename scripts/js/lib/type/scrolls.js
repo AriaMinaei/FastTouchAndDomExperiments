@@ -5,7 +5,8 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
   return Scrolls = (function() {
 
     function Scrolls(id, dommy) {
-      var boundNeedAnimation, childRects, parentRects;
+      var boundNeedAnimation, childRects, parentRects,
+        _this = this;
       this.id = id;
       this.dommy = dommy;
       this.parentEl = this.dommy.el(this.id);
@@ -31,18 +32,32 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this.propsX = {
         delta: 0
       };
-      this._scrollerX = new SingleAxisScroller(this.propsX, boundNeedAnimation, {
-        size: childRects.width,
-        space: parentRects.width
-      });
+      this._scrollerX = new SingleAxisScroller(this.propsX, boundNeedAnimation, (function() {
+        var ops;
+        ops = {
+          size: childRects.width,
+          space: parentRects.width
+        };
+        if (_this.options.x != null) {
+          Object.append(ops, _this.options.x);
+        }
+        return ops;
+      })());
       this._lastScrollX = 0;
       this.propsY = {
         delta: 0
       };
-      this._scrollerY = new SingleAxisScroller(this.propsY, boundNeedAnimation, {
-        size: childRects.height,
-        space: parentRects.height
-      });
+      this._scrollerY = new SingleAxisScroller(this.propsY, boundNeedAnimation, (function() {
+        var ops;
+        ops = {
+          size: childRects.height,
+          space: parentRects.height
+        };
+        if (_this.options.y != null) {
+          Object.append(ops, _this.options.y);
+        }
+        return ops;
+      })());
       this._lastScrollY = 0;
       this._animFrame = 0;
       this._boundAnimFunction = this._animFunction.bind(this);
