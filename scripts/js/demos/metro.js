@@ -12,8 +12,5 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   }).addEvent('move-persistent:finish', function(e, id, el, dommy) {
     return dommy.getLazy(id, 'scrolls').finish();
   });
-  dambo.forThe('stress').addEvent('tap', function(e, id, el, dommy) {
-    return el.classList.toggle('stress');
-  });
   return dr(function() {});
 });

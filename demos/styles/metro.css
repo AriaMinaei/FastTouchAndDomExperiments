@@ -81,29 +81,35 @@ h2 {
 }
 
 .images .img {
-	background-size: 440px 248px;
-	width: 440px;
-	height: 248px;
+	
+	
 	position: relative;
 	display: inline-block;
 	margin: 10px;	
 }
 
+.images .img .image {
+	background-size: 440px 248px;
+	width: 440px;
+	height: 248px;
+	background-repeat: no-repeat;
+}
+
 .images .img.stress {
 	-webkit-perspective: 1000;
-	-webkit-backface-visibility: hidden;
+	-webkit-backface-visibility: visible;
 	-webkit-transform: scale3d(0.9, 0.9, 1);
 }
 
-.images .img-1 { background-image: url('../images/tiles/1.jpg'); }
-.images .img-2 { background-image: url('../images/tiles/2.jpg'); }
-.images .img-3 { background-image: url('../images/tiles/3.jpg'); }
-.images .img-4 { background-image: url('../images/tiles/4.jpg'); }
-.images .img-5 { background-image: url('../images/tiles/5.jpg'); }
-.images .img-6 { background-image: url('../images/tiles/6.jpg'); }
-.images .img-7 { background-image: url('../images/tiles/7.jpg'); }
-.images .img-8 { background-image: url('../images/tiles/8.jpg'); }
-.images .img-9 { background-image: url('../images/tiles/9.jpg'); }
-.images .img-10 { background-image: url('../images/tiles/10.jpg'); }
-.images .img-11 { background-image: url('../images/tiles/11.jpg'); }
-.images .img-12 { background-image: url('../images/tiles/12.jpg'); }
+.images .img-1 .image { background-image: url('../images/tiles/1.jpg'); }
+.images .img-2 .image { background-image: url('../images/tiles/2.jpg'); }
+.images .img-3 .image { background-image: url('../images/tiles/3.jpg'); }
+.images .img-4 .image { background-image: url('../images/tiles/4.jpg'); }
+.images .img-5 .image { background-image: url('../images/tiles/5.jpg'); }
+.images .img-6 .image { background-image: url('../images/tiles/6.jpg'); }
+.images .img-7 .image { background-image: url('../images/tiles/7.jpg'); }
+.images .img-8 .image { background-image: url('../images/tiles/8.jpg'); }
+.images .img-9 .image { background-image: url('../images/tiles/9.jpg'); }
+.images .img-10 .image { background-image: url('../images/tiles/10.jpg'); }
+.images .img-11 .image { background-image: url('../images/tiles/11.jpg'); }
+.images .img-12 .image { background-image: url('../images/tiles/12.jpg'); }
