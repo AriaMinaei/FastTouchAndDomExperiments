@@ -245,7 +245,6 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
         switch (g.check(this)) {
           case -1:
             this.candidates.shift();
-            console.log('wasnt ' + gestureName);
             continue;
           case 0:
             shouldBreak = true;
@@ -256,7 +255,6 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
             this.gestureName = gestureName;
             this.gesture = g;
             this.gesture.init(this);
-            console.groupEnd();
             return;
         }
         if (shouldBreak) {

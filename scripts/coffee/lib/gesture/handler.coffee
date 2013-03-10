@@ -285,7 +285,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 					# Doesn't apply > Remove it
 					when -1
 						@candidates.shift()
-						console.log 'wasnt ' + gestureName
+						# console.log 'wasnt ' + gestureName
 						continue
 					# May apply > Wait for next touch event
 					when 0
@@ -300,7 +300,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 						@gesture = g
 						@gesture.init(@)
 
-						console.groupEnd()
+						# console.groupEnd()
 						return
 
 				break if shouldBreak
