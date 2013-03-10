@@ -154,7 +154,6 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       this._setLastVelocity(this._getRecordedVelocity());
       this._pullerInSync = false;
       if ((this._puller < this.min && this._lastV > 0) || (this._puller > this.max && this._lastV < 0)) {
-        console.log('skip');
         this._bounce.skip = true;
       }
       return this.animate();

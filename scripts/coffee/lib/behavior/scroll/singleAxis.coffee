@@ -207,7 +207,6 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# If we're out of bounds, and the user has swiped inbound
 			if (@_puller < @min and @_lastV > 0) or (@_puller > @max and @_lastV < 0)
 
-				console.log 'skip'
 				# Don't bounce
 				@_bounce.skip = yes
 
