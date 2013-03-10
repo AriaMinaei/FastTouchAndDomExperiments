@@ -25,11 +25,6 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 			dommy.getLazy(id, 'scrolls').finish()
 
 
-	dambo.forThe('stress')
-		.addEvent 'tap', (e, id, el, dommy) ->
-			
-			el.classList.toggle 'stress'
-
 
 	dr ->
 
