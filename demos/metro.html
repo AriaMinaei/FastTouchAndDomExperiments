@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<script src="../scripts/require.js"></script>
+	<script>
+		require.config({
+			baseUrl: '../scripts/js/lib'
+		});
+		require(['../scripts/js/demos/metro.js']);
+	</script>
+
+	<link rel="stylesheet" href="styles/minimal.css">
+	<link rel="stylesheet" href="styles/metro.css">
+
+	<script>
+		// Weinre remote debugger for remote clients
+		(function(){
+			return;
+			if (document.location.hostname === '192.168.2.2') {
+				var s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
+				document.querySelector('head').appendChild(s);
+			}
+
+		})();
+		
+
+	</script>
+
+	<style>
+		
+	</style>
+</head>
+
+<body>
+	
+	<div class="button" data-types="dummy" data-gestures="tap"></div>
+
+	<div class="scroll the-pan" data-types="scrolls" data-scroll-options='"axis":"both", "y":{"maxStretch":"300"}' data-gestures="move-persistent">
+		<div class="scroll-content">
+			<h2>
+				The Galleria
+			</h2>
+			<div class="images">
+				<div>
+					<div data-types="stress" data-gestures="tap" class="img img-7"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-3"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-5"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-8"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-12"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-2"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-4"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-10"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-11"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-6"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-1"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-9"></div>
+				</div>
+				<div>
+					<div data-types="stress" data-gestures="tap" class="img img-2"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-4"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-6"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-11"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-1"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-5"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-7"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-3"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-8"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-9"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-10"></div>
+					<div data-types="stress" data-gestures="tap" class="img img-11"></div>
+				</div>
+					
+			</div>
+			
+			
+		</div>
+	</div>
+</body>
+</html>

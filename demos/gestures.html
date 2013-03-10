@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<script src="../scripts/require.js"></script>
+	<script>
+		require.config({
+			baseUrl: '../scripts/js/lib'
+		});
+		require(['../scripts/js/demos/gestures.js']);
+	</script>
+
+	<link rel="stylesheet" href="styles/minimal.css">
+
+	<script>
+		// Weinre remote debugger for remote clients
+		(function(){
+			if (document.location.hostname === '192.168.2.2') {
+				var s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
+				document.querySelector('head').appendChild(s);
+			}
+		})();
+		
+	</script>
+
+	<style>
+		body {
+			height: 100%;
+		}
+
+		html {
+			-webkit-text-size-adjust: none !important;
+		}
+		
+		.one {
+			position: absolute;
+			width: 80%; height: 80%;
+			
+			-webkit-perspective: 1000;
+			-webkit-backface-visibility: hidden;
+		}
+
+		.two {
+			position: absolute;
+			background: url("images/a.jpg");
+			width: 600px; height: 600px;
+			
+			top: 60px;
+			left: 120px;
+			
+			-webkit-perspective: 1000;
+			-webkit-backface-visibility: hidden;
+		}
+
+		.two.extra {
+			left: 820px;
+		}
+	</style>
+</head>
+<!-- This receives 'move' gestures -->
+<body data-gestures="move">
+	<!-- receives 'transform' gestures -->
+	<div class="one" data-gestures="transform">
+		<div class="extra">
+			<!-- receives 'transform-instant', if it wasn't an transform-instant, a 'tap', if not, a 'hold', ... -->
+			<div class="two alone" data-gestures="transform-instant, tap, hold" data-types="babs, molly"></div>
+			<div class="two extra" data-gestures="transform-instant, tap, hold" data-types="babs, holly"></div>
+		</div>
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* I'm just gonna hack stuff together here for now.
+ * I'll do responsive when we get to the layout module.
+ */
+
+@font-face {
+    font-family: 'RobotoLight';
+    src: url('../fonts/Roboto-Light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoThin';
+    src: url('../fonts/Roboto-Thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+	margin: 0; padding: 0;
+}
+
+body {
+	font-family: "RobotoThin";
+	color: #F0F0F0;
+	font-size: 24px;
+}
+
+h2 {
+	font-weight: normal;
+	font-size: 56px;
+}
+
+.button {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50px;
+	height: 50px;
+	background: #fff;
+	display: none;
+}
+
+.the-pan {
+	position: absolute;
+	left: 0; right: 0; top: 50px;
+	
+	overflow: visible;
+	box-sizing: border-box;
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+}
+
+.the-pan > .scroll-content {
+	position: relative;
+	left: 60px;
+	/*top: 50px;*/
+	padding-right: 120px;
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+	-webkit-transform-style: flat;
+	float: left;
+}
+
+
+@media (max-height: 1000px) {
+	.the-pan > .scrollable {
+		top: 80px;
+	}
+}
+
+.images {
+	float: left;
+}
+
+.images > div {
+	height: 248px;
+	margin-bottom: 20px;
+	white-space: nowrap;
+	float: left;
+}
+
+.images .img {
+	background-size: 440px 248px;
+	width: 440px;
+	height: 248px;
+	position: relative;
+	display: inline-block;
+	margin: 10px;	
+}
+
+.images .img.stress {
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+	-webkit-transform: scale3d(0.9, 0.9, 1);
+}
+
+.images .img-1 { background-image: url('../images/tiles/1.jpg'); }
+.images .img-2 { background-image: url('../images/tiles/2.jpg'); }
+.images .img-3 { background-image: url('../images/tiles/3.jpg'); }
+.images .img-4 { background-image: url('../images/tiles/4.jpg'); }
+.images .img-5 { background-image: url('../images/tiles/5.jpg'); }
+.images .img-6 { background-image: url('../images/tiles/6.jpg'); }
+.images .img-7 { background-image: url('../images/tiles/7.jpg'); }
+.images .img-8 { background-image: url('../images/tiles/8.jpg'); }
+.images .img-9 { background-image: url('../images/tiles/9.jpg'); }
+.images .img-10 { background-image: url('../images/tiles/10.jpg'); }
+.images .img-11 { background-image: url('../images/tiles/11.jpg'); }
+.images .img-12 { background-image: url('../images/tiles/12.jpg'); }
