@@ -16,15 +16,19 @@ define ->
 	UnitBezier::epsilon = 1e-6 # Precision
 
 	UnitBezier::sampleCurveX = (t) ->
+
 	  ((@ax * t + @bx) * t + @cx) * t
 
 	UnitBezier::sampleCurveY = (t) ->
+
 	  ((@ay * t + @by) * t + @cy) * t
 
 	UnitBezier::sampleCurveDerivativeX = (t) ->
+
 	  (3.0 * @ax * t + 2.0 * @bx) * t + @cx
 
 	UnitBezier::solveCurveX = (x, epsilon) ->
+
 	  t0 = undefined
 	  t1 = undefined
 	  t2 = undefined
@@ -37,10 +41,13 @@ define ->
 	  i = 0
 
 	  while i < 8
+
 	    x2 = @sampleCurveX(t2) - x
 	    return t2  if Math.abs(x2) < epsilon
+
 	    d2 = @sampleCurveDerivativeX(t2)
 	    break  if Math.abs(d2) < epsilon
+
 	    t2 = t2 - x2 / d2
 	    i++
 	  
@@ -48,15 +55,25 @@ define ->
 	  t0 = 0.0
 	  t1 = 1.0
 	  t2 = x
+
 	  return t0  if t2 < t0
+
 	  return t1  if t2 > t1
+
 	  while t0 < t1
+
 	    x2 = @sampleCurveX(t2)
+
 	    return t2  if Math.abs(x2 - x) < epsilon
+
 	    if x > x2
+
 	      t0 = t2
+
 	    else
+
 	      t1 = t2
+	      
 	    t2 = (t1 - t0) * .5 + t0
 	  
 	  # Give up
@@ -65,6 +82,7 @@ define ->
 
 	# Find new T as a function of Y along curve X
 	UnitBezier::solve = (x, epsilon) ->
+
 	  @sampleCurveY @solveCurveX(x, epsilon)
 
 	UnitBezier

@@ -95,6 +95,10 @@ h2 {
 	background-repeat: no-repeat;
 }
 
+* {
+	-webkit-transform-style: preserve-3d;
+}
+
 .images .img.stress {
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: visible;
