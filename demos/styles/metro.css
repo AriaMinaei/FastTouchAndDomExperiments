@@ -96,7 +96,7 @@ h2 {
 
 .images .img.stress {
 	/*-webkit-perspective: 1000;*/
-	-webkit-transform: rotate3d(0.1, 0.1, 0, 50deg);
+	/*-webkit-transform: rotate3d(0.1, 0.1, 0, 50deg);*/
 }
 
 .images .img-1 .image { background-image: url('../images/tiles/1.jpg'); }
