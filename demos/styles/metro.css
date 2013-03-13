@@ -47,8 +47,6 @@ h2 {
 	
 	overflow: visible;
 	box-sizing: border-box;
-	-webkit-perspective: 1000;
-	-webkit-backface-visibility: hidden;
 }
 
 .the-pan > .scroll-content {
@@ -56,9 +54,10 @@ h2 {
 	left: 60px;
 	/*top: 50px;*/
 	padding-right: 120px;
-	-webkit-perspective: 1000;
+	
+	/*-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;
-	-webkit-transform-style: flat;
+	-webkit-transform-style: flat;*/
 	float: left;
 }
 
@@ -95,14 +94,9 @@ h2 {
 	background-repeat: no-repeat;
 }
 
-* {
-	-webkit-transform-style: preserve-3d;
-}
-
 .images .img.stress {
-	-webkit-perspective: 1000;
-	-webkit-backface-visibility: visible;
-	-webkit-transform: scale3d(0.9, 0.9, 1);
+	/*-webkit-perspective: 1000;*/
+	-webkit-transform: rotate3d(0.1, 0.1, 0, 50deg);
 }
 
 .images .img-1 .image { background-image: url('../images/tiles/1.jpg'); }

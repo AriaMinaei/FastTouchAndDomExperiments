@@ -24,6 +24,30 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 			# dommy.getLazy(id, 'scrolls').release(e.finish)
 			dommy.getLazy(id, 'scrolls').finish()
 
+	do ->
+
+		div = 2000
+		began = Date.now()
+		d = 0
+
+		els = document.querySelectorAll '.img'
+
+		animate = ->
+
+			d = ((Date.now() - began) % div) / div
+
+			transform = 'rotate3d(0.1, 1, 0, ' + (d * Math.PI * 2) + 'rad)'
+
+			for el in els
+
+				el.style.webkitTransform = transform
+
+			requestAnimationFrame animate
+
+		do animate
+
+
+
 
 	dr ->
 
