@@ -14,6 +14,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   });
   (function() {
     var animate, began, d, div, els;
+    return;
     div = 2000;
     began = Date.now();
     d = 0;
