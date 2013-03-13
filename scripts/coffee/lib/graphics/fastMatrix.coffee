@@ -1,15 +1,20 @@
 define ->
+
 	# This is faster than array.slice(0)
 	# 11%  faster in chrome 25
 	# 800% faster in iOS6
 	# 11%  slower in FF Aurora 20
 	clone16 = (r) ->
+
+
 		[r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]]
 
 
 	# Returns the multiplication of two vectors
 	# Got it from famo.us (Tell me if I shouldn't have, since there was no license statement)
 	multiply = (a, b) ->
+
+
 		[
 			# 0
 			a[0] * b[0] + a[1] * b[4] + a[2] * b[8],
@@ -47,6 +52,7 @@ define ->
 
 	# An identity matrix
 	identity = () ->
+
 		[
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -61,24 +67,33 @@ define ->
 		# 
 		# If it's a string, it'll call @fromString
 		constructor: (arg) ->
+
 			if Array.isArray(arg)
+
 				@r = arg
+
 			else if typeof arg is 'string'
+
 				@fromString arg
+
 			else
+
 				@r = identity()
 
 		# From another Matrix3d object
 		fromMatrix: (m) ->
+
 			@r = clone16(m.r)
 			@
 
 		# Returns a copy of itself
 		copy: ->
+
 			new FastMatrix clone16(@r)
 
 		# Returns a string for css
 		toString: () ->
+
 			a = @r
 			'matrix3d(' + a[0] +
 			', ' + a[1] +
@@ -99,13 +114,17 @@ define ->
 		
 		# Parses a string from css
 		fromString: (s) ->
+
 			# Is it a matrix3d?
 			if s.substr(8, 1) is '('
+
 				# Remove the 'matrix3d(' and ')'
 				s = s.substr(9, s.length - 10)
 				@r = s.split(', ').map(parseFloat)
+
 			# Or a matrix?
 			else if s.substr(6, 1) is '('
+
 				s = s.substr(7, s.length - 8)
 				temp = s.split(', ').map(parseFloat)
 				@r = [
@@ -123,16 +142,21 @@ define ->
 					temp[5],
 					0, 1
 				]
+
 			else if s[0] is 'n'
+
 				# none
 				@r = identity()
+
 			else
+			
 				throw Error 'Unkown matrix format'
 
 			@
 
 		# From a WebKitCSSMatrix object
 		fromWebkit: (w) ->
+
 			@r = [
 				w.m11,
 				w.m12,
@@ -159,6 +183,7 @@ define ->
 
 		# Sets the translation
 		setTranslate: (x, y, z = 0) ->
+
 			# I'm not calling the setTranslateX/Y/Z functions to save a little bit of time
 			@r[12] = parseFloat x
 			@r[13] = parseFloat y
@@ -167,21 +192,25 @@ define ->
 
 		# Sets X Translation
 		setTranslateX: (x) ->
+
 			@r[12] = parseFloat x
 			@
 
 		# Sets Y Translation
 		setTranslateY: (y) ->
+
 			@r[13] = parseFloat y
 			@
 
 		# Sets Z Translation
 		setTranslateZ: (z) ->
+
 			@r[14] = parseFloat z
 			@
 
 		# Translates relative to its current position
 		translate: (x, y, z = 0) ->
+
 			@r[12] += parseFloat x
 			@r[13] += parseFloat y
 			@r[14] += parseFloat z
@@ -189,16 +218,19 @@ define ->
 
 		# Translates in X axis relative to its current position
 		translateX: (x) ->
+
 			@r[12] += parseFloat x
 			@
 
 		# Translates in X axis relative to its current position
 		translateY: (y) ->
+
 			@r[13] += parseFloat y
 			@
 
 		# Translates in X axis relative to its current position
 		translateZ: (z) ->
+
 			@r[14] += parseFloat z
 			@
 		
@@ -216,42 +248,51 @@ define ->
 		###
 
 		_setScale: (x, y, z) ->
+
 			@r[0] = parseFloat x
 			@r[5] = parseFloat y
 			@r[10] = parseFloat x
 			@
 
 		_setScaleX: (x) ->
+
 			@r[0] = parseFloat x
 			@
 
 		_setScaleY: (y) ->
+
 			@r[5] = parseFloat y
 			@
 
 		_setScaleZ: (z) ->
+
 			@r[10] = parseFloat z
 			@
 
 		_scale: (x, y, z) ->
+
 			@r[0] *= parseFloat x
 			@r[5] *= parseFloat y
 			@r[10] *= parseFloat x
 			@
 
 		_scaleX: (x) ->
+
 			@r[0] *= parseFloat x
 			@
 
 		_scaleY: (y) ->
+
 			@r[5] *= parseFloat y
 			@
 
 		_scaleZ: (z) ->
+
 			@r[10] *= parseFloat z
 			@
 
 		_setRotation: (x, y, z) ->
+
 			# I tried w3c's method with some optimizations and Famo.us` method.
 			# They perform the same. Famo.us` is cleaner, so I'm going with that.
 			cosx = Math.cos(x)
@@ -277,6 +318,7 @@ define ->
 			@
 
 		_setRotationX: (x) ->
+
 			cosx = Math.cos(x)
 			sinx = Math.sin(x)
 
@@ -289,6 +331,7 @@ define ->
 			@
 
 		_setRotationY: (y) ->
+
 			# I tried w3c's method with some optimizations and Famo.us` method.
 			# They perform the same. Famo.us` is cleaner, so I'm going with that.
 
@@ -304,6 +347,7 @@ define ->
 			@
 
 		_setRotationZ: (z) ->
+
 			cosz = Math.cos(z)
 			sinz = Math.sin(z)
 

@@ -107,6 +107,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Start listening to touch events
 		listen: ->
+
 			@root.addEventListener 'touchstart', @_boundListeners.start
 			@root.addEventListener 'touchend'  , @_boundListeners.end
 			@root.addEventListener 'touchmove' , @_boundListeners.move
@@ -114,6 +115,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Stop listening to touch events
 		quit: ->
+
 			@root.removeEventListener 'touchstart', @_boundListeners.start
 			@root.removeEventListener 'touchend'  , @_boundListeners.end
 			@root.removeEventListener 'touchmove' , @_boundListeners.move
@@ -130,13 +132,17 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			@starts++
 
 			first = no
+
 			unless @firstEvent
+
 				first = yes
 				@firstEvent = copyTouchEvent(e)
 				@_findCandidates()
 
 			if @gesture then @gesture.start(@, e, first)
+
 			else
+
 				@_checkForType()
 				if @gesture then @gesture.start(@, e, first)
 
@@ -148,8 +154,11 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			@lastEvents.end = copyTouchEvent(e)
 
 			if @gesture then @gesture.end(@, e)
+
 			else 
+
 				@_checkForType()
+
 				if @gesture then @gesture.end(@, e)
 
 			@_shouldFinish() if e.touches.length is 0
@@ -173,6 +182,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			# Checking to see if we've had any real move
 			unless @hadRealMove
+
 				touch = @lastEvents.move.touches[0]
 				first = @firstEvent.touches[0]
 
@@ -181,7 +191,9 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 					@hadRealMove = true
 						
 			if @gesture then @gesture.move(@, @lastEvents.move)
+
 			else
+
 				@_checkForType()
 				if @gesture then @gesture.move(@, @lastEvents.move)
 
@@ -217,12 +229,14 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			# Lets bubble up through the DOM
 			while target?
+
 				fastId = @dommy.fastId target
 				# Loading current target's gestures, if any
 				gestures = @_getElGestures fastId, target
 
 				# Move on if there are no gestures
 				if !gestures
+
 					break if target is @root
 					target = target.parentNode
 					continue
@@ -255,7 +269,9 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			return gestures if gestures isnt undefined
 
 			gestures = el.getAttribute 'data-gestures' if el.getAttribute
+
 			if !gestures
+
 				@dommy._set(fastId, 'gestures', null)
 				return null
 			
@@ -272,7 +288,9 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# Coffee doesn't support labels and stuff, so I gotta use this hack
 			# for breaking outside the while loop
 			shouldBreak = false
+
 			while @candidates.length != 0
+
 				set = @candidates[0]
 				gestureName = set.gestureName
 				# console.log 'checking ' + @candidates[0].gestureName
@@ -315,6 +333,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			# #console.group('Firing for', @gestureName)
 			unless @elEventListenerInitialized
+
 				@elEventListener = dommy.getListener(@elFastId, @el, @gestureName)
 				@elEventListenerInitialized = true
 
@@ -327,6 +346,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# #console.group('Custom Firing', name, 'for', @gestureName)
 
 			unless @elCustomEventListeners[name] isnt undefined
+			
 				@elCustomEventListeners[name] = dommy.getListener(@elFastId, @el, name)
 
 			@elCustomEventListeners[name](e)

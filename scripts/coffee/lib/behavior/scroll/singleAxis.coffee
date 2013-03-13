@@ -27,13 +27,16 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			@size = parseInt options.size
 
 			@min = 0
+
 			if @size > @space
+
 				@min = - ( @size - @space )
 
 			@max = 0
 
 			# Current delta.
 			if options.delta
+
 				@props.delta = parseInt options.delta
 
 			@props.delta = 0 if not @props.delta
@@ -74,11 +77,13 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			@_maxStretch = parseInt(options.maxStretch) or 1800
 
 			if cache.stretch[@_maxStretch] is undefined
+
 				cache.stretch[@_maxStretch] = {}
 
 			@_stretchCache = cache.stretch[@_maxStretch]
 
 			if cache.unstretch[@_maxStretch] is undefined
+
 				cache.unstretch[@_maxStretch] = {}
 
 			@_unstretchCache = cache.unstretch[@_maxStretch]
@@ -94,6 +99,7 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 				duration: 0
 
 			do =>
+				
 				bezier = new Bezier .11,.02,.1,.98
 
 				@_outsideCurve = (t) ->
@@ -117,9 +123,11 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 		_pullerToSticky: (puller) ->
 
 			if puller > @max
+
 				return @max + @_stretch( puller - @max )
 
 			else if puller < @min
+
 				return @min - @_stretch( - (puller - @min) )
 
 			else
@@ -128,9 +136,11 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 		_stickyToPuller: (sticky) ->
 
 			if sticky > @max
+
 				return @max + @_unstretch( sticky - @max )
 
 			else if sticky < @min
+
 				return @min - @_unstretch( - ( sticky - @min ) )
 
 			else
@@ -382,16 +392,20 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 		_recordForVelocity: (delta) ->
 
 			if @_velocityRecords.length is 0
+
 				@_velocityRecords.push
 					d: delta
 					t: Date.now()
 				return
+
 			else
+
 				@_velocityRecords.push
 					d: delta + @_velocityRecords[@_velocityRecords.length - 1].d
 					t: Date.now()
 
 				if @_velocityRecords.length > 3
+
 					do @_velocityRecords.shift
 
 		_getRecordedVelocity: ->
@@ -421,5 +435,6 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			@_velocityRecords.length = 0
 
 		_setLastVelocity: (v) ->
+
 			@_lastV = v
 			@_lastT = Date.now()
