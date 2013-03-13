@@ -26,6 +26,8 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 	do ->
 
+		return
+
 		div = 2000
 		began = Date.now()
 		d = 0
