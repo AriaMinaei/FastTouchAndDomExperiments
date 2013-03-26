@@ -151,4 +151,26 @@ require ['domReady', 'graphics/fastMatrix', 'native'], (domReady, FastMatrix) ->
 		autoGroup 'rotate3d'	, 'translate3d'
 		# autoGroup 'translate3d'	, 'translate3d'
 
-		
+		body.appendChild document.createElement 'hr'
+		autoGroup 'skew'
+		autoGroup 'perspective'	, 'skew' # Yup
+		autoGroup 'scale3d'		, 'skew'
+		# autoGroup 'skew'		, 'skew'
+		autoGroup 'rotate3d'	, 'skew'
+		autoGroup 'translate3d'	, 'skew'
+
+		body.appendChild document.createElement 'hr'
+		autoGroup 'scale3d'
+		autoGroup 'perspective'	, 'scale3d' # Yup
+		# autoGroup 'scale3d'		, 'scale3d'
+		autoGroup 'skew'		, 'scale3d'
+		autoGroup 'rotate3d'	, 'scale3d'
+		autoGroup 'translate3d'	, 'scale3d'
+
+		body.appendChild document.createElement 'hr'
+		autoGroup 'perspective'
+		# autoGroup 'perspective'	, 'perspective' # Yup
+		autoGroup 'scale3d'		, 'perspective'
+		autoGroup 'skew'		, 'perspective'
+		autoGroup 'rotate3d'	, 'perspective'
+		autoGroup 'translate3d'	, 'perspective'
