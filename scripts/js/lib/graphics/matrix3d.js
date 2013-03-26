@@ -95,7 +95,25 @@ define(function() {
     };
 
     Rotation.prototype.getMatrix = function() {
-      return multiply(Rotation.rotateX(this.x), Rotation.rotateY(this.y));
+      var currentMatrix;
+      currentMatrix = null;
+      if (this.x) {
+        currentMatrix = Rotation.rotateX(this.x);
+      }
+      if (this.y) {
+        if (!currentMatrix) {
+          currentMatrix = Rotation.rotateY(this.y);
+        } else {
+          currentMatrix = multiply(currentMatrix, Rotation.rotateY(this.y));
+        }
+      }
+      if (this.z) {
+        if (!currentMatrix) {
+          currentMatrix = Rotation.rotateZ(this.z);
+        } else {
+          currentMatrix = multiply(currentMatrix, Rotation.rotateZ(this.z));
+        }
+      }
       if (!currentMatrix) {
         return identity();
       } else {
@@ -157,7 +175,15 @@ define(function() {
 
     Matrix3d.prototype.generateMatrix = function() {
       var result;
-      result = this._rotation.getMatrix();
+      result = null;
+      if (this._hasPerspective) {
+        result = this._perspective.getMatrix();
+      } else {
+        result = identity();
+      }
+      if (this._hasRotation) {
+        result = multiply(result, this._rotation.getMatrix());
+      }
       return this.r = result;
     };
 

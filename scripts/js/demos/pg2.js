@@ -10,11 +10,11 @@ require(['domReady', 'graphics/matrix3d', 'graphics/fastMatrix', 'utils/test', '
     return Matrix3d.fromString(getComputedStyle(dummyDiv).webkitTransform);
   };
   return domReady(function() {
-    var fromX, fromY, rad;
+    var matrix, rad;
     rad = 30 * Math.PI / 180;
-    fromX = Matrix3d.toWebkit(Rotation.rotateX(rad));
-    fromY = Matrix3d.toWebkit(Rotation.rotateY(rad));
-    console.log('us  ', Matrix3d.fromWebkit(fromX.multiply(fromY)));
-    return console.log('them', Matrix3d.multiply(Rotation.rotateX(rad), Rotation.rotateY(rad)));
+    matrix = new Matrix3d;
+    matrix.setRotation(1, 1, 1);
+    console.log(matrix.generateMatrix());
+    return console.log(cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 1 + 'rad) rotate3d(0, 0, 1, ' + 1 + 'rad)'));
   });
 });

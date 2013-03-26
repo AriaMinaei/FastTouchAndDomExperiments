@@ -326,33 +326,31 @@ define ->
 
 		getMatrix: ->
 			
-			return multiply Rotation.rotateX(@x), Rotation.rotateY(@y)
-
-			# currentMatrix = null
+			currentMatrix = null
 			
-			# if @x
+			if @x
 
-			# 	currentMatrix = Rotation.rotateX @x
+				currentMatrix = Rotation.rotateX @x
 
-			# if @y
+			if @y
 
-			# 	if not currentMatrix 
+				if not currentMatrix 
 
-			# 		currentMatrix = Rotation.rotateY @y
+					currentMatrix = Rotation.rotateY @y
 
-			# 	else
+				else
 
-			# 		currentMatrix = multiply currentMatrix, Rotation.rotateY(@y)
+					currentMatrix = multiply currentMatrix, Rotation.rotateY(@y)
 
-			# if @z
+			if @z
 
-			# 	if not currentMatrix 
+				if not currentMatrix 
 
-			# 		currentMatrix = Rotation.rotateZ @z
+					currentMatrix = Rotation.rotateZ @z
 
-			# 	else
+				else
 
-			# 		currentMatrix = multiply currentMatrix, Rotation.rotateZ(@z)
+					currentMatrix = multiply currentMatrix, Rotation.rotateZ(@z)
 
 			if not currentMatrix
 
@@ -476,19 +474,17 @@ define ->
 		
 		generateMatrix: ->
 
-			# result = null
+			result = null
 
-			# if @_hasPerspective
+			if @_hasPerspective
 
-			# 	result = @_perspective.getMatrix()
+				result = @_perspective.getMatrix()
 
-			# else
+			else
 
-			# 	result = identity()
+				result = identity()
 
-			# if @_hasRotation then result = multiply result, @_rotation.getMatrix()
-
-			result = @_rotation.getMatrix()
+			if @_hasRotation then result = multiply result, @_rotation.getMatrix()
 
 			@r = result
 		
