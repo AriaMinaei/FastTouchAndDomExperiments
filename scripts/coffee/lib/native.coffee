@@ -1,4 +1,5 @@
 define [], ->
+	
 	# Polluting the global scope, but only with necessary and safe
 	# methods.
 	# s
@@ -74,7 +75,8 @@ define [], ->
 		# From MooTools
 		Array.clone = (array) ->
 
-			i = arraylength
+			i = array.length
+			
 			clone = new Array(i)
 
 			while i--

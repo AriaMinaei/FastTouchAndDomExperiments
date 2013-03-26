@@ -1,4 +1,4 @@
-define ['dommy/dambo/type'], (type)->
+define ['dommy/dambo/type'], (Type)->
 	
 	class Dambo
 
@@ -10,7 +10,7 @@ define ['dommy/dambo/type'], (type)->
 
 			if not @types[name]
 
-				@types[name] = new type(name)
+				@types[name] = new Type(name)
 
 			@types[name]
 

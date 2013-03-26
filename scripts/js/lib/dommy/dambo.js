@@ -1,5 +1,5 @@
 
-define(['dommy/dambo/type'], function(type) {
+define(['dommy/dambo/type'], function(Type) {
   var Dambo;
   Dambo = (function() {
 
@@ -9,7 +9,7 @@ define(['dommy/dambo/type'], function(type) {
 
     Dambo.prototype.forThe = function(name) {
       if (!this.types[name]) {
-        this.types[name] = new type(name);
+        this.types[name] = new Type(name);
       }
       return this.types[name];
     };

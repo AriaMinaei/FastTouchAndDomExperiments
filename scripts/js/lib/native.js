@@ -78,7 +78,7 @@ define([], function() {
     };
     Array.clone = function(array) {
       var clone, i;
-      i = arraylength;
+      i = array.length;
       clone = new Array(i);
       while (i--) {
         clone[i] = cloneOf(array[i]);
