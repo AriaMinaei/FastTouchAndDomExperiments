@@ -4,7 +4,9 @@ path = require 'path'
 
 pathToLib = path.resolve __dirname, '../js/lib'
 
-spec = (dependencies, func) ->
+assert = require 'assert'
+
+global.spec = (dependencies, func) ->
 
 	resolvedDependencies = dependencies.map (addr) ->
 
@@ -12,5 +14,12 @@ spec = (dependencies, func) ->
 
 	amdefine resolvedDependencies, func
 
-global.spec = spec
+
 global.should = require 'should'
+
+global.aeq = (a, b) ->
+
+	a.should.be.an.instanceOf Array
+	b.should.be.an.instanceOf Array
+
+	(JSON.stringify(a) is JSON.stringify(b)).should.eql yes, "Expected arrays to be equal."

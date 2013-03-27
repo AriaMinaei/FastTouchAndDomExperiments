@@ -1,4 +1,4 @@
-var amdefine, path, pathToLib, spec;
+var amdefine, assert, path, pathToLib;
 
 amdefine = require('./amdefine.js')(module);
 
@@ -6,7 +6,9 @@ path = require('path');
 
 pathToLib = path.resolve(__dirname, '../js/lib');
 
-spec = function(dependencies, func) {
+assert = require('assert');
+
+global.spec = function(dependencies, func) {
   var resolvedDependencies;
   resolvedDependencies = dependencies.map(function(addr) {
     return path.resolve(pathToLib, addr);
@@ -14,6 +16,10 @@ spec = function(dependencies, func) {
   return amdefine(resolvedDependencies, func);
 };
 
-global.spec = spec;
-
 global.should = require('should');
+
+global.aeq = function(a, b) {
+  a.should.be.an.instanceOf(Array);
+  b.should.be.an.instanceOf(Array);
+  return (JSON.stringify(a) === JSON.stringify(b)).should.eql(true, "Expected arrays to be equal.");
+};
