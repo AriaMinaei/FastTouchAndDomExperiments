@@ -5,7 +5,7 @@ if (typeof define !== 'function') {
 }
 
 define(function() {
-  var Base, clone16, fromString, fromWebkit, identity, multiply, toWebkit;
+  var Base, clone16, fromString, fromWebkit, identity, matrix2Matrix3d, multiply, toWebkit;
   Base = {};
   clone16 = Base.clone16 = function(r) {
     return [r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
@@ -16,7 +16,10 @@ define(function() {
   identity = Base.identity = function() {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   };
-  fromString = Base.fromString = function(s) {
+  matrix2Matrix3d = Base.matrix2Matrix3d = function(matrix) {
+    return [matrix[0], matrix[1], 0, 0, matrix[2], matrix[3], 0, 0, 0, 0, 1, 0, matrix[4], matrix[5], 0, 1];
+  };
+  fromString = Base.css2Array = function(s) {
     result;
 
     var result, temp;
@@ -34,10 +37,10 @@ define(function() {
     }
     return result;
   };
-  fromWebkit = Base.fromWebkit = function(w) {
+  fromWebkit = Base.webkitToArray = function(w) {
     return [w.m11, w.m12, w.m13, w.m14, w.m21, w.m22, w.m23, w.m24, w.m31, w.m32, w.m33, w.m34, w.m41, w.m42, w.m43, w.m44];
   };
-  toWebkit = Base.toWebkit = function(r) {
+  toWebkit = Base.arrayToWebkit = function(r) {
     var w;
     w = new WebKitCSSMatrix;
     w.m11 = r[0];

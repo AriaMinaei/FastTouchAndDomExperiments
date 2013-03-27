@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['./matrix3d/base', './matrix3d/rotation', './matrix3d/perspective'], (Base, Rotation, Perspective) ->
+define ['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/perspective', './matrix3d/rotation', './matrix3d/translation'], (Base, Skew, Scale, Perspective, Rotation, Translation) ->
 
 	class Matrix3d
 		# If arg is an array, it will set the matrix from that array.
@@ -10,11 +10,20 @@ define ['./matrix3d/base', './matrix3d/rotation', './matrix3d/perspective'], (Ba
 		# If it's a string, it'll call @fromString
 		constructor: (arg) ->
 
-			@_perspective = new Perspective 1500.0
+			@_skew = new Skew 0.0, 0.0
+			@_hasSkew = no
+
+			@_scale = new Scale 1.0, 1.0, 1.0
+			@_hasScale = no
+
+			@_perspective = new Perspective 100000.0
 			@_hasPerspective = no
 
 			@_rotation = new Rotation 0.0, 0.0, 0.0
 			@_hasRotation = no
+
+			@_translation = new Translation 0.0, 0.0, 0.0
+			@_hasTranslation = no
 			
 			if Array.isArray(arg)
 
@@ -38,27 +47,54 @@ define ['./matrix3d/base', './matrix3d/rotation', './matrix3d/perspective'], (Ba
 
 			result = null
 
+			if @_hasTranslation
+
+				if result then result = Base.multiply result, @_translation.getMatrix()
+				else result = @_translation.getMatrix()
+
+			if @_hasSkew
+
+				if result then result = Base.multiply result, @_skew.getMatrix()
+				else result = @_skew.getMatrix()
+
+			if @_hasScale
+
+				if result then result = Base.multiply result, @_scale.getMatrix()
+				else result = @_scale.getMatrix()
+
 			if @_hasPerspective
 
-				result = @_perspective.getMatrix()
+				if result then result = Base.multiply result, @_perspective.getMatrix()
+				else result = @_perspective.getMatrix()
 
-			else
+			if @_hasRotation
 
-				result = Base.identity()
+				if result then result = Base.multiply result, @_rotation.getMatrix()
+				else result = @_rotation.getMatrix()
 
-			if @_hasRotation then result = Base.multiply result, @_rotation.getMatrix()
-
+			unless result then result = Base.identity()
+			
 			@r = result
 		
 		# Parses a string from css
 		fromString: (s) ->
 
-			@r = Base.fromString s
+			@r = Base.cssToArray s
 
 		# From a WebKitCSSMatrix object
 		fromWebkit: (w) ->
 
-			@r = Base.fromWebkit w
+			@r = Base.webkit2Array w
+
+		setSkew: (x, y) ->
+
+			@_skew.set x, y
+			@_hasSkew = yes
+			
+		setScale: (x, y, z) ->
+
+			@_scale.set x, y, z
+			@_hasScale = yes
 
 		setPerspective: (d) ->
 
@@ -69,5 +105,10 @@ define ['./matrix3d/base', './matrix3d/rotation', './matrix3d/perspective'], (Ba
 
 			@_rotation.set x, y, z
 			@_hasRotation = yes
+
+		setTranslation: (x, y, z) ->
+
+			@_translation.set x, y, z
+			@_hasTranslation = yes
 
 	Matrix3d

@@ -1,25 +1,26 @@
+# Preparing for the tests
 amdefine = require('./amdefine.js')(module)
-
 path = require 'path'
 
 pathToLib = path.resolve __dirname, '../js/lib'
 
-assert = require 'assert'
-
+# To load the dependencies in each test
 global.spec = (dependencies, func) ->
 
+	# Resolve paths for dependencies
 	resolvedDependencies = dependencies.map (addr) ->
 
 		path.resolve pathToLib, addr
 
 	amdefine resolvedDependencies, func
 
-
+# The lovely should.js framework
 global.should = require 'should'
 
-global.aeq = (a, b) ->
+# We're gonna need assert
+assert = require 'assert'
 
-	a.should.be.an.instanceOf Array
-	b.should.be.an.instanceOf Array
+# should.js doesn't do deep equal.
+Array::shouldEqual = (b, msg = '') ->
 
-	(JSON.stringify(a) is JSON.stringify(b)).should.eql yes, "Expected arrays to be equal."
+	assert.deepEqual @, b, "The two arrays are not equal" + (' | ' + msg if msg)

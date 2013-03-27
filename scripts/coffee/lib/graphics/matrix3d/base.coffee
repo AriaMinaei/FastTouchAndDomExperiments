@@ -82,8 +82,26 @@ define ->
 			1
 		]
 
+	matrix2Matrix3d = Base.matrix2Matrix3d = (matrix) ->
+
+		[
+			matrix[0],
+			matrix[1],
+			0, 0,
+
+			matrix[2],
+			matrix[3],
+			0, 0,
+
+			0, 0, 1, 0,
+
+			matrix[4],
+			matrix[5],
+			0, 1
+		]
+
 	# Parses a matrix() or matrix3d() css string and returns an array16
-	fromString = Base.fromString = (s) ->
+	fromString = Base.css2Array = (s) ->
 
 		result
 
@@ -127,7 +145,7 @@ define ->
 		result
 
 	# Returns an array16 from a WebKitCSSMatrix Object
-	fromWebkit = Base.fromWebkit = (w) ->
+	fromWebkit = Base.webkitToArray = (w) ->
 
 		[
 			w.m11,
@@ -152,7 +170,7 @@ define ->
 		]
 
 	# Turns an array16 into a WebKitCSSMatrix Object
-	toWebkit = Base.toWebkit = (r) ->
+	toWebkit = Base.arrayToWebkit = (r) ->
 
 		w = new WebKitCSSMatrix
 
