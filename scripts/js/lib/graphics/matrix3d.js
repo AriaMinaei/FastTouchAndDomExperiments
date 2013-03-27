@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(function() {
   var Matrix3d, Perspective, Rotation, clone16, fromString, fromWebkit, identity, multiply, toWebkit;
@@ -94,31 +99,19 @@ define(function() {
       return [f, 2 * sc, 0, 0, -2 * sc, f, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     };
 
+    Rotation.rotate = function(x, y, z) {
+      var cosx, cosy, cosz, sinx, siny, sinz;
+      cosx = Math.cos(x);
+      sinx = Math.sin(x);
+      cosy = Math.cos(y);
+      siny = Math.sin(y);
+      cosz = Math.cos(z);
+      sinz = Math.sin(z);
+      return [cosy * cosz, cosx * sinz + sinx * siny * cosz, sinx * sinz - cosx * siny * cosz, 0, -cosy * sinz, cosx * cosz - sinx * siny * sinz, sinx * cosz + cosx * siny * sinz, 0, siny, -sinx * cosy, cosx * cosy, 0, 0, 0, 0, 1];
+    };
+
     Rotation.prototype.getMatrix = function() {
-      var currentMatrix;
-      currentMatrix = null;
-      if (this.x) {
-        currentMatrix = Rotation.rotateX(this.x);
-      }
-      if (this.y) {
-        if (!currentMatrix) {
-          currentMatrix = Rotation.rotateY(this.y);
-        } else {
-          currentMatrix = multiply(currentMatrix, Rotation.rotateY(this.y));
-        }
-      }
-      if (this.z) {
-        if (!currentMatrix) {
-          currentMatrix = Rotation.rotateZ(this.z);
-        } else {
-          currentMatrix = multiply(currentMatrix, Rotation.rotateZ(this.z));
-        }
-      }
-      if (!currentMatrix) {
-        return identity();
-      } else {
-        return currentMatrix;
-      }
+      return Rotation.rotate(this.x, this.y, this.z);
     };
 
     return Rotation;

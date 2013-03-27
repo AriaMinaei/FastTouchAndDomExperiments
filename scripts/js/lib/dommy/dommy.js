@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['dommy/styles'], function(DommyStyles) {
   var Dommy;

@@ -1,4 +1,6 @@
-define [], ->
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
+define ->
 	
 	# Polluting the global scope, but only with necessary and safe
 	# methods.

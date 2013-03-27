@@ -13,8 +13,8 @@ require(['domReady', 'graphics/matrix3d', 'graphics/fastMatrix', 'utils/test', '
     var matrix, rad;
     rad = 30 * Math.PI / 180;
     matrix = new Matrix3d;
-    matrix.setRotation(1, 1, 1);
+    matrix.setRotation(1, 2, 3);
     console.log(matrix.generateMatrix());
-    return console.log(cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 1 + 'rad) rotate3d(0, 0, 1, ' + 1 + 'rad)'));
+    return console.log(cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 2 + 'rad) rotate3d(0, 0, 1, ' + 3 + 'rad)'));
   });
 });

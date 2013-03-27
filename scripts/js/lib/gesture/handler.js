@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   var GestureDefinitionsList, Handler, copyTouchEvent, copyTouchList;

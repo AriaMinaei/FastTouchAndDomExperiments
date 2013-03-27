@@ -1,6 +1,11 @@
-var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+var define,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-define([], function() {
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
+
+define(function() {
   	Function.prototype.overloadSetter = function(usePlural){
 			var self = this;
 			return function(a, b){

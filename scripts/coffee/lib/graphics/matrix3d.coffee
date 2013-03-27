@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ->
 
 	# This is faster than array.slice(0)
@@ -324,41 +326,91 @@ define ->
 				1
 			]
 
+		@rotate: (x, y, z) ->
+
+			cosx = Math.cos(x)
+			sinx = Math.sin(x)
+
+			cosy = Math.cos(y)
+			siny = Math.sin(y)
+			cosz = Math.cos(z)
+			sinz = Math.sin(z)
+
+			[
+				# 0
+				cosy * cosz,
+				# 1
+				cosx * sinz + sinx * siny * cosz,
+				# 2
+				sinx * sinz - cosx * siny * cosz,
+				# 3
+				0,
+
+				# 4
+				-cosy * sinz,
+				# 5
+				cosx * cosz - sinx * siny * sinz,
+				# 6
+				sinx * cosz + cosx * siny * sinz,
+				# 7
+				0,
+
+				# 8
+				siny,
+				# 9
+				-sinx * cosy,
+				# 10
+				cosx * cosy,
+				# 11
+				0,
+
+				# 12
+				0,
+				# 13
+				0,
+				# 14
+				0,
+				# 15
+				1
+			]
+
 		getMatrix: ->
+
+			return Rotation.rotate @x, @y, @z
 			
-			currentMatrix = null
+			# currentMatrix = null
 			
-			if @x
+			# if @x
 
-				currentMatrix = Rotation.rotateX @x
+			# 	currentMatrix = Rotation.rotateX @x
 
-			if @y
+			# if @y
 
-				if not currentMatrix 
+			# 	if not currentMatrix 
 
-					currentMatrix = Rotation.rotateY @y
+			# 		currentMatrix = Rotation.rotateY @y
 
-				else
+			# 	else
 
-					currentMatrix = multiply currentMatrix, Rotation.rotateY(@y)
+			# 		currentMatrix = multiply currentMatrix, Rotation.rotateY(@y)
 
-			if @z
+			# if @z
 
-				if not currentMatrix 
+			# 	if not currentMatrix 
 
-					currentMatrix = Rotation.rotateZ @z
+			# 		currentMatrix = Rotation.rotateZ @z
 
-				else
+			# 	else
 
-					currentMatrix = multiply currentMatrix, Rotation.rotateZ(@z)
+			# 		currentMatrix = multiply currentMatrix, Rotation.rotateZ(@z)
 
-			if not currentMatrix
+			# if not currentMatrix
 
-				return identity()
+			# 	return identity()
 
-			else
+			# else
 
-				return currentMatrix
+			# 	return currentMatrix
 
 
 	class Perspective

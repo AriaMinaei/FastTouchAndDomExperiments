@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScroller) {
   var Scrolls, emptyFunction;

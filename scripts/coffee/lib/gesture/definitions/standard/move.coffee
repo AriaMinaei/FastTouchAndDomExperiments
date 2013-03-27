@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ['./move/instant', './move/persistent'], (setupInstant, setupPersistent) ->
 
 	return (defineGesture) ->

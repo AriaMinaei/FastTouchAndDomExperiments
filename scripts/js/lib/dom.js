@@ -1,5 +1,10 @@
+var define;
 
-define([], function() {
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
+
+define(function() {
   window.$ = function(id) {
     return document.getElementById(id);
   };

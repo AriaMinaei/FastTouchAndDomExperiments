@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ->
 
 	# This is faster than array.slice(0)

@@ -38,8 +38,8 @@ require ['domReady', 'graphics/matrix3d', 'graphics/fastMatrix', 'utils/test', '
 		# console.log 'them', Matrix3d.multiply Rotation.rotateX(rad), Rotation.rotateY(rad)
 
 		matrix = new Matrix3d
-		matrix.setRotation(1, 1, 1)
+		matrix.setRotation(1, 2, 3)
 
 		console.log matrix.generateMatrix()
 
-		console.log cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 1 + 'rad) rotate3d(0, 0, 1, ' + 1 + 'rad)')
+		console.log cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 2 + 'rad) rotate3d(0, 0, 1, ' + 3 + 'rad)')

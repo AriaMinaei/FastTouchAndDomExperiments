@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitions, Bezier) {
   var SingleAxisScroller, cache;

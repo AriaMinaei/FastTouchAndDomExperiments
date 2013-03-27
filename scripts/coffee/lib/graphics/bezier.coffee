@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ->
 	###
 	Source: http://stackoverflow.com/a/11697909/607997

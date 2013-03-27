@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 	emptyFunction = ->
