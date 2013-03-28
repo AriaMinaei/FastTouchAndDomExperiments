@@ -23,8 +23,10 @@ require ['domReady', 'graphics/matrix3d', 'graphics/matrix3d/base', 'native'], (
 
 		# console.log cssToMatrix('rotate3d(1, 0, 0, ' + 1 + 'rad) rotate3d(0, 1, 0, ' + 2 + 'rad) rotate3d(0, 0, 1, ' + 3 + 'rad)')
 
-		matrix = new Matrix3d
+		# matrix = new Matrix3d
 
-		matrix.setPerspective 400
+		# matrix.setPerspective 400
 
-		console.log matrix.generateMatrix()
+		# console.log matrix.generateMatrix()
+	
+		

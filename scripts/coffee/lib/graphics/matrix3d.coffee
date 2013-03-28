@@ -3,6 +3,7 @@ if typeof define isnt 'function' then define = require('amdefine')(module)
 define ['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/perspective', './matrix3d/rotation', './matrix3d/translation'], (Base, Skew, Scale, Perspective, Rotation, Translation) ->
 
 	class Matrix3d
+		
 		# If arg is an array, it will set the matrix from that array.
 		# It won't check the length of the array to save some time, so, make sure
 		# arg.length is 16
@@ -10,19 +11,19 @@ define ['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/pe
 		# If it's a string, it'll call @fromString
 		constructor: (arg) ->
 
-			@_skew = new Skew 0.0, 0.0
+			@_skew = Skew.create()
 			@_hasSkew = no
 
-			@_scale = new Scale 1.0, 1.0, 1.0
+			@_scale = Scale.create()
 			@_hasScale = no
 
-			@_perspective = new Perspective 100000.0
+			@_perspective = Perspective.create()
 			@_hasPerspective = no
 
-			@_rotation = new Rotation 0.0, 0.0, 0.0
+			@_rotation = Rotation.create()
 			@_hasRotation = no
 
-			@_translation = new Translation 0.0, 0.0, 0.0
+			@_translation = Translation.create()
 			@_hasTranslation = no
 			
 			if Array.isArray(arg)

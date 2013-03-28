@@ -8,9 +8,21 @@ define ->
 
 			@set d
 
+		@create: ->
+
+			new @ 0
+
 		set: (d) ->
 
 			@d = parseFloat d
+
+		add: (d) ->
+
+			@d += parseFloat d
+
+		reset: ->
+
+			@d = 0
 
 		getMatrix: ->
 

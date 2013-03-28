@@ -9,10 +9,7 @@ require(['domReady', 'graphics/matrix3d', 'graphics/matrix3d/base', 'native'], f
     return Base.fromString(getComputedStyle(dummyDiv).webkitTransform);
   };
   return domReady(function() {
-    var matrix, rad;
-    rad = 30 * Math.PI / 180;
-    matrix = new Matrix3d;
-    matrix.setPerspective(400);
-    return console.log(matrix.generateMatrix());
+    var rad;
+    return rad = 30 * Math.PI / 180;
   });
 });

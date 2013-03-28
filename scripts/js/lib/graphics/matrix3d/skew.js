@@ -12,9 +12,23 @@ define(function() {
       this.set(x, y);
     }
 
+    Skew.create = function() {
+      return new this(0, 0);
+    };
+
     Skew.prototype.set = function(x, y) {
       this.x = parseFloat(x);
       return this.y = parseFloat(y);
+    };
+
+    Skew.prototype.add = function(x, y) {
+      this.x += parseFloat(x);
+      return this.y += parseFloat(y);
+    };
+
+    Skew.prototype.reset = function() {
+      this.x = 0;
+      return this.y = 0;
     };
 
     Skew.prototype.getMatrix = function() {

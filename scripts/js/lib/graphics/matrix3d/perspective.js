@@ -12,8 +12,20 @@ define(function() {
       this.set(d);
     }
 
+    Perspective.create = function() {
+      return new this(0);
+    };
+
     Perspective.prototype.set = function(d) {
       return this.d = parseFloat(d);
+    };
+
+    Perspective.prototype.add = function(d) {
+      return this.d += parseFloat(d);
+    };
+
+    Perspective.prototype.reset = function() {
+      return this.d = 0;
     };
 
     Perspective.prototype.getMatrix = function() {

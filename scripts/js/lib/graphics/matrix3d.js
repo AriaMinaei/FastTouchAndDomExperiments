@@ -9,15 +9,15 @@ define(['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/pe
   Matrix3d = (function() {
 
     function Matrix3d(arg) {
-      this._skew = new Skew(0.0, 0.0);
+      this._skew = Skew.create();
       this._hasSkew = false;
-      this._scale = new Scale(1.0, 1.0, 1.0);
+      this._scale = Scale.create();
       this._hasScale = false;
-      this._perspective = new Perspective(100000.0);
+      this._perspective = Perspective.create();
       this._hasPerspective = false;
-      this._rotation = new Rotation(0.0, 0.0, 0.0);
+      this._rotation = Rotation.create();
       this._hasRotation = false;
-      this._translation = new Translation(0.0, 0.0, 0.0);
+      this._translation = Translation.create();
       this._hasTranslation = false;
       if (Array.isArray(arg)) {
         this.r = arg;

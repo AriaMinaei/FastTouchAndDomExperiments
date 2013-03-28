@@ -8,11 +8,27 @@ define ->
 
 			@set x, y, z
 
+		@create: ->
+
+			new @ 0, 0, 0
+
 		set: (x, y, z) ->
 
 			@x = parseFloat x
 			@y = parseFloat y
 			@z = parseFloat z
+
+		add: (x, y, z) ->
+
+			@x += parseFloat x
+			@y += parseFloat y
+			@z += parseFloat z
+
+		reset: ->
+
+			@x = 0
+			@y = 0
+			@z = 0
 
 		getMatrix: ->
 

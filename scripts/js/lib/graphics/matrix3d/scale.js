@@ -12,10 +12,26 @@ define(function() {
       this.set(x, y, z);
     }
 
+    Scale.create = function() {
+      return new this(1, 1, 1);
+    };
+
     Scale.prototype.set = function(x, y, z) {
       this.x = parseFloat(x);
       this.y = parseFloat(y);
       return this.z = parseFloat(z);
+    };
+
+    Scale.prototype.add = function(x, y, z) {
+      this.x += parseFloat(x);
+      this.y += parseFloat(y);
+      return this.z += parseFloat(z);
+    };
+
+    Scale.prototype.reset = function() {
+      this.x = 1;
+      this.y = 1;
+      return this.z = 1;
     };
 
     Scale.prototype.getMatrix = function() {
