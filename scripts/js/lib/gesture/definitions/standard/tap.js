@@ -27,3 +27,7 @@ define(function() {
     });
   };
 });
+
+/*
+//@ sourceMappingURL=tap.map
+*/

@@ -69,3 +69,7 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
   setupStandardDefinitions(define);
   return Definitions;
 });
+
+/*
+//@ sourceMappingURL=definitions.map
+*/

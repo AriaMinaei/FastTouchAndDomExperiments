@@ -46,3 +46,7 @@ define(function() {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=type.map
+*/

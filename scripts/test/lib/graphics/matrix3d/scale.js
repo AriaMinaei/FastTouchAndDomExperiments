@@ -7,3 +7,7 @@ spec(['graphics/matrix3d/scale'], function(Scale) {
   s = new Scale(0.1, 0.2, 0.3);
   return s.getMatrix().shouldEqual(correctMatrix);
 });
+
+/*
+//@ sourceMappingURL=scale.map
+*/

@@ -7,3 +7,7 @@ spec(['graphics/matrix3d/translation'], function(Translation) {
   t = new Translation(10, 11, 12);
   return t.getMatrix().shouldEqual(correctMatrix);
 });
+
+/*
+//@ sourceMappingURL=translation.map
+*/

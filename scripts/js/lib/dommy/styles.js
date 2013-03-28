@@ -27,3 +27,7 @@ define(['dommy/styles/transform'], function(DommyStylesTransform) {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=styles.map
+*/

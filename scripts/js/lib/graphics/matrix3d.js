@@ -116,3 +116,7 @@ define(['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/pe
   })();
   return Matrix3d;
 });
+
+/*
+//@ sourceMappingURL=matrix3d.map
+*/

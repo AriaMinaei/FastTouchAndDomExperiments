@@ -13,3 +13,7 @@ spec(['graphics/matrix3d'], function(Matrix3d) {
   matrix.setScale(1.1, 1.2, 1.3);
   return matrix.generateMatrix().shouldEqual(correctMatrix, "The generated Matrix3d is incorrect.");
 });
+
+/*
+//@ sourceMappingURL=matrix3d.map
+*/

@@ -65,3 +65,7 @@ define(function() {
   };
   return Base;
 });
+
+/*
+//@ sourceMappingURL=base.map
+*/

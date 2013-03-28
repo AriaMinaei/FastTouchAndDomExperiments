@@ -61,3 +61,7 @@ define(['native'], function() {
   });
   return Transitions;
 });
+
+/*
+//@ sourceMappingURL=transitions.map
+*/

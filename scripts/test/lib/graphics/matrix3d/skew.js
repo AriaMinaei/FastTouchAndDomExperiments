@@ -7,3 +7,7 @@ spec(['graphics/matrix3d/skew', 'graphics/matrix3d/base'], function(Skew, Base) 
   s = new Skew(20 * Math.PI / 180, 10 * Math.PI / 180);
   return s.getMatrix().shouldEqual(correctMatrix);
 });
+
+/*
+//@ sourceMappingURL=skew.map
+*/

@@ -239,3 +239,7 @@ define(function() {
   FastMatrix.multiply = multiply;
   return FastMatrix;
 });
+
+/*
+//@ sourceMappingURL=fastMatrix.map
+*/

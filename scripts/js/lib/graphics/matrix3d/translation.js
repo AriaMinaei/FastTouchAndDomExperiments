@@ -42,3 +42,7 @@ define(function() {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=translation.map
+*/

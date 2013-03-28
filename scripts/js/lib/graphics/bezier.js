@@ -86,3 +86,7 @@ define(function() {
   };
   return UnitBezier;
 });
+
+/*
+//@ sourceMappingURL=bezier.map
+*/

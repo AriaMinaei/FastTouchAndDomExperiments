@@ -37,3 +37,7 @@ define(function() {
     });
   };
 });
+
+/*
+//@ sourceMappingURL=persistent.map
+*/

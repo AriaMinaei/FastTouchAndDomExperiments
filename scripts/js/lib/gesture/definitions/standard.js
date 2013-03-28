@@ -12,3 +12,7 @@ define(['./standard/tap', './standard/hold', './standard/move', './standard/tran
     return transform(defineGesture);
   };
 });
+
+/*
+//@ sourceMappingURL=standard.map
+*/

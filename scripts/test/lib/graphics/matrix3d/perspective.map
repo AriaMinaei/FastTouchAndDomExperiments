@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "perspective.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\perspective.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEwC,CAAA,CAAxC,KAAyC,EAAD,oBAAnC;CAEJ,KAAA,UAAA;;CAAA,CAAA,CAAQ,CAAA,OAAA;AAE2C,CAFnD,CAEA,CAAgB,GAAA,OAAhB;CAEC,QAAD,EAAA,EAAA;CANuC"
+}

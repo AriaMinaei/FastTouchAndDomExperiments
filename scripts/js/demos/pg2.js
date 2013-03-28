@@ -38,3 +38,7 @@ require(['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base',
     })();
   });
 });
+
+/*
+//@ sourceMappingURL=pg2.map
+*/

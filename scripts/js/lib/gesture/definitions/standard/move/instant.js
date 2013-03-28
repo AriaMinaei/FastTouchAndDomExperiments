@@ -18,3 +18,7 @@ define(function() {
     });
   };
 });
+
+/*
+//@ sourceMappingURL=instant.map
+*/

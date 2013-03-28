@@ -7,3 +7,7 @@ spec(['graphics/matrix3d/perspective'], function(Perspective) {
   correctMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.0025, 0, 0, 0, 1];
   return p.getMatrix().shouldEqual(correctMatrix);
 });
+
+/*
+//@ sourceMappingURL=perspective.map
+*/

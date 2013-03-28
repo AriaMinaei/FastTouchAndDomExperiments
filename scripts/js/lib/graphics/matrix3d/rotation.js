@@ -50,3 +50,7 @@ define(function() {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=rotation.map
+*/

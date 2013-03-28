@@ -24,3 +24,7 @@ define(['dommy/dambo/type'], function(Type) {
   })();
   return Dambo;
 });
+
+/*
+//@ sourceMappingURL=dambo.map
+*/

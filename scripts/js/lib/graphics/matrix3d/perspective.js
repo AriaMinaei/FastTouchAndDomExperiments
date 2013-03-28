@@ -36,3 +36,7 @@ define(function() {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=perspective.map
+*/

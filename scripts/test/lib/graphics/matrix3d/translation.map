@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "translation.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\translation.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEwC,CAAA,CAAxC,KAAyC,EAAD,oBAAnC;CAEJ,KAAA,UAAA;;CAAA,CAAA,CAAgB,UAAhB;CAAA,CAEA,CAAQ,CAAA,OAAA;CAEP,QAAD,EAAA,EAAA;CANuC"
+}

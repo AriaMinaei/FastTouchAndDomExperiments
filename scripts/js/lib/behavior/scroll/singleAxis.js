@@ -312,3 +312,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
   })();
 });
+
+/*
+//@ sourceMappingURL=singleAxis.map
+*/

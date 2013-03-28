@@ -82,3 +82,7 @@ define(['graphics/fastMatrix'], function(FastMatrix) {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=transform.map
+*/

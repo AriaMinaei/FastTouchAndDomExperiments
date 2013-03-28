@@ -25,3 +25,7 @@ Array.prototype.shouldEqual = function(b, msg) {
   }
   return assert.deepEqual(this, b, "The two arrays are not equal" + (msg ? ' | ' + msg : void 0));
 };
+
+/*
+//@ sourceMappingURL=prepare.map
+*/

@@ -1,1 +1,1 @@
-jitter coffee js test -b
+jitter coffee js test -bm

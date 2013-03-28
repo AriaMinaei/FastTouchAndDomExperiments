@@ -45,3 +45,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
     })();
   });
 });
+
+/*
+//@ sourceMappingURL=gestures.map
+*/

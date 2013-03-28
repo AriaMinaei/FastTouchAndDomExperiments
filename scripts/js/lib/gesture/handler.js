@@ -336,3 +336,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   };
   return Handler;
 });
+
+/*
+//@ sourceMappingURL=handler.map
+*/

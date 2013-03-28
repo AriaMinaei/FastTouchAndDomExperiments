@@ -135,3 +135,7 @@ define(function() {
     return this.preventDefault();
   };
 });
+
+/*
+//@ sourceMappingURL=native.map
+*/

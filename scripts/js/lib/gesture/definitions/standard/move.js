@@ -52,3 +52,7 @@ define(['./move/instant', './move/persistent'], function(setupInstant, setupPers
     return setupPersistent(defineGesture);
   };
 });
+
+/*
+//@ sourceMappingURL=move.map
+*/

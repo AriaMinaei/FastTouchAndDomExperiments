@@ -126,3 +126,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
     return autoGroup('translate3d', 'perspective');
   });
 });
+
+/*
+//@ sourceMappingURL=pg.map
+*/

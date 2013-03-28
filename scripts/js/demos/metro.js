@@ -34,3 +34,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   })();
   return dr(function() {});
 });
+
+/*
+//@ sourceMappingURL=metro.map
+*/
