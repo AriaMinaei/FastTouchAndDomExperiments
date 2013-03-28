@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Scale;
-  return Scale = (function() {
 
+  return Scale = (function() {
     function Scale(x, y, z) {
       this.set(x, y, z);
     }

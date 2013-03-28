@@ -19,6 +19,7 @@ define(function() {
       },
       init: function(h) {
         var last;
+
         last = h.lastEvents[h.lastEventType];
         h.vars.lastTranslateX = 0;
         h.vars.lastTranslateY = 0;
@@ -28,6 +29,7 @@ define(function() {
       },
       _prepareForTransform: function(h, a, b) {
         var elDims, startX, startY;
+
         h.vars.mode = 1;
         h.vars.aId = a.identifier;
         h.vars.bId = b.identifier;
@@ -53,6 +55,7 @@ define(function() {
       },
       move: function(h, e) {
         var a, b, distance, removeFromTranslateX, removeFromTranslateY, scale, translateX, translateY;
+
         if (h.vars.mode === 0) {
           a = e.touches[0];
           translateX = a.pageX - h.vars.startX;
@@ -87,6 +90,7 @@ define(function() {
       },
       end: function(h, e) {
         var a, b;
+
         if (e.touches.length === 0) {
           return;
         }
@@ -124,6 +128,7 @@ define(function() {
       },
       init: function(h) {
         var last;
+
         last = h.lastEvents[h.lastEventType];
         h.vars.lastTranslateX = 0;
         h.vars.lastTranslateY = 0;

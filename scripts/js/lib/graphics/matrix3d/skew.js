@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Skew;
-  return Skew = (function() {
 
+  return Skew = (function() {
     function Skew(x, y) {
       this.set(x, y);
     }

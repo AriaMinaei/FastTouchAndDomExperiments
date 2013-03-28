@@ -1,8 +1,8 @@
-
 require('../../prepare');
 
 spec(['graphics/matrix3d'], function(Matrix3d) {
   var correctMatrix, matrix, rad;
+
   correctMatrix = [0.9651279441628826, 0.5637500000000001, -0.6349999999999999, 0.0012499999999999998, 0.6928203230275508, 1.2, 0, 0, 0.528349364905389, 0.29372694945022204, 1.0998522628062373, -0.0021650635094610966, 10, 11, 12, 1];
   rad = Math.PI / 6;
   matrix = new Matrix3d;

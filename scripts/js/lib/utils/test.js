@@ -6,6 +6,7 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Test;
+
   return Test = {
     eq: function(a, b) {
       if (JSON.stringify(a) === JSON.stringify(b)) {

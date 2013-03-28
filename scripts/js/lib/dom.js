@@ -13,6 +13,7 @@ define(function() {
   };
   return (function() {
     var time, vendor, vendors, _i, _len, _results;
+
     time = 0;
     vendors = ['ms', 'moz', 'webkit'];
     _results = [];

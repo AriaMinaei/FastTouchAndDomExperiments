@@ -6,12 +6,13 @@ if (typeof define !== 'function') {
 
 define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScroller) {
   var Scrolls, emptyFunction;
+
   emptyFunction = function() {};
   return Scrolls = (function() {
-
     function Scrolls(id, dommy) {
       var boundNeedAnimation, childRects, parentRects,
         _this = this;
+
       this.id = id;
       this.dommy = dommy;
       this.parentEl = this.dommy.el(this.id);
@@ -39,6 +40,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       };
       this._scrollerX = new SingleAxisScroller(this.propsX, boundNeedAnimation, (function() {
         var ops;
+
         ops = {
           size: childRects.width,
           space: parentRects.width
@@ -54,6 +56,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       };
       this._scrollerY = new SingleAxisScroller(this.propsY, boundNeedAnimation, (function() {
         var ops;
+
         ops = {
           size: childRects.height,
           space: parentRects.height
@@ -68,7 +71,6 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this._boundAnimFunction = this._animFunction.bind(this);
       this._finishCallback = emptyFunction;
       this._finishCallbackWaiting = false;
-      this._cacheInGPU();
     }
 
     Scrolls.prototype.drag = function(x, y) {
@@ -142,6 +144,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
 
     Scrolls.prototype._transformElement = function() {
       var x, y;
+
       x = 0;
       if (this._enabledAxis.x) {
         x = this.propsX.delta;
@@ -157,8 +160,6 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this._transform.currently().setTranslate(x, y);
       return this._transform.commit(this._childEl);
     };
-
-    Scrolls.prototype._cacheInGPU = function() {};
 
     return Scrolls;
 

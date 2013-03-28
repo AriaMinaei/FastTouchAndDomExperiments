@@ -6,6 +6,7 @@ if (typeof define !== 'function') {
 
 define(['native'], function() {
   var Transitions;
+
   Transitions = {
     linear: function(p) {
       return p;
@@ -13,6 +14,7 @@ define(['native'], function() {
   };
   Transitions.define = function(name, func) {
     var _func, _name;
+
     if (typeof name === 'object') {
       for (_name in name) {
         _func = name[_name];

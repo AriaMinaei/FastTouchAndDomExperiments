@@ -34,9 +34,9 @@ define(function() {
 				}
 				return result;
 			};
-		};
-  Object.append = function(original, add) {
+		};  Object.append = function(original, add) {
     var key;
+
     for (key in add) {
       original[key] = add[key];
     }
@@ -44,6 +44,7 @@ define(function() {
   };
   window.typeOf = function(item) {
     var _ref;
+
     if (item === null) {
       return 'null';
     }
@@ -71,6 +72,7 @@ define(function() {
   };
   (function() {
     var cloneOf;
+
     cloneOf = function(item) {
       switch (typeOf(item)) {
         case 'array':
@@ -83,6 +85,7 @@ define(function() {
     };
     Array.clone = function(array) {
       var clone, i;
+
       i = array.length;
       clone = new Array(i);
       while (i--) {
@@ -98,6 +101,7 @@ define(function() {
     };
     return Object.clone = function(object) {
       var clone, key;
+
       clone = {};
       for (key in object) {
         clone[key] = cloneOf(object[key]);

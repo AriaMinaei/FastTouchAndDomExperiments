@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Perspective;
-  return Perspective = (function() {
 
+  return Perspective = (function() {
     function Perspective(d) {
       this.set(d);
     }

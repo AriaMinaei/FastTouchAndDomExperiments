@@ -8,9 +8,9 @@ if (typeof define !== 'function') {
 
 define(['gesture/definitions/standard', 'native'], function(setupStandardDefinitions) {
   var BasicGesture, Definitions, classes;
+
   classes = {};
   classes['basic'] = BasicGesture = (function() {
-
     function BasicGesture() {}
 
     BasicGesture.prototype.check = function(h) {
@@ -44,9 +44,11 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
     list: {},
     define: function(structure) {
       var ExtendsFrom, NewGesture, key, name;
+
       name = structure.name;
       ExtendsFrom = (function() {
         var extendsFrom;
+
         extendsFrom = structure["extends"] || 'basic';
         return classes[extendsFrom];
       })();

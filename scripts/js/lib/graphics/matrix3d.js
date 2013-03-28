@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/perspective', './matrix3d/rotation', './matrix3d/translation'], function(Base, Skew, Scale, Perspective, Rotation, Translation) {
   var Matrix3d;
-  Matrix3d = (function() {
 
+  Matrix3d = (function() {
     function Matrix3d(arg) {
       this._skew = Skew.create();
       this._hasSkew = false;
@@ -35,6 +35,7 @@ define(['./matrix3d/base', './matrix3d/skew', './matrix3d/scale', './matrix3d/pe
 
     Matrix3d.prototype.generateMatrix = function() {
       var result;
+
       result = null;
       if (this._hasTranslation) {
         if (result) {

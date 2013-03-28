@@ -8,6 +8,7 @@ pathToLib = path.resolve(__dirname, '../js/lib');
 
 global.spec = function(dependencies, func) {
   var resolvedDependencies;
+
   resolvedDependencies = dependencies.map(function(addr) {
     return path.resolve(pathToLib, addr);
   });

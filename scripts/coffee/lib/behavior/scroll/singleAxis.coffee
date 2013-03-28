@@ -228,8 +228,6 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 		# Called by a scroller's animationFrame function
 		animate: () ->
 
-
-
 			# Last x.
 			x0 = @props.delta
 
@@ -358,7 +356,10 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			# We're moving outbounds.
 
 			# Slow down based on v0
-			pullback = - 0.03 * v0
+			pullback = - 0.032 * v0
+			# pullback = - 0.1 * Math.pow(v0, 3)
+
+			# console.log v0
 
 			# Calculate deltaV
 			deltaV = pullback * deltaT

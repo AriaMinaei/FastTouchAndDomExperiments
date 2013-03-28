@@ -16,6 +16,7 @@ define(function() {
   */
 
   var UnitBezier;
+
   UnitBezier = function(p1x, p1y, p2x, p2y) {
     this.cx = 3.0 * p1x;
     this.bx = 3.0 * (p2x - p1x) - this.cx;
@@ -36,6 +37,7 @@ define(function() {
   };
   UnitBezier.prototype.solveCurveX = function(x, epsilon) {
     var d2, i, t0, t1, t2, x2;
+
     t0 = void 0;
     t1 = void 0;
     t2 = void 0;

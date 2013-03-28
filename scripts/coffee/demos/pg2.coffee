@@ -1,4 +1,4 @@
-require ['domReady', 'graphics/matrix3d', 'graphics/matrix3d/base', 'native'], (domReady, Matrix3d, Base) ->
+require ['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base', 'graphics/matrix3d/rotation', 'native'], (domReady, Benchmark, Matrix3d, Rotation, Base) ->
 
 
 	Rotation = Matrix3d.Rotation
@@ -14,7 +14,7 @@ require ['domReady', 'graphics/matrix3d', 'graphics/matrix3d/base', 'native'], (
 	
 	domReady ->
 
-		rad = 30 * Math.PI / 180
+		# rad = 30 * Math.PI / 180
 
 		# matrix = new Matrix3d
 		# matrix.setRotation(1, 2, 3)
@@ -29,4 +29,34 @@ require ['domReady', 'graphics/matrix3d', 'graphics/matrix3d/base', 'native'], (
 
 		# console.log matrix.generateMatrix()
 	
-		
+		# To quickly benchmark different possible approaches on stuff
+		do ->
+			suite = new Benchmark.Suite
+
+			a = [1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1]
+
+			d = 200
+
+			rotation = new Rotation 1, 2, 3
+
+			b = rotation.generateMatrix()
+
+			suite.add 'cached', ->
+
+				Base.multiply a, b
+
+			suite.add 'uncached', ->
+
+				Base.multiply a, rotation.generateMatrix()
+
+			suite.on 'cycle', (e) ->
+				console.log String(e.target)
+
+			suite.on 'complete', ->
+				console.log 'Fastest:',  @filter('fastest').pluck('name')[0]
+
+			window.run = ->
+				suite.run
+					async: true
+
+				return null

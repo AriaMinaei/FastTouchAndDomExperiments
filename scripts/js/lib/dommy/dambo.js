@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(['dommy/dambo/type'], function(Type) {
   var Dambo;
-  Dambo = (function() {
 
+  Dambo = (function() {
     function Dambo() {
       this.types = {};
     }

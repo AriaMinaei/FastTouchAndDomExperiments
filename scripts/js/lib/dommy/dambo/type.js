@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var DommyType;
-  return DommyType = (function() {
 
+  return DommyType = (function() {
     function DommyType(name) {
       this.name = name;
       this.events = {};
@@ -25,6 +25,7 @@ define(function() {
 
     DommyType.prototype.getListeners = function(eventName) {
       var forName;
+
       forName = this.events[eventName];
       if (!forName) {
         return [];

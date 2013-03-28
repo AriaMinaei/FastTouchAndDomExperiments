@@ -2,6 +2,7 @@ var __slice = [].slice;
 
 require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMatrix) {
   var body, cellEl, columnEl, createGroup, getColumn, group, groupEl, groupTitleEl, titleEl;
+
   body = null;
   cellEl = document.createElement('div');
   cellEl.classList.add('cell');
@@ -11,6 +12,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
   columnEl.classList.add('column');
   getColumn = function(title, before, after) {
     var c, column, index, t, value, _i, _len;
+
     column = columnEl.cloneNode();
     t = titleEl.cloneNode();
     t.innerHTML = title;
@@ -33,6 +35,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
   groupTitleEl.classList.add('title');
   createGroup = function() {
     var array, arrays, before, group, pair, t, title, _i, _len;
+
     title = arguments[0], arrays = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     group = groupEl.cloneNode();
     t = groupTitleEl.cloneNode();
@@ -57,6 +60,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
   };
   return domReady(function() {
     var autoGroup, dummy, getMatrix, transforms;
+
     body = document.querySelector('body');
     transforms = {
       rotate3d: 'rotate3d(0.1, 0.2, 0.3, 32deg)',
@@ -69,6 +73,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
     body.appendChild(dummy);
     getMatrix = function() {
       var components, s, style;
+
       components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       s = components.join(' ');
       dummy.style.webkitTransform = s;
@@ -77,6 +82,7 @@ require(['domReady', 'graphics/fastMatrix', 'native'], function(domReady, FastMa
     };
     autoGroup = function() {
       var comp, components, matrix, params, soFar, _i, _len;
+
       components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       params = ['', ['identity', FastMatrix.identity()]];
       soFar = [];

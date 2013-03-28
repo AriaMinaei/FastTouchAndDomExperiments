@@ -91,8 +91,6 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			@_finishCallbackWaiting = false
 
-			do @_cacheInGPU			
-
 		# Called when fingers are on screen, moving around.
 		drag: (x, y) ->
 
@@ -180,11 +178,3 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			@_transform.currently().setTranslate(x, y)
 			@_transform.commit(@_childEl)
-
-		_cacheInGPU: ->
-
-			# TODO:
-			# 
-			# I'm gonna have to find a way to make sure
-			# the texture of the hidden part gets uploaded
-			# to the GPU to prevent the janky movement.

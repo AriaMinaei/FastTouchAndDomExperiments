@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Rotation;
-  return Rotation = (function() {
 
+  return Rotation = (function() {
     function Rotation(x, y, z) {
       this.set(x, y, z);
     }
@@ -36,6 +36,7 @@ define(function() {
 
     Rotation.prototype.getMatrix = function() {
       var cosx, cosy, cosz, sinx, siny, sinz;
+
       cosx = Math.cos(this.x);
       sinx = Math.sin(this.x);
       cosy = Math.cos(this.y);

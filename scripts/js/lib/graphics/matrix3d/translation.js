@@ -6,8 +6,8 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Translation;
-  return Translation = (function() {
 
+  return Translation = (function() {
     function Translation(x, y, z) {
       this.set(x, y, z);
     }

@@ -1,4 +1,3 @@
-
 require('../../prepare');
 
 spec(['graphics/bezier'], function(UnitBezier) {

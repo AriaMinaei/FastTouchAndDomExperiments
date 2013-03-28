@@ -6,6 +6,7 @@ if (typeof define !== 'function') {
 
 define(function() {
   var Base, clone16, fromString, fromWebkit, identity, matrix2Matrix3d, multiply, toWebkit;
+
   Base = {};
   clone16 = Base.clone16 = function(r) {
     return [r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
@@ -21,8 +22,8 @@ define(function() {
   };
   fromString = Base.css2Array = function(s) {
     result;
-
     var result, temp;
+
     if (s.substr(8, 1) === '(') {
       s = s.substr(9, s.length - 10);
       result = s.split(', ').map(parseFloat);
@@ -42,6 +43,7 @@ define(function() {
   };
   toWebkit = Base.arrayToWebkit = function(r) {
     var w;
+
     w = new WebKitCSSMatrix;
     w.m11 = r[0];
     w.m12 = r[1];
