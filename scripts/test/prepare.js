@@ -23,7 +23,10 @@ Array.prototype.shouldEqual = function(b, msg) {
   if (msg == null) {
     msg = '';
   }
-  return assert.deepEqual(this, b, "The two arrays are not equal" + (msg ? ' | ' + msg : void 0));
+  if (msg) {
+    msg = '| ' + msg;
+  }
+  return assert.deepEqual(this, b, "The two arrays are not equal " + msg);
 };
 
 /*

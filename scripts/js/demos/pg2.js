@@ -1,7 +1,6 @@
-require(['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base', 'graphics/matrix3d/rotation', 'native'], function(domReady, Benchmark, Matrix3d, Rotation, Base) {
+require(['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base', 'graphics/matrix3d/rotation', 'native'], function(domReady, Benchmark, Matrix3d, Base, Rotation) {
   var cssToMatrix, dummyDiv;
 
-  Rotation = Matrix3d.Rotation;
   dummyDiv = document.createElement('div');
   document.body.appendChild(dummyDiv);
   cssToMatrix = function(css) {
@@ -10,18 +9,28 @@ require(['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base',
   };
   return domReady(function() {
     return (function() {
-      var a, b, d, rotation, suite;
+      var createArray, createObject, suite;
 
       suite = new Benchmark.Suite;
-      a = [1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1];
-      d = 200;
-      rotation = new Rotation(1, 2, 3);
-      b = rotation.generateMatrix();
-      suite.add('cached', function() {
-        return Base.multiply(a, b);
+      createObject = function() {
+        return {
+          x: 1,
+          y: 2,
+          z: 3
+        };
+      };
+      createArray = function() {
+        return [1, 2, 3];
+      };
+      suite.add('o', function() {
+        var b;
+
+        return b = createObject();
       });
-      suite.add('uncached', function() {
-        return Base.multiply(a, rotation.generateMatrix());
+      suite.add('a', function() {
+        var b;
+
+        return b = createArray();
       });
       suite.on('cycle', function(e) {
         return console.log(String(e.target));

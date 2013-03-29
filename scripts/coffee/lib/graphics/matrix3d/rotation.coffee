@@ -32,6 +32,10 @@ define ->
 
 		getMatrix: ->
 
+			Rotation.getMatrix @x, @y, @z
+
+		@getMatrix: (x, y, z) ->
+
 			cosx = Math.cos @x
 			sinx = Math.sin @x
 

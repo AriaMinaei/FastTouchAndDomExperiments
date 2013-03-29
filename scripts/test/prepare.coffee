@@ -23,4 +23,8 @@ assert = require 'assert'
 # should.js doesn't do deep equal.
 Array::shouldEqual = (b, msg = '') ->
 
-	assert.deepEqual @, b, "The two arrays are not equal" + (' | ' + msg if msg)
+	if msg
+
+		msg = '| ' + msg
+
+	assert.deepEqual @, b, "The two arrays are not equal " + msg

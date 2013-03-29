@@ -5,7 +5,7 @@ if (typeof define !== 'function') {
 }
 
 define(function() {
-  var Base, clone16, fromString, fromWebkit, identity, matrix2Matrix3d, multiply, toWebkit;
+  var Base, clone16, fromString, fromWebkit, identity, matrix2Matrix3d, multiply, multiply2, toWebkit;
 
   Base = {};
   clone16 = Base.clone16 = function(r) {
@@ -13,6 +13,43 @@ define(function() {
   };
   multiply = Base.multiply = function(b, a) {
     return [a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12], a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13], a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14], a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + a[3] * b[15], a[4] * b[0] + a[5] * b[4] + a[6] * b[8] + a[7] * b[12], a[4] * b[1] + a[5] * b[5] + a[6] * b[9] + a[7] * b[13], a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14], a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15], a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12], a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13], a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14], a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15], a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12], a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13], a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14], a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]];
+  };
+  multiply2 = Base.multiply2 = function(b, a) {
+    var a0, a1, a10, a11, a12, a13, a14, a15, a2, a3, a4, a5, a6, a7, a8, a9, b0, b1, b10, b11, b12, b13, b14, b15, b2, b3, b4, b5, b6, b7, b8, b9;
+
+    a0 = a[0];
+    a1 = a[1];
+    a2 = a[2];
+    a3 = a[3];
+    a4 = a[4];
+    a5 = a[5];
+    a6 = a[6];
+    a7 = a[7];
+    a8 = a[8];
+    a9 = a[9];
+    a10 = a[10];
+    a11 = a[11];
+    a12 = a[12];
+    a13 = a[13];
+    a14 = a[14];
+    a15 = a[15];
+    b0 = b[0];
+    b1 = b[1];
+    b2 = b[2];
+    b3 = b[3];
+    b4 = b[4];
+    b5 = b[5];
+    b6 = b[6];
+    b7 = b[7];
+    b8 = b[8];
+    b9 = b[9];
+    b10 = b[10];
+    b11 = b[11];
+    b12 = b[12];
+    b13 = b[13];
+    b14 = b[14];
+    b15 = b[15];
+    return [a0 * b0 + a1 * b4 + a2 * b8 + a3 * b12, a0 * b1 + a1 * b5 + a2 * b9 + a3 * b13, a0 * b2 + a1 * b6 + a2 * b10 + a3 * b14, a0 * b3 + a1 * b7 + a2 * b11 + a3 * b15, a4 * b0 + a5 * b4 + a6 * b8 + a7 * b12, a4 * b1 + a5 * b5 + a6 * b9 + a7 * b13, a4 * b2 + a5 * b6 + a6 * b10 + a7 * b14, a4 * b3 + a5 * b7 + a6 * b11 + a7 * b15, a8 * b0 + a9 * b4 + a10 * b8 + a11 * b12, a8 * b1 + a9 * b5 + a10 * b9 + a11 * b13, a8 * b2 + a9 * b6 + a10 * b10 + a11 * b14, a8 * b3 + a9 * b7 + a10 * b11 + a11 * b15, a12 * b0 + a13 * b4 + a14 * b8 + a15 * b12, a12 * b1 + a13 * b5 + a14 * b9 + a15 * b13, a12 * b2 + a13 * b6 + a14 * b10 + a15 * b14, a12 * b3 + a13 * b7 + a14 * b11 + a15 * b15];
   };
   identity = Base.identity = function() {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

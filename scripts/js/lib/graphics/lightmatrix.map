@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "lightmatrix.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "coffee\\lib\\graphics\\lightmatrix.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,CAGoB,CAGhB,CAAA,CAAA,CAJJ,EAII,CAAC,EAAD,MAJG,CAAA,GAAA,GAAA;CAML,KAAA,KAAA;;SAAM;CAEQ,EAAA,CAAA,iBAAA;;CAAb;;CAJC;CAAA"
+}

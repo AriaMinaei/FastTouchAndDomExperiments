@@ -35,6 +35,10 @@ define(function() {
     };
 
     Rotation.prototype.getMatrix = function() {
+      return Rotation.getMatrix(this.x, this.y, this.z);
+    };
+
+    Rotation.getMatrix = function(x, y, z) {
       var cosx, cosy, cosz, sinx, siny, sinz;
 
       cosx = Math.cos(this.x);
