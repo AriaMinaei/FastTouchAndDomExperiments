@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "rotation.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\lightmatrix\\rotation.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEuC,CAA4D,CAAnG,CAAmG,GAAA,CAAC,kBAA/F,CAAA,GAAA;CAEJ,CAAA,EAAI,CAAJ,CAAW,EAAQ,uHAAnB;CAAA,CAEA,EAAI,CAAJ,CAAW,EAAQ,uHAAnB;CAFA,CAIA,EAAI,CAAJ,CAAW,CAAiD,CAAzC,uFAAyC;CAJ5D,CAMA,EAAI,CAAJ,CAAW,EAAQ,+LAAnB;CANA,CAQA,EAAI,CAAJ,CAAW,EAAQ,+MAAnB;CAEK,CAAwC,EAAzC,CAAJ,CAA6D,CAAlD,CAAQ,CAAnB,8MAAA;CAZkG"
+}
