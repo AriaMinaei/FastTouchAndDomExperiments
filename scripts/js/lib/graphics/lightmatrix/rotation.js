@@ -53,27 +53,49 @@ define(function() {
       };
     },
     applyTo: function(b, x, y, z) {
-      var a;
+      var a, am11, am12, am13, am21, am22, am23, am31, am32, am33, bm11, bm12, bm13, bm14, bm21, bm22, bm23, bm24, bm31, bm32, bm33, bm34, cosx, cosy, cosz, sinx, siny, sinz;
 
-      a = Rotation.matrix(x, y, z);
-      return {
-        m11: a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31,
-        m12: a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32,
-        m13: a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33,
-        m14: a.m11 * b.m14 + a.m12 * b.m24 + a.m13 * b.m34,
-        m21: a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31,
-        m22: a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32,
-        m23: a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33,
-        m24: a.m21 * b.m14 + a.m22 * b.m24 + a.m23 * b.m34,
-        m31: a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31,
-        m32: a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
-        m33: a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33,
-        m34: a.m31 * b.m14 + a.m32 * b.m24 + a.m33 * b.m34,
-        m41: b.m41,
-        m42: b.m42,
-        m43: b.m43,
-        m44: b.m44
-      };
+      cosx = Math.cos(x);
+      sinx = Math.sin(x);
+      cosy = Math.cos(y);
+      siny = Math.sin(y);
+      cosz = Math.cos(z);
+      sinz = Math.sin(z);
+      am11 = cosy * cosz;
+      am12 = cosx * sinz + sinx * siny * cosz;
+      am13 = sinx * sinz - cosx * siny * cosz;
+      am21 = -cosy * sinz;
+      am22 = cosx * cosz - sinx * siny * sinz;
+      am23 = sinx * cosz + cosx * siny * sinz;
+      am31 = siny;
+      am32 = -sinx * cosy;
+      am33 = cosx * cosy;
+      a = Rotation.components(x, y, z);
+      bm11 = b.m11;
+      bm12 = b.m12;
+      bm13 = b.m13;
+      bm14 = b.m14;
+      bm21 = b.m21;
+      bm22 = b.m22;
+      bm23 = b.m23;
+      bm24 = b.m24;
+      bm31 = b.m31;
+      bm32 = b.m32;
+      bm33 = b.m33;
+      bm34 = b.m34;
+      b.m11 = am11 * bm11 + am12 * bm21 + am13 * bm31;
+      b.m12 = am11 * bm12 + am12 * bm22 + am13 * bm32;
+      b.m13 = am11 * bm13 + am12 * bm23 + am13 * bm33;
+      b.m14 = am11 * bm14 + am12 * bm24 + am13 * bm34;
+      b.m21 = am21 * bm11 + am22 * bm21 + am23 * bm31;
+      b.m22 = am21 * bm12 + am22 * bm22 + am23 * bm32;
+      b.m23 = am21 * bm13 + am22 * bm23 + am23 * bm33;
+      b.m24 = am21 * bm14 + am22 * bm24 + am23 * bm34;
+      b.m31 = am31 * bm11 + am32 * bm21 + am33 * bm31;
+      b.m32 = am31 * bm12 + am32 * bm22 + am33 * bm32;
+      b.m33 = am31 * bm13 + am32 * bm23 + am33 * bm33;
+      b.m34 = am31 * bm14 + am32 * bm24 + am33 * bm34;
+      return b;
     }
   };
 });

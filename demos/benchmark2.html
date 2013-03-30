@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<script src="../scripts/require.js"></script>
+	<script>
+	require.config({
+		baseUrl: '../scripts/js/lib'
+	});
+	require(['../scripts/js/demos/benchmark2.js']);
+	</script>
+
+	<!-- <link rel="stylesheet" href="styles/minimal.css"> -->
+
+	<style>
+
+	body {
+		overflow: hidden;
+	}
+
+	.test{
+		position: absolute;
+		width: 100px;height: 100px;
+		background-color: #999;
+
+
+	}
+
+	.baba{
+		position: absolute;
+		z-index:0;
+		-webkit-transform: perspective(800);
+		-webkit-transform-style: preserve-3d;
+	}
+
+	.btnExternal{
+		position: absolute;
+		left: 70px;
+		width: 70px;
+		height: 70px;
+		background-color: #eee;
+		border-color: red;
+		border-radius: 50px;
+		-webkit-transition: 0.5s;
+		-moz-transition: 0.5s;
+		-ms-transition: 0.5s;
+		-o-transition: 0.5s;
+		transition: 0.5s;
+	}
+	.btnExternal:hover{
+		width: 70px;
+		height: 70px;
+		background-color: #DDD;
+		border-color: red;
+		border-radius: 50px;
+		-webkit-transition: 0.5s;
+		-moz-transition: 0.5s;
+		-ms-transition: 0.5s;
+		-o-transition: 0.5s;
+		transition: 0.5s;
+	}
+	.btn{
+		margin: 17px;
+		width: 35px;
+		height: 35px;
+		background-color: #EEE;
+		border-color: #999;
+		border-radius: 5px;
+	}
+	.hold{
+		left: 100px;
+		bottom: 100px; 
+		position: fixed;
+		left: 100px;
+		display: none;
+	}
+	.textbox{
+		width: 50px;
+		height: 20px;
+		margin-bottom: 10px;
+
+	}
+
+	</style>
+
+
+	<title>Benchmark</title>
+
+	<script>
+		// Weinre remote debugger for remote clients
+		(function(){
+			// return;
+			if (document.location.hostname === '192.168.2.2') {
+				var s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
+				document.querySelector('head').appendChild(s);
+			}
+
+		})();
+		
+
+		</script>
+	</head>
+
+	<body>
+
+		<div class="baba">
+
+		</div>
+		<div class="hold">
+			<div id='start' class='btnExternal'><button class='btn'></button></div>
+			<div class="text">
+				<!--<input type="text" id="left" class="textbox" placeholder='X'>-->
+
+			</div>
+			<div class="text">
+
+				<!--<input type="text" id="top" class="textbox" placeholder='Y'>-->
+			</div>
+			<div class="text">
+
+			</div>
+
+		</div>
+
+	</body>
+	</html>

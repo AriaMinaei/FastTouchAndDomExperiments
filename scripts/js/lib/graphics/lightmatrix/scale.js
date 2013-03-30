@@ -39,24 +39,19 @@ define(function() {
       var a;
 
       a = Scale.components(x, y, z);
-      return {
-        m11: a.m11 * b.m11,
-        m12: a.m11 * b.m12,
-        m13: a.m11 * b.m13,
-        m14: a.m11 * b.m14,
-        m21: a.m22 * b.m21,
-        m22: a.m22 * b.m22,
-        m23: a.m22 * b.m23,
-        m24: a.m22 * b.m24,
-        m31: a.m33 * b.m31,
-        m32: a.m33 * b.m32,
-        m33: a.m33 * b.m33,
-        m34: a.m33 * b.m34,
-        m41: b.m41,
-        m42: b.m42,
-        m43: b.m43,
-        m44: b.m44
-      };
+      b.m11 *= a.m11;
+      b.m12 *= a.m11;
+      b.m13 *= a.m11;
+      b.m14 *= a.m11;
+      b.m21 *= a.m22;
+      b.m22 *= a.m22;
+      b.m23 *= a.m22;
+      b.m24 *= a.m22;
+      b.m31 *= a.m33;
+      b.m32 *= a.m33;
+      b.m33 *= a.m33;
+      b.m34 *= a.m33;
+      return b;
     }
   };
 });

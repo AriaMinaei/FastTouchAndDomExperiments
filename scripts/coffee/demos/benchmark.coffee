@@ -1,6 +1,5 @@
 require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, Benchmark, LightMatrix) ->
 
-
 	dummyDiv = document.createElement 'div'
 
 	document.body.appendChild dummyDiv
@@ -20,6 +19,7 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, 
 			
 
 			l = new LightMatrix
+			
 			w = new WebKitCSSMatrix
 
 
@@ -28,7 +28,7 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, 
 				l.rotate 1, 2, 3
 				l.toCss()
 
-			suite.add 'w', ->
+			suite.add 'l', ->
 
 				w = w.rotate 1, 2, 3
 				w.toString()

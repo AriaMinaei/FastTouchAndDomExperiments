@@ -67,50 +67,72 @@ define ->
 
 		applyTo: (b, x, y, z) ->
 
+			cosx = Math.cos x
+			sinx = Math.sin x
+
+			cosy = Math.cos y
+			siny = Math.sin y
+
+			cosz = Math.cos z
+			sinz = Math.sin z
+
+			
+			# 0
+			am11 = cosy * cosz
+			# 1
+			am12 = cosx * sinz + sinx * siny * cosz
+			# 2
+			am13 = sinx * sinz - cosx * siny * cosz
+
+			# 4
+			am21 = -cosy * sinz
+			# 5
+			am22 = cosx * cosz - sinx * siny * sinz
+			# 6
+			am23 = sinx * cosz + cosx * siny * sinz
+
+
+			# 8
+			am31 = siny
+			# 9
+			am32 = -sinx * cosy
+			# 10
+			am33 = cosx * cosy
+			
+
 			# console.log arguments
 
-			a = Rotation.matrix x, y, z
+			a = Rotation.components x, y, z
 
-			{
-				m11: a.m11 * b.m11  +  a.m12 * b.m21  +  a.m13 * b.m31
-				m12: a.m11 * b.m12  +  a.m12 * b.m22  +  a.m13 * b.m32
-				m13: a.m11 * b.m13  +  a.m12 * b.m23  +  a.m13 * b.m33
-				m14: a.m11 * b.m14  +  a.m12 * b.m24  +  a.m13 * b.m34
+			bm11 = b.m11
+			bm12 = b.m12
+			bm13 = b.m13
+			bm14 = b.m14
 
-				m21: a.m21 * b.m11  +  a.m22 * b.m21  +  a.m23 * b.m31
-				m22: a.m21 * b.m12  +  a.m22 * b.m22  +  a.m23 * b.m32
-				m23: a.m21 * b.m13  +  a.m22 * b.m23  +  a.m23 * b.m33
-				m24: a.m21 * b.m14  +  a.m22 * b.m24  +  a.m23 * b.m34
+			bm21 = b.m21
+			bm22 = b.m22
+			bm23 = b.m23
+			bm24 = b.m24
 
-				m31: a.m31 * b.m11  +  a.m32 * b.m21  +  a.m33 * b.m31
-				m32: a.m31 * b.m12  +  a.m32 * b.m22  +  a.m33 * b.m32
-				m33: a.m31 * b.m13  +  a.m32 * b.m23  +  a.m33 * b.m33
-				m34: a.m31 * b.m14  +  a.m32 * b.m24  +  a.m33 * b.m34
-				
-				m41: b.m41
-				m42: b.m42
-				m43: b.m43
-				m44: b.m44
-			}
+			bm31 = b.m31
+			bm32 = b.m32
+			bm33 = b.m33
+			bm34 = b.m34
 
-			# {
-			# 	m11: a.m11 * b.m11  +  a.m12 * b.m21  +  a.m13 * b.m31  +  a.m14 * b.m41
-			# 	m12: a.m11 * b.m12  +  a.m12 * b.m22  +  a.m13 * b.m32  +  a.m14 * b.m42
-			# 	m13: a.m11 * b.m13  +  a.m12 * b.m23  +  a.m13 * b.m33  +  a.m14 * b.m43
-			# 	m14: a.m11 * b.m14  +  a.m12 * b.m24  +  a.m13 * b.m34  +  a.m14 * b.m44
+			
+			b.m11 = am11 * bm11  +  am12 * bm21  +  am13 * bm31
+			b.m12 = am11 * bm12  +  am12 * bm22  +  am13 * bm32
+			b.m13 = am11 * bm13  +  am12 * bm23  +  am13 * bm33
+			b.m14 = am11 * bm14  +  am12 * bm24  +  am13 * bm34
 
-			# 	m21: a.m21 * b.m11  +  a.m22 * b.m21  +  a.m23 * b.m31  +  a.m24 * b.m41
-			# 	m22: a.m21 * b.m12  +  a.m22 * b.m22  +  a.m23 * b.m32  +  a.m24 * b.m42
-			# 	m23: a.m21 * b.m13  +  a.m22 * b.m23  +  a.m23 * b.m33  +  a.m24 * b.m43
-			# 	m24: a.m21 * b.m14  +  a.m22 * b.m24  +  a.m23 * b.m34  +  a.m24 * b.m44
+			b.m21 = am21 * bm11  +  am22 * bm21  +  am23 * bm31
+			b.m22 = am21 * bm12  +  am22 * bm22  +  am23 * bm32
+			b.m23 = am21 * bm13  +  am22 * bm23  +  am23 * bm33
+			b.m24 = am21 * bm14  +  am22 * bm24  +  am23 * bm34
 
-			# 	m31: a.m31 * b.m11  +  a.m32 * b.m21  +  a.m33 * b.m31  +  a.m34 * b.m41
-			# 	m32: a.m31 * b.m12  +  a.m32 * b.m22  +  a.m33 * b.m32  +  a.m34 * b.m42
-			# 	m33: a.m31 * b.m13  +  a.m32 * b.m23  +  a.m33 * b.m33  +  a.m34 * b.m43
-			# 	m34: a.m31 * b.m14  +  a.m32 * b.m24  +  a.m33 * b.m34  +  a.m34 * b.m44
-				
-			# 	m41: a.m41 * b.m11  +  a.m42 * b.m21  +  a.m43 * b.m31  +  a.m44 * b.m41
-			# 	m42: a.m41 * b.m12  +  a.m42 * b.m22  +  a.m43 * b.m32  +  a.m44 * b.m42
-			# 	m43: a.m41 * b.m13  +  a.m42 * b.m23  +  a.m43 * b.m33  +  a.m44 * b.m43
-			# 	m44: a.m41 * b.m14  +  a.m42 * b.m24  +  a.m43 * b.m34  +  a.m44 * b.m44
-			# }
+			b.m31 = am31 * bm11  +  am32 * bm21  +  am33 * bm31
+			b.m32 = am31 * bm12  +  am32 * bm22  +  am33 * bm32
+			b.m33 = am31 * bm13  +  am32 * bm23  +  am33 * bm33
+			b.m34 = am31 * bm14  +  am32 * bm24  +  am33 * bm34
+
+			b

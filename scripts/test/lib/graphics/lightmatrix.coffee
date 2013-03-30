@@ -4,12 +4,19 @@ spec ['graphics/lightmatrix'], (LightMatrix) ->
 
 	l = new LightMatrix
 
+	# l.scale 1.1, 1.2, 1.3
+
+	# console.log l.toMatrix()
+
+	# l.toCss().should.equal "matrix3d(1.1, 0, 0, 0, 0, 1.2, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 1)"
+
 	l.setRotationX 2
 
 	l.rotateX 1
 
 	# Original
 	l.rotation().x.should.equal 3
+
 
 	# Temp
 	l.temporarily().rotateX 2
@@ -34,6 +41,8 @@ spec ['graphics/lightmatrix'], (LightMatrix) ->
 
 	l.toCss().should.equal "matrix3d(1, 0, 0, 0, 0, 0.28366218546322625, -0.9589242746631385, 0, 0, 0.9589242746631385, 0.28366218546322625, 0, 0, 0, 0, 1)"
 
+	
+
 	l.translate 10, 11, 12
 
 	l.toCss().should.equal "matrix3d(1, 0, 0, 0, 0, 0.28366218546322625, -0.9589242746631385, 0, 0, 0.9589242746631385, 0.28366218546322625, 0, 10, 14.627375336053149, -7.144220795735808, 1)"
@@ -55,3 +64,4 @@ spec ['graphics/lightmatrix'], (LightMatrix) ->
 	l.rotateZ 7
 
 	# l.toCss().should.equal "matrix3d(0.7253001596549816, 0.7795743235475163, -1.706462346989038, 0.0014256159958137328, -0.6288814916308306, 0.07951841061412396, -2.319210466166395, 0.001937519186438091, -0.2800964082037461, 1.8400993713489595, 0.815049275769825, -0.0006809100048202381, -2.0258517098342743, 32.75163820841804, -29.795347288482823, 1.0273979509511135)"
+

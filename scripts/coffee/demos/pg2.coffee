@@ -1,44 +1,83 @@
-require ['domReady', 'benchmark', 'graphics/matrix3d', 'graphics/matrix3d/base', 'graphics/matrix3d/rotation', 'native'], (domReady, Benchmark, Matrix3d, Base, Rotation) ->
+require ['domReady', 'native'], (domReady) ->
 
+	class Transformer
 
-	dummyDiv = document.createElement 'div'
-	document.body.appendChild dummyDiv
+		constructor: ->
 
-	cssToMatrix = (css) ->
+			@tX = @tY = @tZ = @rX = @rY = @rZ = 0
 
-		dummyDiv.style.webkitTransform = css
+			@p = 100000
 
-		Base.fromString getComputedStyle(dummyDiv).webkitTransform
+		translate: (@tX, @tY, @tZ) ->
+
+		rotate: (@rX, @rY, @rZ) ->
+
+		perspective: (@p) ->
+
+		applyTo: (el) ->
+
+			tr = "translate3d(#{@tX}px, #{@tY}px, #{@tZ}px) " +
+
+				"perspective(#{@p}) " +
+
+				"rotate3d(1, 0, 0, #{@rX}rad) " +
+
+				"rotate3d(0, 1, 0, #{@rY}rad) " +
+
+				"rotate3d(0, 0, 1, #{@rZ}rad) "
+
+			console.log tr
+
+			el.style.webkitTransform = tr
+
+	dad = document.querySelector '.dad'
+
+	_dot = document.createElement 'div'
+
+	_dot.classList.add 'dot'
+
+	getDot = ->
+
+		_dot.cloneNode()
 	
 	domReady ->
 
-		# To quickly benchmark different possible approaches on stuff
-		do ->
-			suite = new Benchmark.Suite
+		num = 16
 
-			createObject = -> {x: 1, y: 2, z: 3}
-			createArray = ->  [1, 2, 3]
+		r = 316
 
-			suite.add 'o', ->
+		c = 
+			x: 1500
+			y: 500
+			z: 0
 
-				b = createObject()
+		for i in [0...num]
 
-			suite.add 'a', ->
+			for j in [0...num]
 
-				b = createArray()
+				teta = i / num * Math.PI * 2
 
-			suite.on 'cycle', (e) ->
+				phi  = j / num * Math.PI * 2
 
-				console.log String(e.target)
+				x = (r * Math.cos(teta) * Math.cos(phi)).toFixed(2)
+				z = (r * Math.sin(teta) * Math.cos(phi)).toFixed(2)
+				y = (r * Math.sin(phi)).toFixed(2)
 
-			suite.on 'complete', ->
+				# x = (r * Math.cos teta).toFixed(2)
+				# z = (r * Math.sin teta).toFixed(2)
 
-				console.log 'Fastest:',  @filter('fastest').pluck('name')[0]
+				# y = (x * Math.sin phi).toFixed(2)
+				# x = (x * Math.cos phi).toFixed(2)
 
-			window.run = ->
+				dot = getDot()
 
-				suite.run
+				t = new Transformer
 
-					async: true
+				t.translate(x + c.x, y + c.y, z + c.z)
+				
+				t.rotate(0,  Math.atan( x / z ), Math.atan(x / y))
 
-				return null
+				t.applyTo dot
+
+				dad.appendChild dot
+

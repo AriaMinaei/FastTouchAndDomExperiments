@@ -60,24 +60,13 @@ define ->
 
 				p = - 1 / d
 
-			{
-				m11: b.m11
-				m12: b.m12
-				m13: b.m13
-				m14: b.m14
+			
 
-				m21: b.m21
-				m22: b.m22
-				m23: b.m23
-				m24: b.m24
-
-				m31: b.m31  +  p * b.m41
-				m32: b.m32  +  p * b.m42
-				m33: b.m33  +  p * b.m43
-				m34: b.m34  +  p * b.m44
+			b.m31 = b.m31  +  p * b.m41
+			b.m32 = b.m32  +  p * b.m42
+			b.m33 = b.m33  +  p * b.m43
+			b.m34 = b.m34  +  p * b.m44
 				
-				m41: b.m41
-				m42: b.m42
-				m43: b.m43
-				m44: b.m44
-			}
+
+
+			b

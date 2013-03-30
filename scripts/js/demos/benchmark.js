@@ -18,7 +18,7 @@ require(['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], function(do
         l.rotate(1, 2, 3);
         return l.toCss();
       });
-      suite.add('w', function() {
+      suite.add('l', function() {
         w = w.rotate(1, 2, 3);
         return w.toString();
       });
