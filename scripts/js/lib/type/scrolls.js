@@ -31,7 +31,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       }
       parentRects = this.parentEl.getBoundingClientRect();
       this._childEl = this.parentEl.children[0];
-      this._childElId = this.dommy.fastId(this._childEl);
+      this._childElId = this.dommy.id(this._childEl);
       this._transform = this.dommy.styles.getTransform(this._childElId, this._childEl);
       childRects = this._childEl.getBoundingClientRect();
       boundNeedAnimation = this._scrollerAskedForAnimation.bind(this);
@@ -153,12 +153,12 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       if (this._enabledAxis.y) {
         y = this.propsY.delta;
       }
-      return this._setTranslate(x, y);
+      return this._setElMovement(x, y);
     };
 
-    Scrolls.prototype._setTranslate = function(x, y) {
-      this._transform.currently().setTranslate(x, y);
-      return this._transform.commit(this._childEl);
+    Scrolls.prototype._setElMovement = function(x, y) {
+      this._transform.move(x, y, 0);
+      return this._transform.applyTo(this._childEl);
     };
 
     return Scrolls;

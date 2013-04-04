@@ -4,12 +4,14 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['dommy/styles'], function(DommyStyles) {
+define(['dommy/styles'], function(Styles) {
   var Dommy;
 
   return Dommy = (function() {
     function Dommy(ns, dambo) {
-      this.ns = ns != null ? ns : 'global-';
+      if (ns == null) {
+        ns = 'global-';
+      }
       if (typeof dambo === 'object') {
         this.dambo = dambo;
       } else if (typeof window.dambo === 'object') {
@@ -17,161 +19,110 @@ define(['dommy/styles'], function(DommyStyles) {
       } else {
         throw Error("Can't have a dommy without a dambo.");
       }
-      this.ns = String(this.ns);
-      this.nsLen = this.ns.length;
-      this.last = 0;
-      this.store = [{}];
-      this.styles = new DommyStyles(this);
-      this.lazies = {};
+      this.namespace = String(ns);
+      this._nsLen = this.namespace.length;
+      this._lastId = 0;
+      this._storage = [{}];
+      this.styles = new Styles(this);
+      this._lazies = {};
     }
 
-    Dommy.prototype.uid = function(el) {
-      var id;
+    Dommy.prototype.id = function(el, set) {
+      var _id;
 
-      id = String(el.id);
-      if (id.length === 0) {
-        id = el.id = this.ns + String(++this.last);
-        this.store[this.last] = {
-          _el: el
-        };
+      if (set == null) {
+        set = true;
       }
-      return id;
-    };
-
-    Dommy.prototype.fastId = function(el) {
-      var id;
-
-      id = String(el.id);
-      if (id.length === 0) {
-        el.id = this.ns + String(++this.last);
-        this.store[this.last] = {
-          _el: el
-        };
-        return this.last;
+      _id = String(el.id);
+      if (_id.length === 0) {
+        if (set) {
+          el.id = this.namespace + String(++this._lastId);
+          this._storage[this._lastId] = {
+            _el: el
+          };
+          return this._lastId;
+        } else {
+          return false;
+        }
       } else {
-        return Number(id.substr(this.nsLen));
+        return Number(_id.substr(this._nsLen));
       }
     };
 
-    Dommy.prototype.nUid = function(el) {
-      var id;
-
-      id = String(el.id);
-      if (id.length === 0) {
-        return null;
-      }
-      return id;
+    Dommy.prototype.el = function(id) {
+      return this.get(id, '_el');
     };
 
-    Dommy.prototype.nFastId = function(el) {
-      var id;
-
-      id = String(el.id);
-      if (id.length === 0) {
-        return null;
+    Dommy.prototype.set = function(id, key, val) {
+      if (!this._storage[id]) {
+        this._storage[id] = {};
       }
-      return Number(id.substr(this.nsLen));
-    };
-
-    Dommy.prototype.el = function(fastId) {
-      return this._get(fastId, '_el');
-    };
-
-    Dommy.prototype._set = function(fastId, key, val) {
-      if (!this.store[fastId]) {
-        this.store[fastId] = {};
-      }
-      this.store[fastId][key] = val;
+      this._storage[id][key] = val;
       return this;
     };
 
-    Dommy.prototype.set = function(el, key, val) {
-      return this._set(this.fastId(el), key, val);
-    };
-
-    Dommy.prototype._get = function(fastId, key) {
-      if (this.store[fastId]) {
-        return this.store[fastId][key];
+    Dommy.prototype.get = function(id, key) {
+      if (this._storage[id]) {
+        return this._storage[id][key];
       }
     };
 
-    Dommy.prototype.get = function(el, key) {
-      return this._get(this.fastId(el), key);
-    };
-
-    Dommy.prototype._remove = function(fastId, key) {
-      if (this.store[fastId]) {
-        delete this.store[fastId][key];
+    Dommy.prototype.remove = function(id, key) {
+      if (this._storage[id]) {
+        delete this._storage[id][key];
       }
       return this;
     };
 
-    Dommy.prototype.remove = function(el, key) {
-      return this._remove(this.fastId(el), key);
-    };
-
-    Dommy.prototype._clean = function(fastId) {
-      if (this.store[fastId]) {
-        return this.store[fastId] = {};
+    Dommy.prototype.clean = function(id) {
+      if (this._storage[id]) {
+        return this._storage[id] = {};
       }
     };
 
-    Dommy.prototype.clean = function(el) {
-      return this.store[this.fastId(el)] = {};
-    };
-
-    Dommy.prototype.eliminate = function(el) {
-      var sub, subQuickId, subs, _i, _len;
+    Dommy.prototype.eliminate = function(id, el) {
+      var sub, subId, subs, _i, _len;
 
       this.clean(el);
       subs = el.getElementsByTagName('*');
       for (_i = 0, _len = subs.length; _i < _len; _i++) {
         sub = subs[_i];
-        subQuickId = this.nFastId(sub);
-        if (subQuickId) {
-          this._clean(subQuickId);
+        subId = this.id(sub, false);
+        if (subId) {
+          this.clean(subId);
         }
       }
       if (el.parentNode) {
         el.parentNode.removeChild(el);
       }
+      this.clean(id);
       return this;
     };
 
-    Dommy.prototype._getTypes = function(fastId, el) {
+    Dommy.prototype.typesOf = function(id, el) {
       var types;
 
-      types = this._get(fastId, '_types');
+      types = this.get(id, '_types');
       if (types !== void 0) {
         return types;
       }
       types = el.getAttribute('data-types');
       if (!types) {
-        this._set(fastId, '_types', null);
+        this.set(id, '_types', null);
         return null;
       }
       types = types.split(',').map(function(s) {
         return s.trim();
       });
-      this._set(fastId, '_types', types);
+      this.set(id, '_types', types);
       return types;
     };
 
-    Dommy.prototype.getTypes = function(el) {
-      var fastId;
-
-      fastId = this.nFastId(el);
-      if (!fastId) {
-        return null;
-      }
-      return this._getTypes(fastId, el);
-    };
-
-    Dommy.prototype.getListener = function(fastId, el, eventName) {
+    Dommy.prototype.getListener = function(id, el, eventName) {
       var listeners, types,
         _this = this;
 
-      types = this._getTypes(fastId, el);
+      types = this.typesOf(id, el);
       if (!types) {
         return function() {};
       }
@@ -198,35 +149,34 @@ define(['dommy/styles'], function(DommyStyles) {
         _results = [];
         for (_i = 0, _len = listeners.length; _i < _len; _i++) {
           listener = listeners[_i];
-          _results.push(listener(e, fastId, el, _this));
+          _results.push(listener(e, id, el, _this));
         }
         return _results;
       };
     };
 
-    Dommy.prototype.fireEvent = function(fastId, el, eventName, e) {
+    Dommy.prototype.fireEvent = function(id, el, eventName, e) {
       var type;
 
-      type = this._getTypes(fastId);
-      this.getListener(fastId, el, eventName, e);
+      type = this.typesOf(id);
+      this.getListener(id, el, eventName, e);
       return this;
     };
 
-    Dommy.prototype.getLazy = function(fastId, name) {
-      var el, forId, lazy, ret,
+    Dommy.prototype.getLazy = function(id, el, name) {
+      var forId, lazy, ret,
         _this = this;
 
-      if (!this.lazies[fastId]) {
-        this.lazies[fastId] = forId = {};
+      if (!this._lazies[id]) {
+        this._lazies[id] = forId = {};
       } else {
-        forId = this.lazies[fastId];
+        forId = this._lazies[id];
       }
       if (forId[name] === void 0) {
-        el = this.el(fastId);
         lazy = (function() {
           var l, type, _i, _len, _ref;
 
-          _ref = _this._getTypes(fastId, el);
+          _ref = _this.typesOf(id, el);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             type = _ref[_i];
             l = _this.dambo.forThe(type).getLazy(name);
@@ -239,7 +189,7 @@ define(['dommy/styles'], function(DommyStyles) {
           forId[name] = null;
           return null;
         }
-        forId[name] = ret = lazy(fastId, this);
+        forId[name] = ret = lazy(id, this);
         return ret;
       }
       return forId[name];

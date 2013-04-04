@@ -4,6 +4,8 @@ define [
 	'./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale', './lightmatrix/perspective',  './lightmatrix/rotation'
 	], (Base, Translation, Scale, Perspective, Rotation) ->
 
+	console.log Base
+
 	emptyStack = ->
 
 		{

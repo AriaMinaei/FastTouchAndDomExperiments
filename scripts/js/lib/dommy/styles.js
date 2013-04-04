@@ -4,26 +4,26 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['dommy/styles/transform'], function(DommyStylesTransform) {
-  var DommyStyles;
+define(['dommy/styles/transform'], function(Transform) {
+  var Styles;
 
-  return DommyStyles = (function() {
-    function DommyStyles(dommy) {
+  return Styles = (function() {
+    function Styles(dommy) {
       this.dommy = dommy;
     }
 
-    DommyStyles.prototype.getTransform = function(fastId, el) {
-      var t;
+    Styles.prototype.getTransform = function(id, el) {
+      var transform;
 
-      t = this.dommy._get(fastId, 'style.transform');
-      if (!t) {
-        t = new DommyStylesTransform(this.dommy, fastId, el);
-        this.dommy._set(fastId, 'style.transform', t);
+      transform = this.dommy.get(id, '_style.transform');
+      if (!transform) {
+        transform = new Transform(this.dommy, id, el);
+        this.dommy.get(id, '_style.transform', transform);
       }
-      return t;
+      return transform;
     };
 
-    return DommyStyles;
+    return Styles;
 
   })();
 });

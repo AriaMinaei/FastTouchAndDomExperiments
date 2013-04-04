@@ -232,9 +232,9 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 			# Lets bubble up through the DOM
 			while target?
 
-				fastId = @dommy.fastId target
+				id = @dommy.id target
 				# Loading current target's gestures, if any
-				gestures = @_getElGestures fastId, target
+				gestures = @_getElGestures id, target
 
 				# Move on if there are no gestures
 				if !gestures
@@ -252,7 +252,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 						@candidates.push
 							gestureName: gestureName
 							target: target
-							fastId: fastId
+							id: id
 
 					tempGests[gestureName] = true
 				
@@ -265,20 +265,20 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 		# Gets El's gestures either from its data-gestures attribute, or a chached
 		# one from dommy.
-		_getElGestures: (fastId, el) ->
+		_getElGestures: (id, el) ->
 
-			gestures = @dommy._get(fastId, 'gestures')
+			gestures = @dommy.get(id, 'gestures')
 			return gestures if gestures isnt undefined
 
 			gestures = el.getAttribute 'data-gestures' if el.getAttribute
 
 			if !gestures
 
-				@dommy._set(fastId, 'gestures', null)
+				@dommy.set(id, 'gestures', null)
 				return null
 			
 			gestures = gestures.split(',').map (g) -> g.trim()
-			@dommy._set(fastId, 'gestures', gestures)
+			@dommy.set(id, 'gestures', gestures)
 
 			gestures
 		
@@ -315,7 +315,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 					# Does apply
 					when 1
 						@el = set.target
-						@elFastId = set.fastId
+						@elFastId = set.id
 						@gestureName = gestureName
 						@gesture = g
 						@gesture.init(@)

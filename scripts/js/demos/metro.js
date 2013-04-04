@@ -1,15 +1,15 @@
-require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark', 'graphics/transitions'], function(dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark, Transitions) {
+define(['gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], function(GestureHandler, Dambo, Dommy, Scrolls, Benchmark) {
   window.dambo = new Dambo;
   window.dommy = new Dommy;
   GestureHandler.create();
   dambo.forThe('scrolls').addLazy('scrolls', function(id, dommy) {
     return new Scrolls(id, dommy);
   }).addEvent('move-persistent', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY);
+    return dommy.getLazy(id, el, 'scrolls').drag(e.translateX, e.translateY);
   }).addEvent('move-persistent:release', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scrolls').release(e.finish);
+    return dommy.getLazy(id, el, 'scrolls').release(e.finish);
   }).addEvent('move-persistent:finish', function(e, id, el, dommy) {
-    return dommy.getLazy(id, 'scrolls').finish();
+    return dommy.getLazy(id, el, 'scrolls').finish();
   });
   (function() {
     var animate, began, d, div, els;
@@ -23,7 +23,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
       var el, transform, _i, _len;
 
       d = ((Date.now() - began) % div) / div;
-      transform = 'rotate3d(0.1, 1, 0, ' + (d * Math.PI * 2) + 'rad)';
+      transform = 'rotate3d(0, 1, 0, ' + (d * Math.PI * 2) + 'rad)';
       for (_i = 0, _len = els.length; _i < _len; _i++) {
         el = els[_i];
         el.style.webkitTransform = transform;
@@ -32,7 +32,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
     };
     return animate();
   })();
-  return dr(function() {});
+  return (function() {})();
 });
 
 /*

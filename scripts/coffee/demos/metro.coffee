@@ -1,8 +1,10 @@
-require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark', 'graphics/transitions'], (dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark, Transitions) ->
+define ['gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark'], (GestureHandler, Dambo, Dommy, Scrolls, Benchmark) ->
+	
 	window.dambo = new Dambo
+	
 	window.dommy = new Dommy
+	
 	GestureHandler.create()
-
 
 	dambo.forThe('scrolls')
 	
@@ -12,18 +14,15 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 		.addEvent 'move-persistent', (e, id, el, dommy) ->
 
-			dommy.getLazy(id, 'scrolls').drag(e.translateX, e.translateY)
+			dommy.getLazy(id, el, 'scrolls').drag(e.translateX, e.translateY)
 
 		.addEvent 'move-persistent:release', (e, id, el, dommy) ->
 
-			# dommy.getLazy(id, 'scrolls').release(e.finish)
-			dommy.getLazy(id, 'scrolls').release(e.finish)
+			dommy.getLazy(id, el, 'scrolls').release(e.finish)
 
 		.addEvent 'move-persistent:finish', (e, id, el, dommy) ->
 
-			# dommy.getLazy(id, 'scrolls').release(e.finish)
-			# dommy.getLazy(id, 'scrolls').release(e.finish)
-			dommy.getLazy(id, 'scrolls').finish()
+			dommy.getLazy(id, el, 'scrolls').finish()
 
 	do ->
 
@@ -39,7 +38,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 			d = ((Date.now() - began) % div) / div
 
-			transform = 'rotate3d(0.1, 1, 0, ' + (d * Math.PI * 2) + 'rad)'
+			transform = 'rotate3d(0, 1, 0, ' + (d * Math.PI * 2) + 'rad)'
 
 			for el in els
 
@@ -52,7 +51,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 
 
-	dr ->
+	do ->
 
 
 		# To quickly benchmark different possible approaches on stuff

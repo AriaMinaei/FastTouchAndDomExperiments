@@ -18,22 +18,27 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 			transforms = {}
 
 			dambo.forThe('babs')
+
 				.addEvent 'transform-instant', (e, id, el) ->
+
 					# If we don't have a reference to this element's transform handler
 					unless transforms[id]
+
 						# Get one
 						transforms[id] = t = dommy.styles.getTransform(id, el)
+
 					else t = transforms[id]
 
 					# Get a temporary transformation matrix handler,
 					t.temporarily()
+
 						# then scale,
-						._scale(e.scale, e.scale, 1)
+						.scale(e.scale, e.scale, 1)
 						# and translate it.
-						.translate(e.translateX, e.translateY, 0)
+						.move(e.translateX, e.translateY, 0)
 
 					# Apply the temp transformation matrix to the element
-					t.apply(el)
+					t.applyTo el
 
 				.addEvent 'transform-instant:finish', (e, id, el) ->
 					# Commit the temp transformation as the current transformation.
@@ -58,10 +63,10 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 						# ._setRotationY(e.translateX * Math.PI / 720)
 						# 
 						# Translate it
-						.translate(e.translateX, e.translateY, 0)
+						.move(e.translateX, e.translateY, 0)
 
 					# Apply the temp transformation matrix to the element
-					t.apply(el)
+					t.applyTo el
 
 				# When move-instant-end fires
 				.addEvent 'move-instant:finish', (e, id, el) ->

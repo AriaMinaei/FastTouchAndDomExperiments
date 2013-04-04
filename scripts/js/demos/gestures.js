@@ -19,8 +19,8 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         } else {
           t = transforms[id];
         }
-        t.temporarily()._scale(e.scale, e.scale, 1).translate(e.translateX, e.translateY, 0);
-        return t.apply(el);
+        t.temporarily().scale(e.scale, e.scale, 1).move(e.translateX, e.translateY, 0);
+        return t.applyTo(el);
       }).addEvent('transform-instant:finish', function(e, id, el) {
         transforms[id].commit(el);
         if (transforms[id]) {
@@ -34,8 +34,8 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         } else {
           t = transforms[id];
         }
-        t.temporarily().translate(e.translateX, e.translateY, 0);
-        return t.apply(el);
+        t.temporarily().move(e.translateX, e.translateY, 0);
+        return t.applyTo(el);
       }).addEvent('move-instant:finish', function(e, id, el) {
         transforms[id].commit(el);
         if (transforms[id]) {

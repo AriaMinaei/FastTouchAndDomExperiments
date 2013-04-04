@@ -10,7 +10,9 @@
 	<script src="../scripts/require.js"></script>
 	<script>
 		require.config({
-			baseUrl: '../scripts/js/lib'
+			baseUrl: '../scripts/js/lib',
+			waitSeconds: 0,
+			enforceDefine: true
 		});
 		require(['../scripts/js/demos/metro.js']);
 	</script>

@@ -35,7 +35,7 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			# Child element's references
 			@_childEl = @parentEl.children[0]
-			@_childElId = @dommy.fastId @_childEl
+			@_childElId = @dommy.id @_childEl
 			@_transform = @dommy.styles.getTransform @_childElId, @_childEl
 
 			# Child element's dimensions
@@ -171,10 +171,9 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			if @_enabledAxis.y
 				y = @propsY.delta
 
-			@_setTranslate x, y
+			@_setElMovement x, y
 
-		# transform.setTranslate the child element to x/y
-		_setTranslate: (x, y) ->
+		_setElMovement: (x, y) ->
 
-			@_transform.currently().setTranslate(x, y)
-			@_transform.commit(@_childEl)
+			@_transform.move x, y, 0
+			@_transform.applyTo @_childEl

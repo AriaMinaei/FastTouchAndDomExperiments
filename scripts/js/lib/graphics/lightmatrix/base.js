@@ -1,9 +1,3 @@
-var define;
-
-if (typeof define !== 'function') {
-  define = require('amdefine')(module);
-}
-
 define(function() {
   var Base;
 

@@ -6,5 +6,5 @@
     "test\\lib\\graphics\\lightmatrix\\perspective.coffee"
   ],
   "names": [],
-  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAE0C,CAA8B,CAAxE,KAAyE,EAAD,gBAAnE,OAAA;CAIC,EAAM,CAAP,CAAJ,CAAW,GAAX,EAAsB,mDAAtB;CAJuE"
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAE0C,CAA8B,CAAxE,KAAyE,EAAD,gBAAnE,OAAA;CAEC,EAAM,CAAP,CAAJ,CAAW,GAAX,EAAsB,mDAAtB;CAFuE"
 }

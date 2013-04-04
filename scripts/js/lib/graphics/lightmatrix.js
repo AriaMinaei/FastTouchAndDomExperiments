@@ -7,6 +7,7 @@ if (typeof define !== 'function') {
 define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale', './lightmatrix/perspective', './lightmatrix/rotation'], function(Base, Translation, Scale, Perspective, Rotation) {
   var LightMatrix, cloneStack, emptyStack;
 
+  console.log(Base);
   emptyStack = function() {
     return {
       mX: 0,

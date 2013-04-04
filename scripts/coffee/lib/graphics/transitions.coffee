@@ -3,6 +3,7 @@ if typeof define isnt 'function' then define = require('amdefine')(module)
 define ['native'], ->
 
 	Transitions =
+		
 		linear: (p) -> p
 
 	Transitions.define = (name, func) ->

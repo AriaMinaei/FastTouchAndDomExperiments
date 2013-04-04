@@ -190,14 +190,14 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     };
 
     Handler.prototype._findCandidates = function() {
-      var fastId, gestureName, gestures, target, tempGests, _i, _len, _results;
+      var gestureName, gestures, id, target, tempGests, _i, _len, _results;
 
       target = this.firstEvent.target;
       tempGests = {};
       _results = [];
       while (target != null) {
-        fastId = this.dommy.fastId(target);
-        gestures = this._getElGestures(fastId, target);
+        id = this.dommy.id(target);
+        gestures = this._getElGestures(id, target);
         if (!gestures) {
           if (target === this.root) {
             break;
@@ -211,7 +211,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
             this.candidates.push({
               gestureName: gestureName,
               target: target,
-              fastId: fastId
+              id: id
             });
           }
           tempGests[gestureName] = true;
@@ -224,10 +224,10 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
       return _results;
     };
 
-    Handler.prototype._getElGestures = function(fastId, el) {
+    Handler.prototype._getElGestures = function(id, el) {
       var gestures;
 
-      gestures = this.dommy._get(fastId, 'gestures');
+      gestures = this.dommy.get(id, 'gestures');
       if (gestures !== void 0) {
         return gestures;
       }
@@ -235,13 +235,13 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
         gestures = el.getAttribute('data-gestures');
       }
       if (!gestures) {
-        this.dommy._set(fastId, 'gestures', null);
+        this.dommy.set(id, 'gestures', null);
         return null;
       }
       gestures = gestures.split(',').map(function(g) {
         return g.trim();
       });
-      this.dommy._set(fastId, 'gestures', gestures);
+      this.dommy.set(id, 'gestures', gestures);
       return gestures;
     };
 
@@ -265,7 +265,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
             break;
           case 1:
             this.el = set.target;
-            this.elFastId = set.fastId;
+            this.elFastId = set.id;
             this.gestureName = gestureName;
             this.gesture = g;
             this.gesture.init(this);
