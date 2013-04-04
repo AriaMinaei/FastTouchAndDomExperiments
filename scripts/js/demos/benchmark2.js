@@ -83,7 +83,7 @@ require(['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], function(do
     _test = document.createElement('div');
     _test.classList.add('test');
     baba = document.querySelector('.baba');
-    for (i = _i = 0; _i <= 20; i = ++_i) {
+    for (i = _i = 0; _i <= 100; i = ++_i) {
       baba.appendChild(_test.cloneNode());
     }
     start = document.getElementById('start');

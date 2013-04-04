@@ -50,7 +50,7 @@ define [
 
 	class LightMatrix
 
-		constructor: () ->
+		constructor: ->
 
 			@_main = emptyStack()
 			@_temp = emptyStack()
@@ -70,6 +70,8 @@ define [
 				translation: no
 
 
+			@_identityMatrix = Base.identity()
+			
 			@_tempMode = no
 
 		temporarily: ->
@@ -104,12 +106,12 @@ define [
 
 		toMatrix: ->
 
-			soFar = Base.identity()
+			soFar = @_getIdentityMatrix()
 
 			# movement
 			if @_has.m
 
-				soFar = Translation.matrix @_current.mX, @_current.mY, @_current.mZ
+				soFar = Translation.setTo soFar, @_current.mX, @_current.mY, @_current.mZ
 
 			# scale
 			if @_has.s
@@ -132,6 +134,12 @@ define [
 				Translation.applyTo soFar, @_current.tX, @_current.tY, @_current.tZ
 
 			soFar
+
+		_getIdentityMatrix: ->
+
+			Base.setIdentity @_identityMatrix
+
+			@_identityMatrix
 
 		###
 		Movement

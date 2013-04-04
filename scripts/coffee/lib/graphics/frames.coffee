@@ -11,3 +11,4 @@ define ->
 			streamId
 
 		cancelDroppableStream: (streamId) ->
+			

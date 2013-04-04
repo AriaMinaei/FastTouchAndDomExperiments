@@ -53,6 +53,7 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
         scale: false,
         translation: false
       };
+      this._identityMatrix = Base.identity();
       this._tempMode = false;
     }
 
@@ -83,9 +84,9 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     LightMatrix.prototype.toMatrix = function() {
       var soFar;
 
-      soFar = Base.identity();
+      soFar = this._getIdentityMatrix();
       if (this._has.m) {
-        soFar = Translation.matrix(this._current.mX, this._current.mY, this._current.mZ);
+        soFar = Translation.setTo(soFar, this._current.mX, this._current.mY, this._current.mZ);
       }
       if (this._has.s) {
         Scale.applyTo(soFar, this._current.sX, this._current.sY, this._current.sZ);
@@ -100,6 +101,11 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
         Translation.applyTo(soFar, this._current.tX, this._current.tY, this._current.tZ);
       }
       return soFar;
+    };
+
+    LightMatrix.prototype._getIdentityMatrix = function() {
+      Base.setIdentity(this._identityMatrix);
+      return this._identityMatrix;
     };
 
     /*

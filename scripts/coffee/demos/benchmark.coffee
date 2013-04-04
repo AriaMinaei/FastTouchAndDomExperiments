@@ -1,4 +1,4 @@
-require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, Benchmark, LightMatrix) ->
+require ['domReady', 'benchmark', 'graphics/lightmatrix', 'graphics/lightmatrix/base','graphics/matrix3d/base', 'native'], (domReady, Benchmark, LightMatrix, Base, OldBase) ->
 
 	dummyDiv = document.createElement 'div'
 
@@ -16,22 +16,20 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, 
 		do ->
 			suite = new Benchmark.Suite
 
-			
+			w = Base.identity()
 
-			l = new LightMatrix
-			
-			w = new WebKitCSSMatrix
+			i = [
+				1,0,0,0,
+				0,1,0,0,
+				0,0,1,0,
+				0,0,0,1
+			]
 
+			suite.add '1', ->
 
-			suite.add 'l', ->
+				Base.toCss w
 
-				l.rotate 1, 2, 3
-				l.toCss()
-
-			suite.add 'l', ->
-
-				w = w.rotate 1, 2, 3
-				w.toString()
+			suite.add '2', ->
 
 			suite.on 'cycle', (e) ->
 
@@ -39,7 +37,7 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, 
 
 			suite.on 'complete', ->
 
-				console.log l, w
+				console.log Base.toCss(w) is 'matrix3d(' + i.join(', ') + ')'
 
 				console.log 'Fastest:',  @filter('fastest').pluck('name')[0]
 

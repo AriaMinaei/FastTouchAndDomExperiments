@@ -396,6 +396,11 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 
 			if @_velocityRecords.length is 0
 
+				# Note:
+				# 
+				# We're creating a whole new object, on every touchmove!
+				# This is not optimal. We're gonna have to do some pulling
+				# for that.
 				@_velocityRecords.push
 					d: delta
 					t: Date.now()

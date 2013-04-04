@@ -110,7 +110,7 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'native'], (domReady, 
 
 		baba = document.querySelector '.baba'
 
-		for i in [0..20]
+		for i in [0..100]
 
 			baba.appendChild _test.cloneNode()
 

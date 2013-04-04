@@ -36,13 +36,19 @@ define ->
 				m44: 1
 			}
 
+		setTo: (b, x, y, z) ->
+
+			b.m41 = x
+			b.m42 = y
+			b.m43 = z
+			
+			b
+
 		applyTo: (b, x, y, z) ->
 
-			a = Translation.components x, y, z
-
-			b.m41 = a.m41 * b.m11  +  a.m42 * b.m21  +  a.m43 * b.m31  +  b.m41
-			b.m42 = a.m41 * b.m12  +  a.m42 * b.m22  +  a.m43 * b.m32  +  b.m42
-			b.m43 = a.m41 * b.m13  +  a.m42 * b.m23  +  a.m43 * b.m33  +  b.m43
-			b.m44 = a.m41 * b.m14  +  a.m42 * b.m24  +  a.m43 * b.m34  +  b.m44
+			b.m41 = x * b.m11  +  y * b.m21  +  z * b.m31  +  b.m41
+			b.m42 = x * b.m12  +  y * b.m22  +  z * b.m32  +  b.m42
+			b.m43 = x * b.m13  +  y * b.m23  +  z * b.m33  +  b.m43
+			b.m44 = x * b.m14  +  y * b.m24  +  z * b.m34  +  b.m44
 			
 			b

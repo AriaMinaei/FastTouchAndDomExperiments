@@ -53,7 +53,7 @@ define(function() {
       };
     },
     applyTo: function(b, x, y, z) {
-      var a, am11, am12, am13, am21, am22, am23, am31, am32, am33, bm11, bm12, bm13, bm14, bm21, bm22, bm23, bm24, bm31, bm32, bm33, bm34, cosx, cosy, cosz, sinx, siny, sinz;
+      var am11, am12, am13, am21, am22, am23, am31, am32, am33, bm11, bm12, bm13, bm14, bm21, bm22, bm23, bm24, bm31, bm32, bm33, bm34, cosx, cosy, cosz, sinx, siny, sinz;
 
       cosx = Math.cos(x);
       sinx = Math.sin(x);
@@ -70,7 +70,6 @@ define(function() {
       am31 = siny;
       am32 = -sinx * cosy;
       am33 = cosx * cosy;
-      a = Rotation.components(x, y, z);
       bm11 = b.m11;
       bm12 = b.m12;
       bm13 = b.m13;

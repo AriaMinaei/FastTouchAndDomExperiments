@@ -102,7 +102,7 @@ define ->
 
 			# console.log arguments
 
-			a = Rotation.components x, y, z
+			# a = Rotation.components x, y, z
 
 			bm11 = b.m11
 			bm12 = b.m12

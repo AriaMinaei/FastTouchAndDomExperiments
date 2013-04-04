@@ -294,13 +294,12 @@ define ->
 
 			# I tried w3c's method with some optimizations and Famo.us` method.
 			# They perform the same. Famo.us` is cleaner, so I'm going with that.
-			cosx = Math.cos(x)
-			sinx = Math.sin(x)
-
-			cosy = Math.cos(y)
-			siny = Math.sin(y)
-			cosz = Math.cos(z)
-			sinz = Math.sin(z)
+			cosx = Math.cos x
+			sinx = Math.sin x
+			cosy = Math.cos y
+			siny = Math.sin y
+			cosz = Math.cos z
+			sinz = Math.sin z
 
 			@r[0] = cosy * cosz
 			@r[1] = cosx * sinz + sinx * siny * cosz
