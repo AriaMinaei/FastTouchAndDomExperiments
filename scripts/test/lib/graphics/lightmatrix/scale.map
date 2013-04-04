@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "scale.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\lightmatrix\\scale.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEoC,CAA8B,CAAlE,CAAkE,IAAC,kBAA9D,CAAA;CAEC,CAAwB,CAAlB,CAAP,CAAJ,CAAW,GAAX,uDAAA;CAFiE"
+}

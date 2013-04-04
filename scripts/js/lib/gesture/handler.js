@@ -1,9 +1,16 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   var GestureDefinitionsList, Handler, copyTouchEvent, copyTouchList;
+
   GestureDefinitionsList = GestureDefinitions.list;
   copyTouchList = function(list) {
     var copied, touch, _i, _len;
+
     copied = Array(0);
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       touch = list[_i];
@@ -19,6 +26,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   };
   copyTouchEvent = function(e) {
     var copied;
+
     copied = {
       target: e.target,
       timeStamp: e.timeStamp,
@@ -30,7 +38,6 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     return copied;
   };
   Handler = (function() {
-
     function Handler(root, dommy) {
       this.root = root != null ? root : window.document;
       this.dommy = dommy != null ? dommy : window.dommy;
@@ -42,6 +49,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._reset = function() {
       var _this = this;
+
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
@@ -88,6 +96,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._touchstartListener = function(e) {
       var first;
+
       e.stop();
       this.lastEvents.start = copyTouchEvent(e);
       this.lastEventType = 'start';
@@ -139,6 +148,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._touchmoveListener = function(e) {
       var first, touch;
+
       e.stop();
       this.lastEvents.move = copyTouchEvent(e);
       this.lastEventType = 'move';
@@ -161,6 +171,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._shouldFinish = function() {
       var shouldFinish;
+
       shouldFinish = true;
       if (this.gesture) {
         shouldFinish = this.gesture.shouldFinish(this);
@@ -180,6 +191,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._findCandidates = function() {
       var fastId, gestureName, gestures, target, tempGests, _i, _len, _results;
+
       target = this.firstEvent.target;
       tempGests = {};
       _results = [];
@@ -214,6 +226,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._getElGestures = function(fastId, el) {
       var gestures;
+
       gestures = this.dommy._get(fastId, 'gestures');
       if (gestures !== void 0) {
         return gestures;
@@ -234,6 +247,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype._checkForType = function() {
       var g, gestureName, set, shouldBreak;
+
       if (this.candidates.length === 0) {
         return;
       }
@@ -285,6 +299,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
 
     Handler.prototype.isTouchInsideElement = function(touch) {
       var target;
+
       target = touch.target;
       while (target != null) {
         if (target === this.el) {
@@ -308,6 +323,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   })();
   Handler.create = function(root, dommy) {
     var h;
+
     if (root == null) {
       root = window.document;
     }
@@ -320,3 +336,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
   };
   return Handler;
 });
+
+/*
+//@ sourceMappingURL=handler.map
+*/

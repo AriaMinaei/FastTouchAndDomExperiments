@@ -1,8 +1,13 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['graphics/fastMatrix'], function(FastMatrix) {
   var DommyStylesTransform;
-  return DommyStylesTransform = (function() {
 
+  return DommyStylesTransform = (function() {
     function DommyStylesTransform(dommy, fastId, el) {
       this.dommy = dommy;
       this.fastId = fastId;
@@ -77,3 +82,7 @@ define(['graphics/fastMatrix'], function(FastMatrix) {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=transform.map
+*/

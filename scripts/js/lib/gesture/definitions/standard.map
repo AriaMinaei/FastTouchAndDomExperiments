@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "standard.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "coffee\\lib\\gesture\\definitions\\standard.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,CAE0B,CAA+D,CAAA,EAAzF,GAA0F,OAAnF,CAAA,KAAA;CAEN,EAAO,MAAA,IAAA;CAGN,EAAA,CAAA,SAAA;CAAA,GACA,SAAA;CADA,GAEA,SAAA;CACU,QAAV,EAAA,EAAA;CAND,EAAO;CAFiF"
+}

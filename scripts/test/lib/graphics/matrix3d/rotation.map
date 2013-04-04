@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "rotation.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\rotation.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEqC,CAAA,CAArC,IAAqC,CAAC,mBAAjC"
+}

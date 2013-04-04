@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ->
 
 	# This is faster than array.slice(0)
@@ -6,14 +8,11 @@ define ->
 	# 11%  slower in FF Aurora 20
 	clone16 = (r) ->
 
-
 		[r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]]
-
 
 	# Returns the multiplication of two vectors
 	# Got it from famo.us (Tell me if I shouldn't have, since there was no license statement)
 	multiply = (a, b) ->
-
 
 		[
 			# 0
@@ -51,7 +50,7 @@ define ->
 		]
 
 	# An identity matrix
-	identity = () ->
+	identity = ->
 
 		[
 			1, 0, 0, 0,
@@ -295,13 +294,12 @@ define ->
 
 			# I tried w3c's method with some optimizations and Famo.us` method.
 			# They perform the same. Famo.us` is cleaner, so I'm going with that.
-			cosx = Math.cos(x)
-			sinx = Math.sin(x)
-
-			cosy = Math.cos(y)
-			siny = Math.sin(y)
-			cosz = Math.cos(z)
-			sinz = Math.sin(z)
+			cosx = Math.cos x
+			sinx = Math.sin x
+			cosy = Math.cos y
+			siny = Math.sin y
+			cosz = Math.cos z
+			sinz = Math.sin z
 
 			@r[0] = cosy * cosz
 			@r[1] = cosx * sinz + sinx * siny * cosz
@@ -358,5 +356,11 @@ define ->
 			@r[5] = cosz
 
 			@
+
+	FastMatrix.identity = identity
+
+	FastMatrix.clone16 	= clone16
+
+	FastMatrix.multiply = multiply
 
 	FastMatrix

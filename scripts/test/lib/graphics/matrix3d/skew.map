@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "skew.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\skew.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEgC,CAA2B,CAA3D,KAA4D,eAAvD;CAEJ,KAAA,UAAA;;CAAA,CAAA,CAAgB,CAAI,SAApB,EAAgB,IAAqB;CAArC,CAEA,CAAQ,CAAA;CAEP,QAAD,EAAA,EAAA;CAN0D"
+}

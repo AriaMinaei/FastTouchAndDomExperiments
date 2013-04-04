@@ -1,6 +1,6 @@
-
 require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(dr, GestureHandler, Dambo, Dommy) {
   var g;
+
   window.dambo = new Dambo;
   window.dommy = new Dommy;
   g = new GestureHandler(document);
@@ -9,9 +9,11 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
   return dr(function() {
     return (function() {
       var transforms;
+
       transforms = {};
       return dambo.forThe('babs').addEvent('transform-instant', function(e, id, el) {
         var t;
+
         if (!transforms[id]) {
           transforms[id] = t = dommy.styles.getTransform(id, el);
         } else {
@@ -26,6 +28,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         }
       }).addEvent('move-instant', function(e, id, el) {
         var t;
+
         if (!transforms[id]) {
           transforms[id] = t = dommy.styles.getTransform(id, el);
         } else {
@@ -42,3 +45,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
     })();
   });
 });
+
+/*
+//@ sourceMappingURL=gestures.map
+*/

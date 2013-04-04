@@ -1,8 +1,13 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['dommy/styles'], function(DommyStyles) {
   var Dommy;
-  return Dommy = (function() {
 
+  return Dommy = (function() {
     function Dommy(ns, dambo) {
       this.ns = ns != null ? ns : 'global-';
       if (typeof dambo === 'object') {
@@ -22,6 +27,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.uid = function(el) {
       var id;
+
       id = String(el.id);
       if (id.length === 0) {
         id = el.id = this.ns + String(++this.last);
@@ -34,6 +40,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.fastId = function(el) {
       var id;
+
       id = String(el.id);
       if (id.length === 0) {
         el.id = this.ns + String(++this.last);
@@ -48,6 +55,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.nUid = function(el) {
       var id;
+
       id = String(el.id);
       if (id.length === 0) {
         return null;
@@ -57,6 +65,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.nFastId = function(el) {
       var id;
+
       id = String(el.id);
       if (id.length === 0) {
         return null;
@@ -113,6 +122,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.eliminate = function(el) {
       var sub, subQuickId, subs, _i, _len;
+
       this.clean(el);
       subs = el.getElementsByTagName('*');
       for (_i = 0, _len = subs.length; _i < _len; _i++) {
@@ -130,6 +140,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype._getTypes = function(fastId, el) {
       var types;
+
       types = this._get(fastId, '_types');
       if (types !== void 0) {
         return types;
@@ -148,6 +159,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.getTypes = function(el) {
       var fastId;
+
       fastId = this.nFastId(el);
       if (!fastId) {
         return null;
@@ -158,12 +170,14 @@ define(['dommy/styles'], function(DommyStyles) {
     Dommy.prototype.getListener = function(fastId, el, eventName) {
       var listeners, types,
         _this = this;
+
       types = this._getTypes(fastId, el);
       if (!types) {
         return function() {};
       }
       listeners = (function() {
         var listener, type, _i, _j, _len, _len1, _ref;
+
         listeners = [];
         for (_i = 0, _len = types.length; _i < _len; _i++) {
           type = types[_i];
@@ -180,6 +194,7 @@ define(['dommy/styles'], function(DommyStyles) {
       }
       return function(e) {
         var listener, _i, _len, _results;
+
         _results = [];
         for (_i = 0, _len = listeners.length; _i < _len; _i++) {
           listener = listeners[_i];
@@ -191,6 +206,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
     Dommy.prototype.fireEvent = function(fastId, el, eventName, e) {
       var type;
+
       type = this._getTypes(fastId);
       this.getListener(fastId, el, eventName, e);
       return this;
@@ -199,6 +215,7 @@ define(['dommy/styles'], function(DommyStyles) {
     Dommy.prototype.getLazy = function(fastId, name) {
       var el, forId, lazy, ret,
         _this = this;
+
       if (!this.lazies[fastId]) {
         this.lazies[fastId] = forId = {};
       } else {
@@ -208,6 +225,7 @@ define(['dommy/styles'], function(DommyStyles) {
         el = this.el(fastId);
         lazy = (function() {
           var l, type, _i, _len, _ref;
+
           _ref = _this._getTypes(fastId, el);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             type = _ref[_i];
@@ -231,3 +249,7 @@ define(['dommy/styles'], function(DommyStyles) {
 
   })();
 });
+
+/*
+//@ sourceMappingURL=dommy.map
+*/

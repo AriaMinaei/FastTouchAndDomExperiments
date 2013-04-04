@@ -1,6 +1,11 @@
-var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+var define,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-define([], function() {
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
+
+define(function() {
   	Function.prototype.overloadSetter = function(usePlural){
 			var self = this;
 			return function(a, b){
@@ -29,9 +34,9 @@ define([], function() {
 				}
 				return result;
 			};
-		};
-  Object.append = function(original, add) {
+		};  Object.append = function(original, add) {
     var key;
+
     for (key in add) {
       original[key] = add[key];
     }
@@ -39,6 +44,7 @@ define([], function() {
   };
   window.typeOf = function(item) {
     var _ref;
+
     if (item === null) {
       return 'null';
     }
@@ -66,6 +72,7 @@ define([], function() {
   };
   (function() {
     var cloneOf;
+
     cloneOf = function(item) {
       switch (typeOf(item)) {
         case 'array':
@@ -78,7 +85,8 @@ define([], function() {
     };
     Array.clone = function(array) {
       var clone, i;
-      i = arraylength;
+
+      i = array.length;
       clone = new Array(i);
       while (i--) {
         clone[i] = cloneOf(array[i]);
@@ -93,6 +101,7 @@ define([], function() {
     };
     return Object.clone = function(object) {
       var clone, key;
+
       clone = {};
       for (key in object) {
         clone[key] = cloneOf(object[key]);
@@ -126,3 +135,7 @@ define([], function() {
     return this.preventDefault();
   };
 });
+
+/*
+//@ sourceMappingURL=native.map
+*/

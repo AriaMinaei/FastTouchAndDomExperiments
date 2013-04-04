@@ -5,6 +5,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
 
 
 	dambo.forThe('scrolls')
+	
 		.addLazy 'scrolls', (id, dommy) ->
 
 			new Scrolls(id, dommy)
