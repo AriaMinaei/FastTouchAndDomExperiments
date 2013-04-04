@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "frames.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "coffee\\lib\\graphics\\frames.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,EAEO,GAAP,GAAO;CAEN,KAAA;;GAEC,GAFD,GAAA;CAEC,CAAyB,CAAA,CAAzB,IAAyB,CAAC,cAA1B;CAAA,CAE0B,CAAA,CAA1B,IAA0B,CAAC,eAA3B;CAA0B,YAEzB;CAJD,IAE0B;CAF1B,CAMuB,CAAA,CAAvB,IAAuB,CAAC,YAAxB;CAVK;CAAA"
+}

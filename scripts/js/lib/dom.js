@@ -1,5 +1,10 @@
+var define;
 
-define([], function() {
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
+
+define(function() {
   window.$ = function(id) {
     return document.getElementById(id);
   };
@@ -8,6 +13,7 @@ define([], function() {
   };
   return (function() {
     var time, vendor, vendors, _i, _len, _results;
+
     time = 0;
     vendors = ['ms', 'moz', 'webkit'];
     _results = [];
@@ -22,3 +28,7 @@ define([], function() {
     return _results;
   })();
 });
+
+/*
+//@ sourceMappingURL=dom.map
+*/

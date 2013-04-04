@@ -1,3 +1,8 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['./move/instant', './move/persistent'], function(setupInstant, setupPersistent) {
   return function(defineGesture) {
@@ -47,3 +52,7 @@ define(['./move/instant', './move/persistent'], function(setupInstant, setupPers
     return setupPersistent(defineGesture);
   };
 });
+
+/*
+//@ sourceMappingURL=move.map
+*/

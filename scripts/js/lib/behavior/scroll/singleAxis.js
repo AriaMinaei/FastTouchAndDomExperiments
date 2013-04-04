@@ -1,6 +1,12 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitions, Bezier) {
   var SingleAxisScroller, cache;
+
   cache = {
     stretch: {
       0: 0
@@ -20,9 +26,9 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
     		 * 
     		 * @param  {Object} options = {} Options - Look at the source
     */
-
     function SingleAxisScroller(props, askForAnimation, options) {
       var _this = this;
+
       this.props = props;
       this.askForAnimation = askForAnimation;
       if (options == null) {
@@ -67,6 +73,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       };
       (function() {
         var bezier;
+
         bezier = new Bezier(.11, .02, .1, .98);
         return _this._outsideCurve = function(t) {
           return bezier.solve(t, Bezier.prototype.epsilon);
@@ -107,6 +114,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._stretch = function(puller) {
       var cached;
+
       puller = Math.min(puller, this._maxStretch);
       cached = this._stretchCache[puller];
       if (cached === void 0) {
@@ -119,6 +127,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._unstretch = function(stretched) {
       var cached;
+
       stretched = Math.min(Math.round(stretched), this._stretchedMax);
       cached = this._unstretchCache[stretched];
       if (cached === void 0) {
@@ -131,6 +140,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._cacheStretches = function() {
       var current, stretched;
+
       stretched = 0;
       current = 0;
       while (true) {
@@ -161,6 +171,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype.animate = function() {
       var deltaT, i, smallerDeltaT, v, v0, x, x0, _i, _ref, _ref1;
+
       x0 = this.props.delta;
       v0 = this._lastV;
       deltaT = Date.now() - this._lastT;
@@ -183,6 +194,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._animStep = function(x0, v0, deltaT) {
       var deltas, ret;
+
       ret = {
         x: 0,
         v: 0
@@ -205,6 +217,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._deltasForOutside = function(x0, v0, deltaT) {
       var deltaV, newX, pullback, ret;
+
       if ((-0.0001 < v0 && v0 < 0.0001)) {
         this._bounce.skip = false;
       }
@@ -229,7 +242,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
         }
         return ret;
       }
-      pullback = -0.03 * v0;
+      pullback = -0.032 * v0;
       deltaV = pullback * deltaT;
       return ret = {
         deltaX: 0.5 * deltaV * deltaT + v0 * deltaT,
@@ -239,6 +252,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._deltasForInside = function(v0, deltaT) {
       var deltaV, direction, friction, ret;
+
       this._bounce.skip = false;
       direction = parseFloat(Math.unit(v0));
       friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1);
@@ -268,6 +282,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
     SingleAxisScroller.prototype._getRecordedVelocity = function() {
       var first, last, length, v;
+
       length = this._velocityRecords.length;
       v = 0;
       if (length > 1) {
@@ -297,3 +312,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
 
   })();
 });
+
+/*
+//@ sourceMappingURL=singleAxis.map
+*/

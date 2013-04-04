@@ -1,10 +1,22 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(function() {
+  /*
+  	Source: http://stackoverflow.com/a/11697909/607997
+  	http://codepen.io/onedayitwillmake/details/EHDmw
+  	by Mario Gonzalez
+  */
+
   /*
   	Solver for cubic bezier curve with implicit control points at (0,0) and (1.0, 1.0)
   */
 
   var UnitBezier;
+
   UnitBezier = function(p1x, p1y, p2x, p2y) {
     this.cx = 3.0 * p1x;
     this.bx = 3.0 * (p2x - p1x) - this.cx;
@@ -25,6 +37,7 @@ define(function() {
   };
   UnitBezier.prototype.solveCurveX = function(x, epsilon) {
     var d2, i, t0, t1, t2, x2;
+
     t0 = void 0;
     t1 = void 0;
     t2 = void 0;
@@ -73,3 +86,7 @@ define(function() {
   };
   return UnitBezier;
 });
+
+/*
+//@ sourceMappingURL=bezier.map
+*/

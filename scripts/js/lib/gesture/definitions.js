@@ -1,11 +1,16 @@
-var __hasProp = {}.hasOwnProperty,
+var define,
+  __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
+
 define(['gesture/definitions/standard', 'native'], function(setupStandardDefinitions) {
-  var BasicGesture, Definitions, classes, define;
+  var BasicGesture, Definitions, classes;
+
   classes = {};
   classes['basic'] = BasicGesture = (function() {
-
     function BasicGesture() {}
 
     BasicGesture.prototype.check = function(h) {
@@ -39,9 +44,11 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
     list: {},
     define: function(structure) {
       var ExtendsFrom, NewGesture, key, name;
+
       name = structure.name;
       ExtendsFrom = (function() {
         var extendsFrom;
+
         extendsFrom = structure["extends"] || 'basic';
         return classes[extendsFrom];
       })();
@@ -62,3 +69,7 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
   setupStandardDefinitions(define);
   return Definitions;
 });
+
+/*
+//@ sourceMappingURL=definitions.map
+*/

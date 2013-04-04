@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "scale.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\scale.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEkC,CAAA,CAAlC,CAAkC,IAAC,gBAA9B;CAEJ,KAAA,UAAA;;CAAA,CAAA,CAAgB,UAAhB;CAAA,CAEA,CAAQ,CAAA,CAAA;CAEP,QAAD,EAAA,EAAA;CANiC"
+}

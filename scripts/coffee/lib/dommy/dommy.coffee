@@ -1,3 +1,5 @@
+if typeof define isnt 'function' then define = require('amdefine')(module)
+
 define ['dommy/styles'], (DommyStyles) ->
 
 	# To store data on DOM, detached from it.

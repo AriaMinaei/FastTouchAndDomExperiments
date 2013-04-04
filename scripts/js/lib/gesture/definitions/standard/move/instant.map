@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "instant.js",
+  "sourceRoot": "..\\..\\..\\..\\..\\..",
+  "sources": [
+    "coffee\\lib\\gesture\\definitions\\standard\\move\\instant.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,EAEO,GAAP,GAAO;GACN,MAAA,IAAA;CAKE,UAFD,EAAA;CAEC,CAAM,EAAN,EAAA,QAAA;CAAA,CAES,IAAT,GAAA;CAFA,CAIO,CAAA,EAAP,CAAA,GAAQ;CAAM,cAAO;CAJrB,MAIO;CAJP,CAMM,CAAA,CAAN,EAAA,GAAO;CAEL,GAAA,MAA4B,GAAA,CAA7B,CAAA;CARD,MAMM;CAXR,KAGC;CAJK,EACN;CADM"
+}

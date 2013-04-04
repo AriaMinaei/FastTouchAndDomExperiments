@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<script src="../scripts/require.js"></script>
+	<script>
+		require.config({
+			baseUrl: '../scripts/js/lib'
+		});
+		require(['../scripts/js/demos/pg2.js']);
+	</script>
+
+	<link rel="stylesheet" href="styles/minimal.css">
+
+	<style>
+
+		@-webkit-keyframes rot {
+			from {
+				-webkit-transform: perspective(800) rotate3d(1, 0, 0, 0deg);
+			}
+
+			to {
+				-webkit-transform: perspective(800) rotate3d(1, 0, 0, 360deg);
+			}
+		}
+
+		.dad {
+			position: absolute;
+			width: 800px; height: 800px;
+			-webkit-transform-style: preserve-3d;
+			top: 30px; left: 930px;
+			/*-webkit-transform: perspective(800) rotate3d(1, 0, 0, 45deg);*/
+			
+			-webkit-animation: rot 9s linear 0s infinite;
+			
+		}
+		
+		.dot {
+			width: 120px; height: 120px;
+			background: white;
+			position: absolute;
+			top: 0; left: 0;
+			background: url("marshal.jpg");
+		}
+
+	</style>
+
+	<script>
+		// Weinre remote debugger for remote clients
+		(function(){
+			// return;
+			if (document.location.hostname === '192.168.2.2') {
+				var s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
+				document.querySelector('head').appendChild(s);
+			}
+
+		})();
+		
+
+	</script>
+</head>
+
+<body>
+
+	
+	<div class="dad"></div>
+
+</body>
+</html>

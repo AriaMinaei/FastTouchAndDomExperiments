@@ -1,4 +1,3 @@
-
 require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scrolls', 'benchmark', 'graphics/transitions'], function(dr, GestureHandler, Dambo, Dommy, Scrolls, Benchmark, Transitions) {
   window.dambo = new Dambo;
   window.dommy = new Dommy;
@@ -14,6 +13,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   });
   (function() {
     var animate, began, d, div, els;
+
     return;
     div = 2000;
     began = Date.now();
@@ -21,6 +21,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
     els = document.querySelectorAll('.img');
     animate = function() {
       var el, transform, _i, _len;
+
       d = ((Date.now() - began) % div) / div;
       transform = 'rotate3d(0.1, 1, 0, ' + (d * Math.PI * 2) + 'rad)';
       for (_i = 0, _len = els.length; _i < _len; _i++) {
@@ -33,3 +34,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy', 'type/scro
   })();
   return dr(function() {});
 });
+
+/*
+//@ sourceMappingURL=metro.map
+*/

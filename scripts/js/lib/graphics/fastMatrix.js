@@ -1,6 +1,12 @@
+var define;
+
+if (typeof define !== 'function') {
+  define = require('amdefine')(module);
+}
 
 define(function() {
   var FastMatrix, clone16, identity, multiply;
+
   clone16 = function(r) {
     return [r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
   };
@@ -11,7 +17,6 @@ define(function() {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   };
   FastMatrix = (function() {
-
     function FastMatrix(arg) {
       if (Array.isArray(arg)) {
         this.r = arg;
@@ -33,12 +38,14 @@ define(function() {
 
     FastMatrix.prototype.toString = function() {
       var a;
+
       a = this.r;
       return 'matrix3d(' + a[0] + ', ' + a[1] + ', ' + a[2] + ', ' + a[3] + ', ' + a[4] + ', ' + a[5] + ', ' + a[6] + ', ' + a[7] + ', ' + a[8] + ', ' + a[9] + ', ' + a[10] + ', ' + a[11] + ', ' + a[12] + ', ' + a[13] + ', ' + a[14] + ', ' + a[15] + ')';
     };
 
     FastMatrix.prototype.fromString = function(s) {
       var temp;
+
       if (s.substr(8, 1) === '(') {
         s = s.substr(9, s.length - 10);
         this.r = s.split(', ').map(parseFloat);
@@ -169,6 +176,7 @@ define(function() {
 
     FastMatrix.prototype._setRotation = function(x, y, z) {
       var cosx, cosy, cosz, sinx, siny, sinz;
+
       cosx = Math.cos(x);
       sinx = Math.sin(x);
       cosy = Math.cos(y);
@@ -189,6 +197,7 @@ define(function() {
 
     FastMatrix.prototype._setRotationX = function(x) {
       var cosx, sinx;
+
       cosx = Math.cos(x);
       sinx = Math.sin(x);
       this.r[5] = cosx;
@@ -200,6 +209,7 @@ define(function() {
 
     FastMatrix.prototype._setRotationY = function(y) {
       var cosy, siny;
+
       cosy = Math.cos(y);
       siny = Math.sin(y);
       this.r[0] = cosy;
@@ -211,6 +221,7 @@ define(function() {
 
     FastMatrix.prototype._setRotationZ = function(z) {
       var cosz, sinz;
+
       cosz = Math.cos(z);
       sinz = Math.sin(z);
       this.r[0] = cosz;
@@ -223,5 +234,12 @@ define(function() {
     return FastMatrix;
 
   })();
+  FastMatrix.identity = identity;
+  FastMatrix.clone16 = clone16;
+  FastMatrix.multiply = multiply;
   return FastMatrix;
 });
+
+/*
+//@ sourceMappingURL=fastMatrix.map
+*/

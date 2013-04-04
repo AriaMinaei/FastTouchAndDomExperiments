@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "bezier.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\bezier.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,QAAA;;AAEA,CAFA,CAE0B,CAAA,CAA1B,KAA2B,CAAD,OAArB;CAEE,GAAW,CAAZ,CAAO,GAAZ;CAFyB"
+}

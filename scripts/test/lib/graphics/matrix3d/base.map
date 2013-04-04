@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "base.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\graphics\\matrix3d\\base.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEiC,CAAA,CAAjC,KAAkC,eAA7B;CAGJ,KAAA,sBAAA;;AAAqD,CAArD,CAAA,CAAU,IAAV,UAAU,CAAA,CAAA,EAAA,CAAA;AAC2C,CADrD,CACA,CAAU,IAAV,UAAU,CAAA,CAAA,CAAA,CAAA,EAAA;AAC6C,CAFvD,CAEA,CAAa,OAAb,OAAa,CAAA,CAAA,CAAA,CAAA,CAAA;CAFb,CAIA,EAAI,GAAJ,CAAA,EAAA,CAAA;CACK,CAAmB,EAApB,GAAJ,EAAA,CAAA,CAAA;CARgC"
+}
