@@ -1,4 +1,4 @@
-require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(dr, GestureHandler, Dambo, Dommy) {
+define(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(dr, GestureHandler, Dambo, Dommy) {
   var g;
 
   window.dambo = new Dambo;
@@ -22,7 +22,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         t.temporarily().scale(e.scale, e.scale, 1).move(e.translateX, e.translateY, 0);
         return t.applyTo(el);
       }).addEvent('transform-instant:finish', function(e, id, el) {
-        transforms[id].commit(el);
+        transforms[id].commit();
         if (transforms[id]) {
           return transforms[id] = null;
         }
@@ -37,7 +37,7 @@ require(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(
         t.temporarily().move(e.translateX, e.translateY, 0);
         return t.applyTo(el);
       }).addEvent('move-instant:finish', function(e, id, el) {
-        transforms[id].commit(el);
+        transforms[id].commit();
         if (transforms[id]) {
           return transforms[id] = null;
         }

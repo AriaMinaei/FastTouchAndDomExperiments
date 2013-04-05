@@ -7,7 +7,7 @@ if (typeof define !== 'function') {
 }
 
 define(['gesture/definitions/standard', 'native'], function(setupStandardDefinitions) {
-  var BasicGesture, Definitions, classes;
+  var BasicGesture, Definitions, classes, defineGesture;
 
   classes = {};
   classes['basic'] = BasicGesture = (function() {
@@ -63,10 +63,10 @@ define(['gesture/definitions/standard', 'native'], function(setupStandardDefinit
       return Definitions.list[name] = new NewGesture();
     }
   };
-  define = function(what) {
+  defineGesture = function(what) {
     return Definitions.define(what);
   };
-  setupStandardDefinitions(define);
+  setupStandardDefinitions(defineGesture);
   return Definitions;
 });
 

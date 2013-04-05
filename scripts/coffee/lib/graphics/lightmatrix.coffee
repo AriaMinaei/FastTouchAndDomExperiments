@@ -4,8 +4,6 @@ define [
 	'./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale', './lightmatrix/perspective',  './lightmatrix/rotation'
 	], (Base, Translation, Scale, Perspective, Rotation) ->
 
-	console.log Base
-
 	emptyStack = ->
 
 		{
@@ -28,27 +26,26 @@ define [
 			tZ: 0
 		}
 
-	cloneStack = (stack) ->
+	copyStack = (from, to) ->
 
-		{
-			mX: stack.mX
-			mY: stack.mY
-			mZ: stack.mZ
+		to.mX = from.mX
+		to.mY = from.mY
+		to.mZ = from.mZ
 
-			sX: stack.sX
-			sY: stack.sY
-			sZ: stack.sZ
+		to.sX = from.sX
+		to.sY = from.sY
+		to.sZ = from.sZ
 
-			p: stack.p
+		to.p  = from.p
 
-			rX: stack.rX
-			rY: stack.rY
-			rZ: stack.rZ
+		to.rX = from.rX
+		to.rY = from.rY
+		to.rZ = from.rZ
 
-			tX: stack.tX
-			tY: stack.tY
-			tZ: stack.tZ
-		}
+		to.tX = from.tX
+		to.tY = from.tY
+		to.tZ = from.tZ
+		
 
 	class LightMatrix
 
@@ -78,7 +75,7 @@ define [
 
 		temporarily: ->
 
-			@_temp = cloneStack @_main
+			copyStack @_main, @_temp
 			@_current = @_temp
 
 			@_tempMode = yes
@@ -87,18 +84,22 @@ define [
 
 		commit: ->
 
-			@_main = cloneStack @_temp
-			@_current = @_main
+			if @_tempMode
 
-			@_tempMode = no
+				copyStack @_temp, @_main
+				@_current = @_main
+
+				@_tempMode = no
 
 			@
 
 		rollBack: ->
 
-			@_current = @_main
+			if @_tempMode
 
-			@_tempMode = no
+				@_current = @_main
+
+				@_tempMode = no
 
 			@
 
@@ -167,7 +168,7 @@ define [
 
 		setMovement: (x, y, z) ->
 
-			@_has.m = no if not x and not y and not z
+			@_has.m = yes
 
 			@_current.mX = x
 			@_current.mY = y
@@ -177,7 +178,7 @@ define [
 
 		setMovementX: (x) ->
 
-			@_has.m = yes if x
+			@_has.m = yes
 
 			@_current.mX = x
 
@@ -185,7 +186,7 @@ define [
 
 		setMovementY: (y) ->
 
-			@_has.m = yes if y
+			@_has.m = yes
 
 			@_current.mY = y
 
@@ -193,7 +194,7 @@ define [
 
 		setMovementZ: (z) ->
 
-			@_has.m = yes if z
+			@_has.m = yes
 
 			@_current.mZ = z
 
@@ -202,7 +203,7 @@ define [
 		move: (x, y, z) ->
 
 			# This *does* work most of the times
-			@_has.m = yes if x or y or z
+			@_has.m = yes
 
 			@_current.mX += x
 			@_current.mY += y
@@ -212,7 +213,7 @@ define [
 
 		moveX: (x) ->
 
-			@_has.m = yes if x
+			@_has.m = yes
 
 			@_current.mX += x
 
@@ -220,7 +221,7 @@ define [
 
 		moveY: (y) ->
 
-			@_has.m = yes if y
+			@_has.m = yes
 
 			@_current.mY += y
 
@@ -228,7 +229,7 @@ define [
 
 		moveZ: (z) ->
 
-			@_has.m = yes if z
+			@_has.m = yes
 
 			@_current.mZ += z
 
@@ -258,7 +259,7 @@ define [
 
 		setScale: (x, y, z) ->
 
-			@_has.s = no if x is 1 and y is 1 and z is 1
+			@_has.s = yes
 
 			@_current.sX = x
 			@_current.sY = y
@@ -268,7 +269,7 @@ define [
 
 		setScaleX: (x) ->
 
-			@_has.s = yes if x isnt 1
+			@_has.s = yes
 
 			@_current.sX = x
 
@@ -276,7 +277,7 @@ define [
 
 		setScaleY: (y) ->
 
-			@_has.s = yes if y isnt 1
+			@_has.s = yes
 
 			@_current.sY = y
 
@@ -284,7 +285,7 @@ define [
 
 		setScaleZ: (z) ->
 
-			@_has.s = yes if z isnt 1
+			@_has.s = yes
 
 			@_current.sZ = z
 
@@ -293,7 +294,7 @@ define [
 		scale: (x, y, z) ->
 
 			# This *does* work most of the times
-			@_has.s = yes if x isnt 1 or y isnt 1 or z isnt 1
+			@_has.s = yes
 
 			@_current.sX *= x
 			@_current.sY *= y
@@ -311,7 +312,7 @@ define [
 
 		scaleX: (x) ->
 
-			@_has.s = yes if x
+			@_has.s = yes
 
 			@_current.sX *= x
 
@@ -319,7 +320,7 @@ define [
 
 		scaleY: (y) ->
 
-			@_has.s = yes if y
+			@_has.s = yes
 
 			@_current.sY *= y
 
@@ -327,7 +328,7 @@ define [
 
 		scaleZ: (z) ->
 
-			@_has.s = yes if z
+			@_has.s = yes
 
 			@_current.sZ *= z
 
@@ -336,6 +337,14 @@ define [
 		###
 		Perspective
 		###
+
+		resetPerspective: ->
+
+			@_current.p = 0
+
+			@_has.p = no
+
+			@
 
 		setPerspective: (d) ->
 
@@ -370,7 +379,7 @@ define [
 
 		setRotation: (x, y, z) ->
 
-			@_has.r = no if not x and not y and not z
+			@_has.r = yes
 
 			@_current.rX = x
 			@_current.rY = y
@@ -380,7 +389,7 @@ define [
 
 		setRotationX: (x) ->
 
-			@_has.r = yes if x
+			@_has.r = yes
 
 			@_current.rX = x
 
@@ -388,7 +397,7 @@ define [
 
 		setRotationY: (y) ->
 
-			@_has.r = yes if y
+			@_has.r = yes
 
 			@_current.rY = y
 
@@ -396,7 +405,7 @@ define [
 
 		setRotationZ: (z) ->
 
-			@_has.r = yes if z
+			@_has.r = yes
 
 			@_current.rZ = z
 
@@ -405,7 +414,7 @@ define [
 		rotate: (x, y, z) ->
 
 			# This *does* work most of the times
-			@_has.r = yes if x or y or z
+			@_has.r = yes
 
 			@_current.rX += x
 			@_current.rY += y
@@ -415,7 +424,7 @@ define [
 
 		rotateX: (x) ->
 
-			@_has.r = yes if x
+			@_has.r = yes
 
 			@_current.rX += x
 
@@ -423,7 +432,7 @@ define [
 
 		rotateY: (y) ->
 
-			@_has.r = yes if y
+			@_has.r = yes
 
 			@_current.rY += y
 
@@ -431,7 +440,7 @@ define [
 
 		rotateZ: (z) ->
 
-			@_has.r = yes if z
+			@_has.r = yes
 
 			@_current.rZ += z
 
@@ -471,7 +480,7 @@ define [
 
 		setTranslationX: (x) ->
 
-			@_has.t = yes if x
+			@_has.t = yes
 
 			@_current.tX = x
 
@@ -479,7 +488,7 @@ define [
 
 		setTranslationY: (y) ->
 
-			@_has.t = yes if y
+			@_has.t = yes
 
 			@_current.tY = y
 
@@ -487,7 +496,7 @@ define [
 
 		setTranslationZ: (z) ->
 
-			@_has.t = yes if z
+			@_has.t = yes
 
 			@_current.tZ = z
 
@@ -496,7 +505,7 @@ define [
 		translate: (x, y, z) ->
 
 			# This *does* work most of the times
-			@_has.t = yes if x or y or z
+			@_has.t = yes
 
 			@_current.tX += x
 			@_current.tY += y
@@ -506,7 +515,7 @@ define [
 
 		translateX: (x) ->
 
-			@_has.t = yes if x
+			@_has.t = yes
 
 			@_current.tX += x
 
@@ -514,7 +523,7 @@ define [
 
 		translateY: (y) ->
 
-			@_has.t = yes if y
+			@_has.t = yes
 
 			@_current.tY += y
 
@@ -522,7 +531,7 @@ define [
 
 		translateZ: (z) ->
 
-			@_has.t = yes if z
+			@_has.t = yes
 
 			@_current.tZ += z
 

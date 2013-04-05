@@ -14,6 +14,6 @@ define ['dommy/styles/transform'], (Transform) ->
 
 				transform = new Transform @dommy, id, el
 
-				@dommy.get(id, '_style.transform', transform)
+				@dommy.set id, '_style.transform', transform
 				
 			transform

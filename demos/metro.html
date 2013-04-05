@@ -7,7 +7,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes"> 
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-	<script src="../scripts/require.js"></script>
+	<!--<script src="../scripts/require.js"></script>
 	<script>
 		require.config({
 			baseUrl: '../scripts/js/lib',
@@ -15,6 +15,11 @@
 			enforceDefine: true
 		});
 		require(['../scripts/js/demos/metro.js']);
+	</script>-->
+
+	<script src="../scripts/bdrequire.js"></script>
+	<script>
+		require({baseUrl: '../scripts/js/lib'}, ['../scripts/js/demos/metro.js']);
 	</script>
 
 	<link rel="stylesheet" href="styles/minimal.css">

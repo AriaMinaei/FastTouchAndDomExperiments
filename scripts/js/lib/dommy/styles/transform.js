@@ -9,7 +9,6 @@ if (typeof define !== 'function') {
 define(['graphics/lightmatrix'], function(LightMatrix) {
   var Transform;
 
-  console.log(LightMatrix);
   return Transform = (function(_super) {
     __extends(Transform, _super);
 
@@ -20,7 +19,6 @@ define(['graphics/lightmatrix'], function(LightMatrix) {
     }
 
     Transform.prototype.applyTo = function(el) {
-      console.log(this.toCss());
       el.style.webkitTransform = this.toCss();
       return this;
     };

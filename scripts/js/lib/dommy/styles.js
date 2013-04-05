@@ -18,7 +18,7 @@ define(['dommy/styles/transform'], function(Transform) {
       transform = this.dommy.get(id, '_style.transform');
       if (!transform) {
         transform = new Transform(this.dommy, id, el);
-        this.dommy.get(id, '_style.transform', transform);
+        this.dommy.set(id, '_style.transform', transform);
       }
       return transform;
     };

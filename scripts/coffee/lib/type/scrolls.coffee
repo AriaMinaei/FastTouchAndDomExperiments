@@ -127,18 +127,18 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 				else
 					finish()
 				
-		_scrollerAskedForAnimation: () ->
+		_scrollerAskedForAnimation: ->
 
 			unless @_animFrame
 				@_animFrame = requestAnimationFrame @_boundAnimFunction
 
-		_cancelAnimation: () ->
+		_cancelAnimation: ->
 
 			if @_animFrame
 				cancelAnimationFrame(@_animFrame)
 				@_animFrame = 0
 
-		_animFunction: () ->
+		_animFunction: ->
 
 			@_animFrame = 0
 
@@ -161,7 +161,7 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			@_finishCallback = emptyFunction
 			@_finishCallbackWaiting = false
 
-		_transformElement: () ->
+		_transformElement: ->
 
 			x = 0
 			if @_enabledAxis.x
@@ -175,5 +175,5 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 		_setElMovement: (x, y) ->
 
-			@_transform.move x, y, 0
+			@_transform.setMovement x, y, 0
 			@_transform.applyTo @_childEl

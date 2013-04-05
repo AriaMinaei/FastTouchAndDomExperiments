@@ -1,6 +1,7 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
 define ['gesture/definitions', 'native'], (GestureDefinitions) ->
+
 	GestureDefinitionsList = GestureDefinitions.list
 	
 	# Returns a maintained copy of TouchList
@@ -51,6 +52,7 @@ define ['gesture/definitions', 'native'], (GestureDefinitions) ->
 
 			# Binding our few listeners to 'this'
 			@_boundListeners =
+
 				start: @_touchstartListener.bind @
 				end: @_touchendListener.bind @
 				move: @_touchmoveListener.bind @

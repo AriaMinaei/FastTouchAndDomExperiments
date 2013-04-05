@@ -1,4 +1,4 @@
-require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, GestureHandler, Dambo, Dommy) ->
+define ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, GestureHandler, Dambo, Dommy) ->
 	window.dambo = new Dambo
 	window.dommy = new Dommy
 	# Instantiate a new GestureHandler
@@ -25,7 +25,7 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					unless transforms[id]
 
 						# Get one
-						transforms[id] = t = dommy.styles.getTransform(id, el)
+						transforms[id] = t = dommy.styles.getTransform id, el
 
 					else t = transforms[id]
 
@@ -41,20 +41,23 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 					t.applyTo el
 
 				.addEvent 'transform-instant:finish', (e, id, el) ->
+
 					# Commit the temp transformation as the current transformation.
 					# This way, the next time the user touches the element, the transformation
 					# will pick up from where we left it off.
-					transforms[id].commit(el)
+					do transforms[id].commit
 
 					# Remove reference to transformation handler
 					transforms[id] = null if transforms[id]
 
 				# listen to 'move-instant', for all elements of 'babs' type
 				.addEvent 'move-instant', (e, id, el) ->
+					
 					# If we don't have a reference to this element's transform handler
 					unless transforms[id]
 						# Get one
-						transforms[id] = t = dommy.styles.getTransform(id, el)
+						transforms[id] = t = dommy.styles.getTransform id, el
+
 					else t = transforms[id]
 
 					# Get a temporary transformation matrix handler
@@ -63,19 +66,20 @@ require ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gest
 						# ._setRotationY(e.translateX * Math.PI / 720)
 						# 
 						# Translate it
-						.move(e.translateX, e.translateY, 0)
+						.move e.translateX, e.translateY, 0
 
 					# Apply the temp transformation matrix to the element
 					t.applyTo el
 
 				# When move-instant-end fires
 				.addEvent 'move-instant:finish', (e, id, el) ->
+					
 					# console.log 'received move-instant-end event for', e
 
 					# Commit the temp transformation as the current transformation.
 					# This way, the next time the user touches the element, the transformation
 					# will pick up from where we left it off.
-					transforms[id].commit(el)
+					do transforms[id].commit
 
 					# Remove reference to transformation handler
 					transforms[id] = null if transforms[id]

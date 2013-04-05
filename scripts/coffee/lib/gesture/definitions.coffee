@@ -98,9 +98,9 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 			Definitions.list[name] = new NewGesture()
 
 	# A reference to the define() method
-	define = (what) -> Definitions.define what
+	defineGesture = (what) -> Definitions.define what
 	
 	# Setting up standard definitions
-	setupStandardDefinitions(define)
+	setupStandardDefinitions(defineGesture)
 
 	Definitions

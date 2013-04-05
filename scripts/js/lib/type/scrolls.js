@@ -157,7 +157,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
     };
 
     Scrolls.prototype._setElMovement = function(x, y) {
-      this._transform.move(x, y, 0);
+      this._transform.setMovement(x, y, 0);
       return this._transform.applyTo(this._childEl);
     };
 

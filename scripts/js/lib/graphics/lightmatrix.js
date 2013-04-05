@@ -5,9 +5,8 @@ if (typeof define !== 'function') {
 }
 
 define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale', './lightmatrix/perspective', './lightmatrix/rotation'], function(Base, Translation, Scale, Perspective, Rotation) {
-  var LightMatrix, cloneStack, emptyStack;
+  var LightMatrix, copyStack, emptyStack;
 
-  console.log(Base);
   emptyStack = function() {
     return {
       mX: 0,
@@ -25,22 +24,20 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
       tZ: 0
     };
   };
-  cloneStack = function(stack) {
-    return {
-      mX: stack.mX,
-      mY: stack.mY,
-      mZ: stack.mZ,
-      sX: stack.sX,
-      sY: stack.sY,
-      sZ: stack.sZ,
-      p: stack.p,
-      rX: stack.rX,
-      rY: stack.rY,
-      rZ: stack.rZ,
-      tX: stack.tX,
-      tY: stack.tY,
-      tZ: stack.tZ
-    };
+  copyStack = function(from, to) {
+    to.mX = from.mX;
+    to.mY = from.mY;
+    to.mZ = from.mZ;
+    to.sX = from.sX;
+    to.sY = from.sY;
+    to.sZ = from.sZ;
+    to.p = from.p;
+    to.rX = from.rX;
+    to.rY = from.rY;
+    to.rZ = from.rZ;
+    to.tX = from.tX;
+    to.tY = from.tY;
+    return to.tZ = from.tZ;
   };
   return LightMatrix = (function() {
     function LightMatrix() {
@@ -59,22 +56,26 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     }
 
     LightMatrix.prototype.temporarily = function() {
-      this._temp = cloneStack(this._main);
+      copyStack(this._main, this._temp);
       this._current = this._temp;
       this._tempMode = true;
       return this;
     };
 
     LightMatrix.prototype.commit = function() {
-      this._main = cloneStack(this._temp);
-      this._current = this._main;
-      this._tempMode = false;
+      if (this._tempMode) {
+        copyStack(this._temp, this._main);
+        this._current = this._main;
+        this._tempMode = false;
+      }
       return this;
     };
 
     LightMatrix.prototype.rollBack = function() {
-      this._current = this._main;
-      this._tempMode = false;
+      if (this._tempMode) {
+        this._current = this._main;
+        this._tempMode = false;
+      }
       return this;
     };
 
@@ -131,9 +132,7 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setMovement = function(x, y, z) {
-      if (!x && !y && !z) {
-        this._has.m = false;
-      }
+      this._has.m = true;
       this._current.mX = x;
       this._current.mY = y;
       this._current.mZ = z;
@@ -141,33 +140,25 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setMovementX = function(x) {
-      if (x) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mX = x;
       return this;
     };
 
     LightMatrix.prototype.setMovementY = function(y) {
-      if (y) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mY = y;
       return this;
     };
 
     LightMatrix.prototype.setMovementZ = function(z) {
-      if (z) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mZ = z;
       return this;
     };
 
     LightMatrix.prototype.move = function(x, y, z) {
-      if (x || y || z) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mX += x;
       this._current.mY += y;
       this._current.mZ += z;
@@ -175,25 +166,19 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.moveX = function(x) {
-      if (x) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mX += x;
       return this;
     };
 
     LightMatrix.prototype.moveY = function(y) {
-      if (y) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mY += y;
       return this;
     };
 
     LightMatrix.prototype.moveZ = function(z) {
-      if (z) {
-        this._has.m = true;
-      }
+      this._has.m = true;
       this._current.mZ += z;
       return this;
     };
@@ -220,9 +205,7 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setScale = function(x, y, z) {
-      if (x === 1 && y === 1 && z === 1) {
-        this._has.s = false;
-      }
+      this._has.s = true;
       this._current.sX = x;
       this._current.sY = y;
       this._current.sZ = z;
@@ -230,33 +213,25 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setScaleX = function(x) {
-      if (x !== 1) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sX = x;
       return this;
     };
 
     LightMatrix.prototype.setScaleY = function(y) {
-      if (y !== 1) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sY = y;
       return this;
     };
 
     LightMatrix.prototype.setScaleZ = function(z) {
-      if (z !== 1) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sZ = z;
       return this;
     };
 
     LightMatrix.prototype.scale = function(x, y, z) {
-      if (x !== 1 || y !== 1 || z !== 1) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sX *= x;
       this._current.sY *= y;
       this._current.sZ *= z;
@@ -272,25 +247,19 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.scaleX = function(x) {
-      if (x) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sX *= x;
       return this;
     };
 
     LightMatrix.prototype.scaleY = function(y) {
-      if (y) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sY *= y;
       return this;
     };
 
     LightMatrix.prototype.scaleZ = function(z) {
-      if (z) {
-        this._has.s = true;
-      }
+      this._has.s = true;
       this._current.sZ *= z;
       return this;
     };
@@ -299,6 +268,12 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     		Perspective
     */
 
+
+    LightMatrix.prototype.resetPerspective = function() {
+      this._current.p = 0;
+      this._has.p = false;
+      return this;
+    };
 
     LightMatrix.prototype.setPerspective = function(d) {
       this._current.p = d;
@@ -330,9 +305,7 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setRotation = function(x, y, z) {
-      if (!x && !y && !z) {
-        this._has.r = false;
-      }
+      this._has.r = true;
       this._current.rX = x;
       this._current.rY = y;
       this._current.rZ = z;
@@ -340,33 +313,25 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setRotationX = function(x) {
-      if (x) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rX = x;
       return this;
     };
 
     LightMatrix.prototype.setRotationY = function(y) {
-      if (y) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rY = y;
       return this;
     };
 
     LightMatrix.prototype.setRotationZ = function(z) {
-      if (z) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rZ = z;
       return this;
     };
 
     LightMatrix.prototype.rotate = function(x, y, z) {
-      if (x || y || z) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rX += x;
       this._current.rY += y;
       this._current.rZ += z;
@@ -374,25 +339,19 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.rotateX = function(x) {
-      if (x) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rX += x;
       return this;
     };
 
     LightMatrix.prototype.rotateY = function(y) {
-      if (y) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rY += y;
       return this;
     };
 
     LightMatrix.prototype.rotateZ = function(z) {
-      if (z) {
-        this._has.r = true;
-      }
+      this._has.r = true;
       this._current.rZ += z;
       return this;
     };
@@ -429,33 +388,25 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.setTranslationX = function(x) {
-      if (x) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tX = x;
       return this;
     };
 
     LightMatrix.prototype.setTranslationY = function(y) {
-      if (y) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tY = y;
       return this;
     };
 
     LightMatrix.prototype.setTranslationZ = function(z) {
-      if (z) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tZ = z;
       return this;
     };
 
     LightMatrix.prototype.translate = function(x, y, z) {
-      if (x || y || z) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tX += x;
       this._current.tY += y;
       this._current.tZ += z;
@@ -463,25 +414,19 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
     };
 
     LightMatrix.prototype.translateX = function(x) {
-      if (x) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tX += x;
       return this;
     };
 
     LightMatrix.prototype.translateY = function(y) {
-      if (y) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tY += y;
       return this;
     };
 
     LightMatrix.prototype.translateZ = function(z) {
-      if (z) {
-        this._has.t = true;
-      }
+      this._has.t = true;
       this._current.tZ += z;
       return this;
     };
