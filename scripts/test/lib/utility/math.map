@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "math.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "test\\lib\\utility\\math.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,QAAA;;AAEA,CAFA,CAEuB,CAAA,CAAvB,KAAwB,KAAnB;CAEJ,CAAA,EAAI,CAAJ,CAAA;CAAA,CAEA,EAAI,CAAJ,CAAgC,EAAhC;CAFA,CAIA,EAAI,CAAJ,CAA2B;AACf,CALZ,CAKA,EAAI,CAAJ,CAA4B;CAL5B,CAMA,EAAI,CAAJ,CAA2B;CAN3B,CAOA,EAAI,CAAJ,CAA4B;CAP5B,CASA,EAAI,CAAJ,CAAoB;CATpB,CAUA,EAAI,CAAJ,CAAmB;AACR,CAAN,EAAL,CAAI,CAAJ,CAAsB,GAAtB;CAbsB"
+}

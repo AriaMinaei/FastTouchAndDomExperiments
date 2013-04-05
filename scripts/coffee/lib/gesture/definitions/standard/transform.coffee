@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ->
+define ['utility/math'], (math) ->
 	return (defineGesture) ->
 
 		# Transform gesture.
@@ -47,7 +47,7 @@ define ->
 
 				h.vars.scaleMultiplier = h.vars.lastScale
 
-				h.vars.distance = Math.distance a.pageX, a.pageY, b.pageX, b.pageY
+				h.vars.distance = math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
 				startX = parseInt((b.pageX + a.pageX) / 2)
 				startY = parseInt((b.pageY + a.pageY) / 2)
@@ -107,7 +107,7 @@ define ->
 				a = e.touches[0]
 				b = e.touches[1]
 
-				distance = Math.distance a.pageX, a.pageY, b.pageX, b.pageY
+				distance = math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
 				# Scale, without considering how much the scale multiplier is
 				scale = (distance / h.vars.distance)

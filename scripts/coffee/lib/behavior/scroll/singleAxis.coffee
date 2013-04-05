@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezier) ->
+define ['graphics/transitions', 'graphics/bezier', 'utility/math'], (Transitions, Bezier, math) ->
 
 	cache = 
 		stretch: 
@@ -377,7 +377,7 @@ define ['graphics/transitions', 'graphics/bezier', 'native'], (Transitions, Bezi
 			@_bounce.skip = no
 
 			# Direction of the initial velocity.
-			direction = parseFloat(Math.unit v0)
+			direction = parseFloat(math.unit v0)
 
 			# Friction based on direction and velocity.
 			friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1)

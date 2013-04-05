@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['native'], function() {
+define(function() {
   var Transitions;
 
   Transitions = {

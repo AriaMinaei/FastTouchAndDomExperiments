@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScroller) {
+define(['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], function(SingleAxisScroller, belt) {
   var Scrolls, emptyFunction;
 
   emptyFunction = function() {};
@@ -19,7 +19,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
       this.options = {
         axis: 'both'
       };
-      this.options = Object.append(this.options, JSON.parse('{' + this.parentEl.getAttribute('data-scroll-options') + '}'));
+      this.options = belt.append(this.options, JSON.parse('{' + this.parentEl.getAttribute('data-scroll-options') + '}'));
       this._enabledAxis = {
         x: 1,
         y: 1
@@ -46,7 +46,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
           space: parentRects.width
         };
         if (_this.options.x != null) {
-          Object.append(ops, _this.options.x);
+          belt.append(ops, _this.options.x);
         }
         return ops;
       })());
@@ -62,7 +62,7 @@ define(['behavior/scroll/singleAxis', 'native', 'dom'], function(SingleAxisScrol
           space: parentRects.height
         };
         if (_this.options.y != null) {
-          Object.append(ops, _this.options.y);
+          belt.append(ops, _this.options.y);
         }
         return ops;
       })());

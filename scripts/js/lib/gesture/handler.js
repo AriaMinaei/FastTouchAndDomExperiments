@@ -4,80 +4,59 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['gesture/definitions', 'native'], function(GestureDefinitions) {
-  var GestureDefinitionsList, Handler, copyTouchEvent, copyTouchList;
+define(['./definitions', './tools', 'utility/belt'], function(GestureDefinitions, TouchTools, belt) {
+  var GestureDefinitionsList, Handler, emptyFunction;
 
-  GestureDefinitionsList = GestureDefinitions.list;
-  copyTouchList = function(list) {
-    var copied, touch, _i, _len;
-
-    copied = Array(0);
-    for (_i = 0, _len = list.length; _i < _len; _i++) {
-      touch = list[_i];
-      copied.push({
-        pageX: touch.pageX,
-        pageY: touch.pageY,
-        screenX: touch.screenX,
-        screenY: touch.screenY,
-        identifier: touch.identifier
-      });
-    }
-    return copied;
-  };
-  copyTouchEvent = function(e) {
-    var copied;
-
-    copied = {
-      target: e.target,
-      timeStamp: e.timeStamp,
-      touches: copyTouchList(e.touches),
-      changedTouches: copyTouchList(e.changedTouches),
-      scale: e.scale,
-      rotation: e.rotation
-    };
-    return copied;
-  };
+  emptyFunction = function() {};
   Handler = (function() {
     function Handler(root, dommy) {
-      this.root = root != null ? root : window.document;
-      this.dommy = dommy != null ? dommy : window.dommy;
-      this._reset();
-      this.options = {
-        real_move_distance: 16
-      };
-    }
-
-    Handler.prototype._reset = function() {
       var _this = this;
 
+      this.root = root != null ? root : window.document;
+      this.dommy = dommy != null ? dommy : window.dommy;
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
         move: this._touchmoveListener.bind(this),
         cancel: this._touchcancelListener.bind(this)
       };
-      this.lastEvents = {
-        start: null,
-        move: null,
-        end: null,
-        cancel: null
+      this.lastEvents = {};
+      this._candidates = [];
+      this._elCustomEventListeners = {};
+      this.vars = {};
+      this.options = {
+        real_move_distance: 16
       };
+      this._touchEventPool = new TouchTools.TouchEventPool(4, 3);
+      this.forceFinish = function() {
+        return _this.finish();
+      };
+      this._reset();
+    }
+
+    Handler.prototype._reset = function() {
+      this.lastEvents.start = null;
+      this.lastEvents.move = null;
+      this.lastEvents.end = null;
+      this.lastEvents.cancel = null;
       this.firstEvent = null;
       this.lastEventType = null;
       this.starts = 0;
       this.hadRealMove = false;
-      this.candidates = [];
+      this._candidates.length = 0;
       this.gesture = null;
       this.gestureName = '';
       this.el = null;
       this.elFastId = 0;
-      this.elEventListener = function() {};
-      this.elEventListenerInitialized = false;
-      this.elCustomEventListeners = {};
-      this.vars = {};
-      return this.forceFinish = function() {
-        return _this.finish();
-      };
+      this._elEventListener = emptyFunction;
+      this._elEventListenerInitialized = false;
+      belt.empty(this._elCustomEventListeners);
+      belt.empty(this.vars);
+      return null;
+    };
+
+    Handler.prototype._copyTouchEvent = function(e) {
+      return this._touchEventPool.copy(e);
     };
 
     Handler.prototype.listen = function() {
@@ -97,14 +76,15 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     Handler.prototype._touchstartListener = function(e) {
       var first;
 
-      e.stop();
-      this.lastEvents.start = copyTouchEvent(e);
+      e.stopPropagation();
+      e.preventDefault();
+      this.lastEvents.start = this._copyTouchEvent(e);
       this.lastEventType = 'start';
       this.starts++;
       first = false;
       if (!this.firstEvent) {
         first = true;
-        this.firstEvent = copyTouchEvent(e);
+        this.firstEvent = this._copyTouchEvent(e);
         this._findCandidates();
       }
       if (this.gesture) {
@@ -118,9 +98,10 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     };
 
     Handler.prototype._touchendListener = function(e) {
-      e.stop();
+      e.stopPropagation();
+      e.preventDefault();
       this.lastEventType = 'end';
-      this.lastEvents.end = copyTouchEvent(e);
+      this.lastEvents.end = this._copyTouchEvent(e);
       if (this.gesture) {
         this.gesture.end(this, e);
       } else {
@@ -135,9 +116,10 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     };
 
     Handler.prototype._touchcancelListener = function(e) {
-      e.stop();
+      e.stopPropagation();
+      e.preventDefault();
       this.lastEventType = 'cancel';
-      this.lastEvents.cancel = copyTouchEvent(e);
+      this.lastEvents.cancel = this._copyTouchEvent(e);
       if (this.gesture) {
         this.gesture.cancel(this, e);
       }
@@ -149,8 +131,9 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     Handler.prototype._touchmoveListener = function(e) {
       var first, touch;
 
-      e.stop();
-      this.lastEvents.move = copyTouchEvent(e);
+      e.stopPropagation();
+      e.preventDefault();
+      this.lastEvents.move = this._copyTouchEvent(e);
       this.lastEventType = 'move';
       if (!this.hadRealMove) {
         touch = this.lastEvents.move.touches[0];
@@ -208,7 +191,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
         for (_i = 0, _len = gestures.length; _i < _len; _i++) {
           gestureName = gestures[_i];
           if (!tempGests[gestureName]) {
-            this.candidates.push({
+            this._candidates.push({
               gestureName: gestureName,
               target: target,
               id: id
@@ -248,17 +231,17 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     Handler.prototype._checkForType = function() {
       var g, gestureName, set, shouldBreak;
 
-      if (this.candidates.length === 0) {
+      if (this._candidates.length === 0) {
         return;
       }
       shouldBreak = false;
-      while (this.candidates.length !== 0) {
-        set = this.candidates[0];
+      while (this._candidates.length !== 0) {
+        set = this._candidates[0];
         gestureName = set.gestureName;
         g = GestureDefinitionsList[gestureName];
         switch (g.check(this)) {
           case -1:
-            this.candidates.shift();
+            this._candidates.shift();
             continue;
           case 0:
             shouldBreak = true;
@@ -275,7 +258,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
           break;
         }
       }
-      if (this.candidates.length !== 0) {
+      if (this._candidates.length !== 0) {
 
       } else {
 
@@ -283,18 +266,18 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     };
 
     Handler.prototype.fire = function(e) {
-      if (!this.elEventListenerInitialized) {
-        this.elEventListener = dommy.getListener(this.elFastId, this.el, this.gestureName);
-        this.elEventListenerInitialized = true;
+      if (!this._elEventListenerInitialized) {
+        this._elEventListener = dommy.getListener(this.elFastId, this.el, this.gestureName);
+        this._elEventListenerInitialized = true;
       }
-      return this.elEventListener(e);
+      return this._elEventListener(e);
     };
 
     Handler.prototype.fireCustom = function(name, e) {
-      if (this.elCustomEventListeners[name] === void 0) {
-        this.elCustomEventListeners[name] = dommy.getListener(this.elFastId, this.el, name);
+      if (this._elCustomEventListeners[name] === void 0) {
+        this._elCustomEventListeners[name] = dommy.getListener(this.elFastId, this.el, name);
       }
-      return this.elCustomEventListeners[name](e);
+      return this._elCustomEventListeners[name](e);
     };
 
     Handler.prototype.isTouchInsideElement = function(touch) {
@@ -334,6 +317,7 @@ define(['gesture/definitions', 'native'], function(GestureDefinitions) {
     h.listen();
     return h;
   };
+  GestureDefinitionsList = GestureDefinitions.list;
   return Handler;
 });
 

@@ -6,7 +6,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['gesture/definitions/standard', 'native'], function(setupStandardDefinitions) {
+define(['gesture/definitions/standard'], function(setupStandardDefinitions) {
   var BasicGesture, Definitions, classes, defineGesture;
 
   classes = {};

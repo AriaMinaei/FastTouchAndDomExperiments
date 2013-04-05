@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(function() {
+define(['utility/math'], function(math) {
   return function(defineGesture) {
     defineGesture({
       name: 'transform',
@@ -34,7 +34,7 @@ define(function() {
         h.vars.aId = a.identifier;
         h.vars.bId = b.identifier;
         h.vars.scaleMultiplier = h.vars.lastScale;
-        h.vars.distance = Math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
+        h.vars.distance = math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
         startX = parseInt((b.pageX + a.pageX) / 2);
         startY = parseInt((b.pageY + a.pageY) / 2);
         elDims = h.vars.elDims = h.el.getBoundingClientRect();
@@ -71,7 +71,7 @@ define(function() {
         }
         a = e.touches[0];
         b = e.touches[1];
-        distance = Math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
+        distance = math.distance(a.pageX, a.pageY, b.pageX, b.pageY);
         scale = distance / h.vars.distance;
         removeFromTranslateX = (scale - 1) * h.vars.width * h.vars.pX;
         removeFromTranslateY = (scale - 1) * h.vars.height * h.vars.pY;

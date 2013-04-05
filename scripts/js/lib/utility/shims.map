@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "shims.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "coffee\\lib\\utility\\shims.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,EAEO,GAAP,GAAO;CAIN,CAAG,CAAA,MAAA;CAEC,OAAA,iCAAA;;CAAA,EAAO,CAAP;CAAA,EACU,CAAV,GAAA,CAAU;AAEV,CAAA;UAAA,oCAAA;4BAAA;AAA+B,CAAJ,KAAU;;QAEjC;CAAA,EAA+B,GAA/B,eAAA,EAAuC;CAAvC,EAC8B,GAAxB,cAAN,EAAsC;CAH1C;qBALD;CAAA,EAAA;CAJG,QAeN;CAfM"
+}

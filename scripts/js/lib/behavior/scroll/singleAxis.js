@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitions, Bezier) {
+define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Transitions, Bezier, math) {
   var SingleAxisScroller, cache;
 
   cache = {
@@ -254,7 +254,7 @@ define(['graphics/transitions', 'graphics/bezier', 'native'], function(Transitio
       var deltaV, direction, friction, ret;
 
       this._bounce.skip = false;
-      direction = parseFloat(Math.unit(v0));
+      direction = parseFloat(math.unit(v0));
       friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1);
       deltaV = friction * deltaT;
       return ret = {

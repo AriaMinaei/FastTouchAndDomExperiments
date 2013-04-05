@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
+define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleAxisScroller, belt) ->
 	
 	emptyFunction = ->
 
@@ -13,12 +13,14 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			# Default options
 			@options = 
+
 				axis: 'both'
 
 			# Load more options from the data-attrs of @parentEl
 			# Example:
 			# <div data-types="scroll" data-scroll-options='"axis":"x"'>
-			@options = Object.append @options,
+			@options = belt.append @options,
+
 				JSON.parse '{' + @parentEl.getAttribute('data-scroll-options') + '}'
 
 			# To make sure we only scroll in the desired axis
@@ -28,6 +30,7 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			# for x/y -only axis configs
 			if @options.axis is 'x' then @_enabledAxis.y = 0
+
 			else if @options.axis is 'y' then @_enabledAxis.x = 0
 
 			# Reference to dimensions
@@ -35,7 +38,9 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 
 			# Child element's references
 			@_childEl = @parentEl.children[0]
+
 			@_childElId = @dommy.id @_childEl
+
 			@_transform = @dommy.styles.getTransform @_childElId, @_childEl
 
 			# Child element's dimensions
@@ -45,34 +50,38 @@ define ['behavior/scroll/singleAxis', 'native', 'dom'], (SingleAxisScroller) ->
 			boundNeedAnimation = @_scrollerAskedForAnimation.bind @
 
 			@propsX = 
+
 				delta: 0
 
 			@_scrollerX = new SingleAxisScroller @propsX, boundNeedAnimation, do =>
 
 				ops = 
+
 					size: childRects.width
 					space: parentRects.width
 
 				if @options.x?
 
-					Object.append ops, @options.x
+					belt.append ops, @options.x
 
 				ops
 
 			@_lastScrollX = 0
 
 			@propsY = 
+
 				delta: 0
 
 			@_scrollerY = new SingleAxisScroller @propsY, boundNeedAnimation, do =>
 
 				ops = 
+
 					size: childRects.height
 					space: parentRects.height
 
 				if @options.y?
 
-					Object.append ops, @options.y
+					belt.append ops, @options.y
 
 				ops
 

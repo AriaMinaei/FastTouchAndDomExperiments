@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
+define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 
 	# List of classes of different gesture definitions
 	classes = {}
@@ -85,11 +85,6 @@ define ['gesture/definitions/standard', 'native'], (setupStandardDefinitions) ->
 			# Add the methods from structure to the class
 			for key of structure
 				NewGesture::[key] = structure[key]
-
-			# Debug
-			# console.group name
-			# console.log key for key of NewGesture::
-			# console.groupEnd name
 
 			# Hold a reference to the class
 			classes[name] = NewGesture
