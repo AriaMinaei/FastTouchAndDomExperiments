@@ -1,12 +1,25 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['graphics/transitions', 'graphics/bezier', 'utility/math'], (Transitions, Bezier, math) ->
+define ['visuals/animation/easing', 'visuals/animation/bezier', 'utility/math'], (Easing, Bezier, math) ->
 
 	cache = 
+		
 		stretch: 
+
 			0: 0
+
 		unstretch: 
+
 			0: 0
+
+
+	bezier = null
+
+	initBezier = ->
+
+		if not bezier
+
+			bezier = new Bezier .11,.02,.1,.98
 
 	class SingleAxisScroller
 
@@ -74,7 +87,7 @@ define ['graphics/transitions', 'graphics/bezier', 'utility/math'], (Transitions
 
 			# An easing function used when scroller is stretching out
 			# of bounds.
-			@_stretchEasingFunction = Transitions.quint.easeOut
+			@_stretchEasingFunction = Easing.quint.easeOut
 
 			@_maxStretch = parseInt(options.maxStretch) or 1800
 
@@ -95,21 +108,20 @@ define ['graphics/transitions', 'graphics/bezier', 'utility/math'], (Transitions
 			@_bounceTime = parseInt(options.bounceTime) or 750
 
 			@_bounce = 
+			
 				ing: no
 				t: 0
 				x: 0
 				duration: 0
 
-			do =>
-				
-				bezier = new Bezier .11,.02,.1,.98
-
-				@_outsideCurve = (t) ->
-
-					bezier.solve t, Bezier::epsilon
+			do initBezier
 			
 			return null
 
+		_outsideCurve: (t) ->
+
+			bezier.solve t, Bezier.epsilon
+		
 		drag: (delta) ->
 
 			do @_syncPuller if not @_pullerInSync

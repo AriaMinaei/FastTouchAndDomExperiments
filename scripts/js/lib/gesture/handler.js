@@ -258,11 +258,6 @@ define(['./definitions', './tools', 'utility/belt'], function(GestureDefinitions
           break;
         }
       }
-      if (this._candidates.length !== 0) {
-
-      } else {
-
-      }
     };
 
     Handler.prototype.fire = function(e) {

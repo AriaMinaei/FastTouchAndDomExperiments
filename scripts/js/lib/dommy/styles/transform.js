@@ -6,7 +6,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['graphics/lightmatrix'], function(LightMatrix) {
+define(['visuals/lightmatrix'], function(LightMatrix) {
   var Transform;
 
   return Transform = (function(_super) {

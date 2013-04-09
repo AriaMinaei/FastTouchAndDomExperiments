@@ -10,6 +10,7 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 	# Choose a high-level element, like the html element, since this can delegate events
 	# to child elements.
 	class Handler
+		
 		# Just specify the root element. document.body usually works
 		constructor: (@root = window.document, @dommy = window.dommy) ->
 
@@ -122,8 +123,8 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 			do e.preventDefault
 
 			@lastEvents.start = @_copyTouchEvent e
-
 			@lastEventType = 'start'
+
 			@starts++
 
 			first = no
@@ -140,7 +141,8 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 
 			else
 
-				@_checkForType()
+				do @_checkForType
+
 				if @gesture then @gesture.start @, e, first
 
 		# Listener for touchend
@@ -193,12 +195,13 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
 					@hadRealMove = true
 						
-			if @gesture then @gesture.move(@, @lastEvents.move)
+			if @gesture then @gesture.move @, @lastEvents.move
 
 			else
 
-				@_checkForType()
-				if @gesture then @gesture.move(@, @lastEvents.move)
+				do @_checkForType
+
+				if @gesture then @gesture.move @, @lastEvents.move
 
 		# Runs when there are no touches left.
 		# If the gesture allows, it will finish
@@ -210,16 +213,17 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 
 			return if not shouldFinish
 
-			@finish()
+			do @finish
 
 		# Final method that runs when the gesture ends.
 		finish: ->
 
-			@gesture.finish(@) if @gesture
+			@gesture.finish @ if @gesture
 
 			#console.info 'finished with: ' + @gestureName if @gestureName
 			#console.info '-----------------------------'
-			@_reset()
+			
+			do @_reset
 			
 		# Determines the potential targets and gestures for the current gesture
 		_findCandidates: ->
@@ -234,6 +238,7 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 			while target?
 
 				id = @dommy.id target
+
 				# Loading current target's gestures, if any
 				gestures = @_getElGestures id, target
 
@@ -241,16 +246,21 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 				if !gestures
 
 					break if target is @root
+
 					target = target.parentNode
+
 					continue
 
 				# Found gestures. Let's put the element in the candidates
 				for gestureName in gestures
+
 					# This means if there are multiple elements in the bubble
 					# listening for this gesture, only the innermost may catch it.
 					unless tempGests[gestureName]
+
 						#console.warn 'Invalid gesture name \'' + gestureName + '\'' if not Gesture[gestureName]
 						@_candidates.push
+
 							gestureName: gestureName
 							target: target
 							id: id
@@ -268,18 +278,21 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 		# one from dommy.
 		_getElGestures: (id, el) ->
 
-			gestures = @dommy.get(id, 'gestures')
+			gestures = @dommy.get id, 'gestures'
+
 			return gestures if gestures isnt undefined
 
 			gestures = el.getAttribute 'data-gestures' if el.getAttribute
 
 			if !gestures
 
-				@dommy.set(id, 'gestures', null)
+				@dommy.set id, 'gestures', null
+
 				return null
 			
 			gestures = gestures.split(',').map (g) -> g.trim()
-			@dommy.set(id, 'gestures', gestures)
+
+			@dommy.set id, 'gestures', gestures
 
 			gestures
 		
@@ -287,6 +300,7 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 		_checkForType: ->
 
 			return if @_candidates.length is 0
+
 			# console.group('Type')
 			# Coffee doesn't support labels and stuff, so I gotta use this hack
 			# for breaking outside the while loop
@@ -295,6 +309,7 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 			while @_candidates.length != 0
 
 				set = @_candidates[0]
+
 				gestureName = set.gestureName
 				# console.log 'checking ' + @_candidates[0].gestureName
 
@@ -302,33 +317,42 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 				g = GestureDefinitionsList[gestureName]
 
 				# Check if gesture applies
-				switch g.check(@)
+				switch g.check @
+
 					# Doesn't apply > Remove it
 					when -1
+
 						@_candidates.shift()
+
 						# console.log 'wasnt ' + gestureName
+
 						continue
+					
 					# May apply > Wait for next touch event
 					when 0
+
 						# Break outside the while loop
 						shouldBreak = true
+
 						break
+
 					# Does apply
 					when 1
+						
 						@el = set.target
 						@elFastId = set.id
 						@gestureName = gestureName
 						@gesture = g
-						@gesture.init(@)
+						@gesture.init @
 
 						# console.groupEnd()
 						return
 
 				break if shouldBreak
 
-			if @_candidates.length isnt 0
+			# if @_candidates.length isnt 0
 				# console.log 'havent determined yet'
-			else # console.log "Don't know!"
+			# else # console.log "Don't know!"
 			# console.groupEnd()
 
 		# Fires event on our elements
@@ -338,9 +362,11 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 			unless @_elEventListenerInitialized
 
 				@_elEventListener = dommy.getListener(@elFastId, @el, @gestureName)
+				
 				@_elEventListenerInitialized = true
 
 			@_elEventListener(e)
+			
 			# #console.groupEnd()
 
 		# Fires an event with a custom name

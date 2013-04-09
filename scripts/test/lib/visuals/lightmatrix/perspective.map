@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "perspective.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\visuals\\lightmatrix\\perspective.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAE0C,CAA8B,CAAxE,KAAyE,EAAD,gBAAnE,OAAA;CAEC,EAAM,CAAP,CAAJ,CAAW,GAAX,EAAsB,mDAAtB;CAFuE"
+}

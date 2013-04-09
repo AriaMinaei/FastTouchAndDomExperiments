@@ -4,8 +4,8 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Transitions, Bezier, math) {
-  var SingleAxisScroller, cache;
+define(['visuals/animation/easing', 'visuals/animation/bezier', 'utility/math'], function(Easing, Bezier, math) {
+  var SingleAxisScroller, bezier, cache, initBezier;
 
   cache = {
     stretch: {
@@ -13,6 +13,12 @@ define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Tra
     },
     unstretch: {
       0: 0
+    }
+  };
+  bezier = null;
+  initBezier = function() {
+    if (!bezier) {
+      return bezier = new Bezier(.11, .02, .1, .98);
     }
   };
   return SingleAxisScroller = (function() {
@@ -27,8 +33,6 @@ define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Tra
     		 * @param  {Object} options = {} Options - Look at the source
     */
     function SingleAxisScroller(props, askForAnimation, options) {
-      var _this = this;
-
       this.props = props;
       this.askForAnimation = askForAnimation;
       if (options == null) {
@@ -53,7 +57,7 @@ define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Tra
       this._velocityThreshold = 0.01;
       this._lastV = 0;
       this._lastT = 0;
-      this._stretchEasingFunction = Transitions.quint.easeOut;
+      this._stretchEasingFunction = Easing.quint.easeOut;
       this._maxStretch = parseInt(options.maxStretch) || 1800;
       if (cache.stretch[this._maxStretch] === void 0) {
         cache.stretch[this._maxStretch] = {};
@@ -71,16 +75,13 @@ define(['graphics/transitions', 'graphics/bezier', 'utility/math'], function(Tra
         x: 0,
         duration: 0
       };
-      (function() {
-        var bezier;
-
-        bezier = new Bezier(.11, .02, .1, .98);
-        return _this._outsideCurve = function(t) {
-          return bezier.solve(t, Bezier.prototype.epsilon);
-        };
-      })();
+      initBezier();
       return null;
     }
+
+    SingleAxisScroller.prototype._outsideCurve = function(t) {
+      return bezier.solve(t, Bezier.epsilon);
+    };
 
     SingleAxisScroller.prototype.drag = function(delta) {
       if (!this._pullerInSync) {

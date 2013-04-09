@@ -6,7 +6,10 @@ define ['./standard/tap', './standard/hold', './standard/move', './standard/tran
 
 		# define all standard gestures
 		tap defineGesture
+
 		hold defineGesture
+
 		move defineGesture
+		
 		transform defineGesture
 
