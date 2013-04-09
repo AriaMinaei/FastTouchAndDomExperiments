@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "tween.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "test\\lib\\visuals\\animation\\tween.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,WAAA;;AAEA,CAFA,CAEkC,CAAA,CAAlC,CAAkC,IAAC,gBAA9B;CAEJ,KAAA;;CAAA,CAAA,CAAQ,CAAA,CAAA,IAAoB;CAAD,UAAO;CAA1B,EAAmB;CAA3B,CAEA,MAAA;CAEC,CAAD,GAAA,CAAe,GAAf;CANiC"
+}

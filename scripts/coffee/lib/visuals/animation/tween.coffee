@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define [] ->
+define ['./easing'], (Easing) ->
 
 	class Tween
 
@@ -10,7 +10,7 @@ define [] ->
 
 		on: (t) ->
 
-			( @to - @from ) * @curve( ( t - @start ) * @duration ) + @from
+			( @to - @from ) * @curve( ( t - @start ) / @duration ) + @from
 
 		frame: ->
 

@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define([](function() {
+define(['./easing'], function(Easing) {
   var Tween;
 
   return Tween = (function() {
@@ -17,7 +17,7 @@ define([](function() {
     }
 
     Tween.prototype.on = function(t) {
-      return (this.to - this.from) * this.curve((t - this.start) * this.duration) + this.from;
+      return (this.to - this.from) * this.curve((t - this.start) / this.duration) + this.from;
     };
 
     Tween.prototype.frame = function() {
@@ -31,7 +31,7 @@ define([](function() {
     return Tween;
 
   })();
-}));
+});
 
 /*
 //@ sourceMappingURL=tween.map

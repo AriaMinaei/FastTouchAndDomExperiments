@@ -1,14 +1,15 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
 define ->
+
     ###
-    Source: http://stackoverflow.com/a/11697909/607997
-    http://codepen.io/onedayitwillmake/details/EHDmw
-    by Mario Gonzalez
+     * Source: http://stackoverflow.com/a/11697909/607997
+     * http://codepen.io/onedayitwillmake/details/EHDmw
+     * by Mario Gonzalez
     ###
 
     ###
-    Solver for cubic bezier curve with implicit control points at (0,0) and (1.0, 1.0)
+     * Solver for cubic bezier curve with implicit control points at (0,0) and (1.0, 1.0)
     ###
     class UnitBezier
 
