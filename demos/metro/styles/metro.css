@@ -1,0 +1,106 @@
+/* I'm just gonna hack stuff together here for now.
+ * I'll do responsive when we get to the layout module.
+ */
+
+@font-face {
+    font-family: 'RobotoLight';
+    src: url('../fonts/Roboto-Light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoThin';
+    src: url('../fonts/Roboto-Thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+	margin: 0; padding: 0;
+}
+
+body {
+	font-family: "RobotoThin";
+	color: #F0F0F0;
+	font-size: 24px;
+}
+
+h2 {
+	font-weight: normal;
+	font-size: 56px;
+}
+
+.button {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50px;
+	height: 50px;
+	background: #fff;
+	display: none;
+}
+
+.the-pan {
+	position: absolute;
+	left: 0; right: 0; top: 50px;
+	
+	overflow: visible;
+	box-sizing: border-box;
+}
+
+.the-pan > .scroll-content {
+	position: relative;
+	left: 60px;
+	/*top: 50px;*/
+	padding-right: 120px;
+	
+	/*-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+	-webkit-transform-style: flat;*/
+	float: left;
+}
+
+
+@media (max-height: 1000px) {
+	.the-pan > .scrollable {
+		top: 80px;
+	}
+}
+
+.images {
+	float: left;
+}
+
+.images > div {
+	height: 248px;
+	margin-bottom: 20px;
+	white-space: nowrap;
+	float: left;
+}
+
+.images .img {
+	position: relative;
+	display: inline-block;
+	margin: 10px;	
+}
+
+.images .img .image {
+	background-size: 440px 248px;
+	width: 440px;
+	height: 248px;
+	background-repeat: no-repeat;
+}
+
+.images .img-1 .image { background-image: url('../images/1.jpg'); }
+.images .img-2 .image { background-image: url('../images/2.jpg'); }
+.images .img-3 .image { background-image: url('../images/3.jpg'); }
+.images .img-4 .image { background-image: url('../images/4.jpg'); }
+.images .img-5 .image { background-image: url('../images/5.jpg'); }
+.images .img-6 .image { background-image: url('../images/6.jpg'); }
+.images .img-7 .image { background-image: url('../images/7.jpg'); }
+.images .img-8 .image { background-image: url('../images/8.jpg'); }
+.images .img-9 .image { background-image: url('../images/9.jpg'); }
+.images .img-10 .image { background-image: url('../images/10.jpg'); }
+.images .img-11 .image { background-image: url('../images/11.jpg'); }
+.images .img-12 .image { background-image: url('../images/12.jpg'); }

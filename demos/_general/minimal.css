@@ -1,0 +1,10 @@
+body {
+	background: #151515;
+	color: white;
+	font-family: Helvetica;
+	overflow: hidden;
+}
+
+* {
+	font-weight: normal;
+}

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "shoes.js",
+  "sourceRoot": "..\\..",
+  "sources": [
+    "coffee\\demos\\shoes.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,CAAc,CAAA,GAArB,EAAqB,CAAC,CAAf;CAAqC,EAAA,KAAT,CAAA;CAAd"
+}

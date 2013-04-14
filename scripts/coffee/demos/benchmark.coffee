@@ -1,14 +1,4 @@
-require ['domReady', 'benchmark', 'graphics/lightmatrix', 'graphics/lightmatrix/base','graphics/matrix3d/base', 'native'], (domReady, Benchmark, LightMatrix, Base, OldBase) ->
-
-	dummyDiv = document.createElement 'div'
-
-	document.body.appendChild dummyDiv
-
-	cssToMatrix = (css) ->
-
-		dummyDiv.style.webkitTransform = css
-
-		Base.fromString getComputedStyle(dummyDiv).webkitTransform
+require ['domReady', 'benchmark'], (domReady, Benchmark) ->
 	
 	domReady ->
 
@@ -16,20 +6,13 @@ require ['domReady', 'benchmark', 'graphics/lightmatrix', 'graphics/lightmatrix/
 		do ->
 			suite = new Benchmark.Suite
 
-			w = Base.identity()
-
-			i = [
-				1,0,0,0,
-				0,1,0,0,
-				0,0,1,0,
-				0,0,0,1
-			]
-
 			suite.add '1', ->
 
-				Base.toCss w
+				
 
 			suite.add '2', ->
+
+				
 
 			suite.on 'cycle', (e) ->
 

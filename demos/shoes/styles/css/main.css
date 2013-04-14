@@ -1,0 +1,34 @@
+/* line 1, ../sass/imports/_reset.sass */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 1, ../sass/imports/_type.sass */
+body {
+  font-family: "Helvetica Neue";
+  font-style: 26px;
+}
+
+/* line 7, ../sass/main.sass */
+body {
+  overflow: hidden;
+}
+
+/* line 11, ../sass/main.sass */
+.nowPlaying-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 18, ../sass/main.sass */
+.nowPlaying-bg-item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+/* line 25, ../sass/main.sass */
+.nowPlaying-bg-item.main {
+  background: url("../../files/albums/Regina Felangee/Smelly Shoes/artwork-1.jpg");
+}

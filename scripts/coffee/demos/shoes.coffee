@@ -1,0 +1,5 @@
+define ['domready'], (domReady) ->
+	
+	domReady ->
+	
+		

@@ -1,22 +1,10 @@
-require(['domReady', 'benchmark', 'graphics/lightmatrix', 'graphics/lightmatrix/base', 'graphics/matrix3d/base', 'native'], function(domReady, Benchmark, LightMatrix, Base, OldBase) {
-  var cssToMatrix, dummyDiv;
-
-  dummyDiv = document.createElement('div');
-  document.body.appendChild(dummyDiv);
-  cssToMatrix = function(css) {
-    dummyDiv.style.webkitTransform = css;
-    return Base.fromString(getComputedStyle(dummyDiv).webkitTransform);
-  };
+require(['domReady', 'benchmark'], function(domReady, Benchmark) {
   return domReady(function() {
     return (function() {
-      var i, suite, w;
+      var suite;
 
       suite = new Benchmark.Suite;
-      w = Base.identity();
-      i = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-      suite.add('1', function() {
-        return Base.toCss(w);
-      });
+      suite.add('1', function() {});
       suite.add('2', function() {});
       suite.on('cycle', function(e) {
         return console.log(String(e.target));
