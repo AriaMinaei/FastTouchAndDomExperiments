@@ -39,7 +39,7 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 		# touchmove events get throttled for every animation frame.
 		move: (h, e) -> #console.log 'Caught touchmove for "' + name + '"'
 
-		cancel: (h, e) -> console.log 'cancel'
+		cancel: (h, e) -> #console.log 'cancel'
 
 		# Called by Gesture.Handler's shouldFinish(), which usually happens
 		# when all fingers are off screen.
@@ -50,7 +50,8 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 		# 
 		# Also, if this returns true, or if Gesture.Handler.finish() is called, a finish method
 		# on this gesture will be called too.
-		shouldFinish: (h) -> 
+		shouldFinish: (h) ->
+
 			true
 
 		# Called by gestureHandler to inform that gesture is ending.
@@ -61,6 +62,7 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 
 
 	Definitions =
+
 		# List of all gesture definitions (instantiated)
 		list: {}
 
@@ -72,11 +74,14 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 
 			# Let's see which class it has to extend
 			ExtendsFrom = do ->
+
 				extendsFrom = structure.extends or 'basic'
-				return classes[extendsFrom]
+
+				classes[extendsFrom]
 
 			# A dummy constructor function
 			NewGesture = ->
+
 				NewGesture.__super__.constructor.apply @, arguments
 
 			# Extend from parent class
@@ -84,6 +89,7 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 
 			# Add the methods from structure to the class
 			for key of structure
+
 				NewGesture::[key] = structure[key]
 
 			# Hold a reference to the class
@@ -96,6 +102,6 @@ define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
 	defineGesture = (what) -> Definitions.define what
 	
 	# Setting up standard definitions
-	setupStandardDefinitions(defineGesture)
+	setupStandardDefinitions defineGesture
 
 	Definitions

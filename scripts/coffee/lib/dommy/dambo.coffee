@@ -12,7 +12,7 @@ define ['dommy/dambo/type'], (Type)->
 
 			if not @types[name]
 
-				@types[name] = new Type(name)
+				@types[name] = new Type name
 
 			@types[name]
 

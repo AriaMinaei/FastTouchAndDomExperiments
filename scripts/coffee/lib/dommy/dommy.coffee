@@ -2,6 +2,8 @@ if typeof define isnt 'function' then define = require('amdefine')(module)
 
 define ['dommy/styles'], (Styles) ->
 
+	emptyFunction = ->
+
 	# To store data on DOM, detached from it.
 	# Remember, you can't have custom IDs if you wanna use this ;)
 	# 
@@ -63,7 +65,7 @@ define ['dommy/styles'], (Styles) ->
 					return false
 			else
 
-				Number(_id.substr(@_nsLen))
+				Number _id.substr @_nsLen
 
 		# Retrieves an element by its fast ID
 		el: (id)->
@@ -147,7 +149,7 @@ define ['dommy/styles'], (Styles) ->
 
 			types = @typesOf id, el
 
-			unless types then return () ->
+			unless types then return emptyFunction
 
 			listeners = do ->
 
@@ -161,13 +163,13 @@ define ['dommy/styles'], (Styles) ->
 
 				listeners
 
-			if listeners.length is 0 then return () ->
+			if listeners.length is 0 then return emptyFunction
 
 			return (e) =>
 
 				for listener in listeners
 
-					listener(e, id, el, @)
+					listener e, id, el, @
 
 		# Quick n dirty event firing. Do it on one time events, like tap or click.
 		# For events that get fired regularly or many times in a row, its better to
@@ -209,7 +211,7 @@ define ['dommy/styles'], (Styles) ->
 
 					return null
 
-				forId[name] = ret = lazy(id, @)
+				forId[name] = ret = lazy id, @
 
 				return ret
 

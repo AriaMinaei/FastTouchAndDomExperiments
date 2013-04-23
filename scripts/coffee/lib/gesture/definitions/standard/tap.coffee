@@ -28,4 +28,4 @@ define ->
 			end: (h, e) ->
 
 				# Fire a tap event
-				h.fire({})
+				h.fire {}

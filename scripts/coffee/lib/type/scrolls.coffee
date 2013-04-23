@@ -103,7 +103,7 @@ define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleA
 		# Called when fingers are on screen, moving around.
 		drag: (x, y) ->
 
-			@_cancelAnimation()
+			do @_cancelAnimation
 
 			if @_enabledAxis.x
 				@_scrollerX.drag x - @_lastScrollX
@@ -121,20 +121,28 @@ define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleA
 		release: (finish) ->
 
 			if @_enabledAxis.x
-				@_scrollerX.release()
+
+				do @_scrollerX.release
+
 				@_lastScrollX = 0
 
 			if @_enabledAxis.y
-				@_scrollerY.release()
+
+				do @_scrollerY.release
+
 				@_lastScrollY = 0
 			
 			if finish
 
 				if @_animFrame
-					@_finishCallback = -> finish()
+
+					@_finishCallback = -> do finish
+
 					@_finishCallbackWaiting = true
+
 				else
-					finish()
+
+					do finish
 				
 		_scrollerAskedForAnimation: ->
 
@@ -144,7 +152,9 @@ define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleA
 		_cancelAnimation: ->
 
 			if @_animFrame
-				cancelAnimationFrame(@_animFrame)
+
+				cancelAnimationFrame @_animFrame
+
 				@_animFrame = 0
 
 		_animFunction: ->
@@ -152,32 +162,42 @@ define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleA
 			@_animFrame = 0
 
 			if @_enabledAxis.x
-				@_scrollerX.animate()
+
+				do @_scrollerX.animate
 
 			if @_enabledAxis.y
-				@_scrollerY.animate()
+
+				do @_scrollerY.animate
 
 			# Translate the child element
 			do @_transformElement
 
 			if @_finishCallbackWaiting
+
 				unless @_animFrame
-					@_finishCallback()
+
+					do @_finishCallback
+
 					do @finish
 
 		finish: ->
 
 			@_finishCallback = emptyFunction
+
 			@_finishCallbackWaiting = false
 
 		_transformElement: ->
 
 			x = 0
+
 			if @_enabledAxis.x
+
 				x = @propsX.delta
 
 			y = 0
+
 			if @_enabledAxis.y
+
 				y = @propsY.delta
 
 			@_setElMovement x, y
@@ -185,4 +205,5 @@ define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleA
 		_setElMovement: (x, y) ->
 
 			@_transform.setMovement x, y, 0
+
 			@_transform.applyTo @_childEl

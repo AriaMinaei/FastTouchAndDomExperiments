@@ -51,9 +51,9 @@ define ['utility/pool/fixed'], (FixedPool) ->
 			copied.target = e.target
 			copied.timeStamp = e.timeStamp
 
-			copied.touches = copyTouchList(e.touches)
+			copied.touches = copyTouchList e.touches
 
-			copied.changedTouches = copyTouchList(e.changedTouches)
+			copied.changedTouches = copyTouchList e.changedTouches
 
 			copied
 
@@ -79,7 +79,7 @@ define ['utility/pool/fixed'], (FixedPool) ->
 	# if subsequent events are dispatched. This is a simple workaround.
 	copyTouchList = (list) ->
 
-		copied = Array(0)
+		copied = []
 
 		for touch in list
 
@@ -97,13 +97,12 @@ define ['utility/pool/fixed'], (FixedPool) ->
 	TouchTools.copyTouchEvent = (e) ->
 
 		copied = 
+
 			target: e.target
 			timeStamp: e.timeStamp
-			touches: copyTouchList(e.touches)
-			changedTouches: copyTouchList(e.changedTouches)
+			touches: copyTouchList e.touches
+			changedTouches: copyTouchList e.changedTouches
 
 		copied
-
-
 
 	TouchTools

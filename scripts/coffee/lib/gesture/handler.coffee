@@ -42,9 +42,9 @@ define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchT
 
 			@forceFinish = =>
 
-				@finish()
+				do @finish
 
-			@_reset()
+			do @_reset
 				
 		# Resets the whole object, but keeps the root el
 		_reset: ->

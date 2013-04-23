@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "nowplaying.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "coffee\\demos\\shoes\\type\\nowplaying.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,EAAA;;AAAA,CAAA,GAAG,CAAmB,CAAnB,IAAH;CAAsC,CAAA,CAAS,GAAT,CAAS,GAAA;EAA/C;;AAEA,CAFA,EAEO,GAAP,GAAO;CAEN,KAAA,IAAA;;SAAM;CAEQ,CAAA,CAAA,CAAA,CAAA,eAAE;CAEd,CAAA,CAFc,CAAA,EAAD;CAEb,EAFmB,CAAA,CAEnB,CAFkB;CAElB,CAAA,CAAM,CAAL,CAAW,CAAZ;CAAA,CAEA,CAAA,CAAa,EAAb,CAAO;CAJR,IAAa;;CAAb;;CAJK;CAAA"
+}

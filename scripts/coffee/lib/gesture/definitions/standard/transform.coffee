@@ -28,7 +28,7 @@ define ['utility/math'], (math) ->
 				h.vars.lastScale = 1
 
 				# We know there are at least two fingers on the screen, so lets prepare
-				@_prepareForTransform(h, last.touches[0], last.touches[1])
+				@_prepareForTransform h, last.touches[0], last.touches[1]
 
 				null
 
@@ -49,8 +49,8 @@ define ['utility/math'], (math) ->
 
 				h.vars.distance = math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
-				startX = parseInt((b.pageX + a.pageX) / 2)
-				startY = parseInt((b.pageY + a.pageY) / 2)
+				startX = parseInt (b.pageX + a.pageX) / 2
+				startY = parseInt (b.pageY + a.pageY) / 2
 				
 				# Dimensions of our element
 				elDims = h.vars.elDims = h.el.getBoundingClientRect()
@@ -95,12 +95,14 @@ define ['utility/math'], (math) ->
 					translateY = a.pageY - h.vars.startY
 
 					h.fire
+
 						scale: h.vars.scaleMultiplier
 						translateX: translateX
 						translateY: translateY
 
 					h.vars.lastTranslateX = translateX
 					h.vars.lastTranslateY = translateY
+
 					return
 
 				# Currently in transforming mode
@@ -110,7 +112,7 @@ define ['utility/math'], (math) ->
 				distance = math.distance a.pageX, a.pageY, b.pageX, b.pageY
 
 				# Scale, without considering how much the scale multiplier is
-				scale = (distance / h.vars.distance)
+				scale = distance / h.vars.distance
 
 				# Now, use that temporary scale to fix the positioning
 				removeFromTranslateX = (scale - 1) * h.vars.width  * h.vars.pX
@@ -125,6 +127,7 @@ define ['utility/math'], (math) ->
 
 				# Fire the event
 				h.fire
+
 					scale: scale
 					translateX: translateX
 					translateY: translateY
@@ -143,10 +146,13 @@ define ['utility/math'], (math) ->
 
 				# If we were in > two fingers mode
 				if h.vars.mode is 1
+
 					# Should we switch to moving mode?
 					if e.touches.length is 1
+
 						# Switch to moving mode
 						@_prepareForMove(h, e.touches[0])
+
 						return
 
 					# Still in transforming mode
@@ -196,6 +202,9 @@ define ['utility/math'], (math) ->
 				h.vars.lastScale = 1
 
 				if last.touches.length is 1
-					@_prepareForMove(h, last.touches[0])
+
+					@_prepareForMove h, last.touches[0]
+				
 				else
+				
 					@_prepareForTransform(h, last.touches[0], last.touches[1])

@@ -12,7 +12,6 @@ define ['visuals/animation/easing', 'visuals/animation/bezier', 'utility/math'],
 
 			0: 0
 
-
 	bezier = null
 
 	initBezier = ->
@@ -359,6 +358,7 @@ define ['visuals/animation/easing', 'visuals/animation/bezier', 'utility/math'],
 				else
 
 					ret = 
+
 						deltaX: newX - x0
 						deltaV: - v0
 				
@@ -389,7 +389,7 @@ define ['visuals/animation/easing', 'visuals/animation/bezier', 'utility/math'],
 			@_bounce.skip = no
 
 			# Direction of the initial velocity.
-			direction = parseFloat(math.unit v0)
+			direction = parseFloat math.unit v0
 
 			# Friction based on direction and velocity.
 			friction = -direction * 0.031 * Math.min(Math.abs(v0), 0.1)

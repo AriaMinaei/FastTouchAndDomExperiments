@@ -8,18 +8,29 @@ define(['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], function
   var Scrolls, emptyFunction;
 
   emptyFunction = function() {};
+
   return Scrolls = (function() {
+
     function Scrolls(id, dommy) {
+
       var boundNeedAnimation, childRects, parentRects,
+
         _this = this;
 
       this.id = id;
+
       this.dommy = dommy;
+
       this.parentEl = this.dommy.el(this.id);
+
       this.options = {
+
         axis: 'both'
+
       };
+
       this.options = belt.append(this.options, JSON.parse('{' + this.parentEl.getAttribute('data-scroll-options') + '}'));
+      
       this._enabledAxis = {
         x: 1,
         y: 1

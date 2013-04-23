@@ -13,8 +13,14 @@ define ['./move/instant', './move/persistent'], (setupInstant, setupPersistent) 
 			check: (h) ->
 
 				if not h.hadRealMove
-					if h.starts is 1 then return 0 
-					else return -1
+
+					if h.starts is 1
+
+						return 0 
+
+					else
+
+						return -1
 
 				return 1
 			
@@ -32,12 +38,14 @@ define ['./move/instant', './move/persistent'], (setupInstant, setupPersistent) 
 				h.vars.id = e.touches[0].identifier
 
 				h.fire
+
 					translateX: 0
 					translateY: 0
 
 			move: (h, e) ->
 
 				h.fire 
+				
 					translateX: e.touches[0].pageX - h.vars.startX
 					translateY: e.touches[0].pageY - h.vars.startY
 
