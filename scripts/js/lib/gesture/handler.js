@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['./definitions', './tools', 'utility/belt'], function(GestureDefinitions, TouchTools, belt) {
+define(['./definitions', './tools', '../utility/belt'], function(GestureDefinitions, TouchTools, belt) {
   var GestureDefinitionsList, Handler, emptyFunction;
 
   emptyFunction = function() {};

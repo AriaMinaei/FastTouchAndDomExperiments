@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['./definitions', './tools', 'utility/belt'], (GestureDefinitions, TouchTools, belt) ->
+define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, TouchTools, belt) ->
 
 	emptyFunction = ->
 

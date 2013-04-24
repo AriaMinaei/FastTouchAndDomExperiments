@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "vector.js",
+  "sourceRoot": "..\\..\\..\\..",
+  "sources": [
+    "coffee\\demos\\particles\\spring\\vector.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,EAAA,GAAP,GAAO;CAEN,KAAA;;SAAM;CAEQ,CAAM,CAAN,CAAA,YAAE;CAAQ,EAAR,CAAA,EAAD;CAAS,EAAJ,CAAA,EAAD;CAAlB,IAAa;;CAAb;;CAJK;CAAA"
+}

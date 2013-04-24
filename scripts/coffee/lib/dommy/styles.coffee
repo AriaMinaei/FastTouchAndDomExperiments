@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['dommy/styles/transform'], (Transform) ->
+define ['./styles/transform'], (Transform) ->
 
 	class Styles
 

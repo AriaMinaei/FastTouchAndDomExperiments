@@ -6,7 +6,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['gesture/definitions/standard'], function(setupStandardDefinitions) {
+define(['./definitions/standard'], function(setupStandardDefinitions) {
   var BasicGesture, Definitions, classes, defineGesture;
 
   classes = {};
@@ -25,9 +25,7 @@ define(['gesture/definitions/standard'], function(setupStandardDefinitions) {
 
     BasicGesture.prototype.move = function(h, e) {};
 
-    BasicGesture.prototype.cancel = function(h, e) {
-      return console.log('cancel');
-    };
+    BasicGesture.prototype.cancel = function(h, e) {};
 
     BasicGesture.prototype.shouldFinish = function(h) {
       return true;

@@ -4,9 +4,10 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['dommy/styles'], function(Styles) {
-  var Dommy;
+define(['./styles'], function(Styles) {
+  var Dommy, emptyFunction;
 
+  emptyFunction = function() {};
   return Dommy = (function() {
     function Dommy(ns, dambo) {
       if (ns == null) {
@@ -124,7 +125,7 @@ define(['dommy/styles'], function(Styles) {
 
       types = this.typesOf(id, el);
       if (!types) {
-        return function() {};
+        return emptyFunction;
       }
       listeners = (function() {
         var listener, type, _i, _j, _len, _len1, _ref;
@@ -141,7 +142,7 @@ define(['dommy/styles'], function(Styles) {
         return listeners;
       })();
       if (listeners.length === 0) {
-        return function() {};
+        return emptyFunction;
       }
       return function(e) {
         var listener, _i, _len, _results;

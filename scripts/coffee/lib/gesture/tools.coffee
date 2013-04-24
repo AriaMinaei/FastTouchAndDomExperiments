@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['utility/pool/fixed'], (FixedPool) ->
+define ['../utility/pool/fixed'], (FixedPool) ->
 
 	TouchTools = {}
 

@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['gesture/definitions/standard'], (setupStandardDefinitions) ->
+define ['./definitions/standard'], (setupStandardDefinitions) ->
 
 	# List of classes of different gesture definitions
 	classes = {}

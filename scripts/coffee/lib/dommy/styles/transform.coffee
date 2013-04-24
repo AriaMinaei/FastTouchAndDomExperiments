@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['visuals/lightmatrix'], (LightMatrix) ->
+define ['../../visuals/lightmatrix'], (LightMatrix) ->
 
 	class Transform extends LightMatrix
 

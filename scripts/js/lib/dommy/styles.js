@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['dommy/styles/transform'], function(Transform) {
+define(['./styles/transform'], function(Transform) {
   var Styles;
 
   return Styles = (function() {

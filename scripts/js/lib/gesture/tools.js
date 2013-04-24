@@ -6,7 +6,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['utility/pool/fixed'], function(FixedPool) {
+define(['../utility/pool/fixed'], function(FixedPool) {
   var TouchPool, TouchTools, copyTouchList, _ref;
 
   TouchTools = {};
@@ -97,7 +97,7 @@ define(['utility/pool/fixed'], function(FixedPool) {
   copyTouchList = function(list) {
     var copied, touch, _i, _len;
 
-    copied = Array(0);
+    copied = [];
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       touch = list[_i];
       copied.push({

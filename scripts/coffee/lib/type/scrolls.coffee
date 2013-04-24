@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['behavior/scroll/singleAxis', 'utility/belt', 'utility/shims'], (SingleAxisScroller, belt) ->
+define ['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'], (SingleAxisScroller, belt) ->
 	
 	emptyFunction = ->
 

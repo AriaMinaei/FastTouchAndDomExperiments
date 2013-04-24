@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['dommy/dambo/type'], function(Type) {
+define(['./dambo/type'], function(Type) {
   var Dambo;
 
   Dambo = (function() {

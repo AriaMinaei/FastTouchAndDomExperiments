@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"> 
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	
+	<script src="../../scripts/require.js"></script>
+	<script>
+		require.config({
+			baseUrl: '../../scripts/js/lib'
+		});
+		require(['../../scripts/js/demos/particles/spring.js']);
+	</script>
+
+	<link rel="stylesheet" href="styles/main.css">
+
+	<script>
+		// Weinre remote debugger for remote clients
+		(function(){
+			return;
+			if (document.location.hostname === '192.168.2.2') {
+				var s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = 'http://192.168.2.2:8080/target/target-script-min.js';
+				document.querySelector('head').appendChild(s);
+			}
+
+		})();
+		
+
+	</script>
+</head>
+
+<body>
+	
+	
+
+</body>
+</html>
