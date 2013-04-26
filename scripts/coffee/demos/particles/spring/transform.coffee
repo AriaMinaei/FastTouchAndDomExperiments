@@ -11,10 +11,10 @@ define ->
 				tZ: 0
 
 
-		toState: (transform)->
+		toState: (x, y)->
 
-			@currentTransform.tX = parseFloat transform.x
-			@currentTransform.tY = parseFloat transform.y
+			@currentTransform.tX = parseFloat x
+			@currentTransform.tY = parseFloat y
 			@currentTransform.tZ = 0
 
 			do @_applyToElement

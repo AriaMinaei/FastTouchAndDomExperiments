@@ -6,8 +6,7 @@ define ->
 	# From https://github.com/soulwire/Coffee-Physics
 	do ->
 
-	    time = 0
-	    vendors = ['webkit']
+	    vendors = ['webkit', 'moz']
 
 	    for vendor in vendors when not window.requestAnimationFrame
 	    	

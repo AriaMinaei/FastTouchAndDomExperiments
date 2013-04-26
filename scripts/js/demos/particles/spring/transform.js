@@ -11,9 +11,9 @@ define(function() {
       };
     }
 
-    Transform.prototype.toState = function(transform) {
-      this.currentTransform.tX = parseFloat(transform.x);
-      this.currentTransform.tY = parseFloat(transform.y);
+    Transform.prototype.toState = function(x, y) {
+      this.currentTransform.tX = parseFloat(x);
+      this.currentTransform.tY = parseFloat(y);
       this.currentTransform.tZ = 0;
       return this._applyToElement();
     };

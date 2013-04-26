@@ -6,5 +6,5 @@
     "coffee\\demos\\particles\\spring.coffee"
   ],
   "names": [],
-  "mappings": "AACA,CAAO,CAAiD,CAAA,GAAxD,GAAyD,EAAD,kCAAjD;AAIS,CAAR,EAAQ,EAAf,CAAM,GAAN;CAJuD"
+  "mappings": "AACA,CAAO,CAAgD,CAAa,GAApE,EAAoE,CAAC,CAA9D,CAA6D,kCAA7D;CAEG,EAAA,KAAT,CAAA;CAEC,IAAA,GAAA;;CAAwB,EAAZ,CAAA,CAAZ,GAAgC,GAAhC,EAAwB;CAFzB,EAAS;CAF0D"
 }

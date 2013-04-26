@@ -6,10 +6,9 @@ if (typeof define !== 'function') {
 
 define(function() {
   (function() {
-    var time, vendor, vendors, _i, _len, _results;
+    var vendor, vendors, _i, _len, _results;
 
-    time = 0;
-    vendors = ['webkit'];
+    vendors = ['webkit', 'moz'];
     _results = [];
     for (_i = 0, _len = vendors.length; _i < _len; _i++) {
       vendor = vendors[_i];

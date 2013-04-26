@@ -1,6 +1,6 @@
 								
-define ['../../../../js/demos/particles/spring/field'], (SpringField) ->
+define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField, domReady) ->
 	
-	# domReady ->
+	domReady ->
 
-	window.field = new SpringField
+		field = new SpringField document.querySelector '.field'
