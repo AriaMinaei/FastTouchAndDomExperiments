@@ -1,6 +1,7 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
 define ->
+
 	return (defineGesture) ->
 
 		# Move gesture. Doesn't finish until the event receiver calls
@@ -32,7 +33,7 @@ define ->
 					else
 					
 						h.restartFromEvent e
-
+						
 				else
 
 					@constructor.__super__.start.apply @, arguments

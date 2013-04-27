@@ -9,9 +9,8 @@ define ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gestu
 	# Start listening for events
 	g.listen()
 
-	# for debugging
-	window.g = g
 	dr ->
+
 		# Wrap around an anonymous function
 		do ->
 			# holds refrences to transform handler objects for each element
@@ -83,58 +82,3 @@ define ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, Gestu
 
 					# Remove reference to transformation handler
 					transforms[id] = null if transforms[id]
-
-					# Btw, the rotation doesn't work the way the user intents,
-					# since the FastMatrix class isn't finished yet.
-
-
-
-		# To quickly benchmark different possible approaches on stuff
-		# do ->
-		# 	suite = new Benchmark.Suite
-
-		# 	suite.add 'case1', ->
-				
-
-		# 	suite.add 'case2', ->
-
-		# 	suite.on 'cycle', (e) ->
-		# 		console.log String(e.target)
-
-		# 	suite.on 'complete', ->
-		# 		console.log 'Fastest:', this
-
-		# 	window.run = ->
-		# 		suite.run
-		# 			async: true
-
-		# 		return null
-		
-		# This is to test Graphics.FastMatrix, since its not ready yet.
-		# window.t = 
-		# 	el: null
-		# 	m: new Graphics.FastMatrix
-		# 	default: ->
-		# 		@fromEl(document.querySelectorAll('.two.extra')[0])
-		# 		@
-		# 	fromEl: (@el) ->
-		# 		@m.fromString getComputedStyle(@el).webkitTransform
-		# 		@
-		# 	apply: ->
-		# 		@el.style.webkitTransform = @m.toString()
-		# 		@
-
-		# t.default()
-
-		# window.m = t.m
-
-		# setInterval ->
-		# 	t.apply()
-		# , 1000
-
-		# # m._setRotation(Math.PI / 4, 0, 0)
-		# m._setRotationZ(Math.PI / 4)
-		# console.log 'm', m.toString()
-
-		# console.log 'w', getComputedStyle(document.querySelectorAll('.two.alone')[0]).webkitTransform
-

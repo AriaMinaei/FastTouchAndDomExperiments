@@ -24,7 +24,7 @@ define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
       var moved;
 
       moved = false;
-      if (Math.abs(Math.abs(nextX) - Math.abs(this._appliedPos.x)) > 0.99 || Math.abs(Math.abs(nextY) - Math.abs(this._appliedPos.y)) > 0.99) {
+      if (Math.abs(Math.abs(nextX) - Math.abs(this._appliedPos.x)) > 0.9 || Math.abs(Math.abs(nextY) - Math.abs(this._appliedPos.y)) > 0.9) {
         this._moveEl(nextX, nextY);
         moved = true;
       }
@@ -36,7 +36,7 @@ define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
     Particle.prototype._moveEl = function(nextX, nextY) {
       this._appliedPos.x = nextX;
       this._appliedPos.y = nextY;
-      this._transformMatrix.setMovement(nextX, nextY, 0);
+      this._transformMatrix.setMovement(parseInt(nextX), parseInt(nextY), 0);
       return this.el.style.webkitTransform = this._transformMatrix.toCss();
     };
 

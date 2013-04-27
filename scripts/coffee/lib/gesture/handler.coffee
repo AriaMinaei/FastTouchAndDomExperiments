@@ -193,7 +193,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 
 				if Math.abs(touch.screenX - first.screenX) >= @options.real_move_distance or
 				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
-					@hadRealMove = true
+					@hadRealMove = yes
 						
 			if @gesture then @gesture.move @, @lastEvents.move
 

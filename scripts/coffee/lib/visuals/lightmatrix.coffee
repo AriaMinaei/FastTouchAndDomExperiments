@@ -107,6 +107,10 @@ define [
 
 			Base.toCss @toMatrix()
 
+		toArray: ->
+
+			Base.toArray @toMatrix()
+
 		toMatrix: ->
 
 			soFar = @_getIdentityMatrix()

@@ -42,12 +42,35 @@ define(function() {
       var key;
 
       for (key in add) {
-        to[key] = add[key];
+        if (add[key] !== void 0) {
+          to[key] = add[key];
+        }
+      }
+      return to;
+    },
+    deepAppend: function(to, add) {
+      var key, val;
+
+      for (key in add) {
+        val = add[key];
+        if (val === void 0) {
+          continue;
+        }
+        if (belt.typeOf(val) !== 'object') {
+          to[key] = val;
+        } else {
+          if (belt.typeOf(to[key]) !== 'object') {
+            to[key] = {};
+          }
+          belt.deepAppend(to[key], val);
+        }
       }
       return to;
     },
     /*
-    		Returns type of an object, including 'array'
+    		Returns type of an object, including:
+    		undefined, null, string, number, array,
+    		arguments, element, textnode, whitespace, and object
     */
 
     typeOf: function(item) {
@@ -55,6 +78,9 @@ define(function() {
 
       if (item === null) {
         return 'null';
+      }
+      if (typeof item !== 'object') {
+        return typeof item;
       }
       if (Array.isArray(item)) {
         return 'array';

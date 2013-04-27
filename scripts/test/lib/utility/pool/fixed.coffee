@@ -1,6 +1,6 @@
 require '../../../prepare'
 
-spec ['utility/pool/fixed'], (FixedPool) ->
+spec ['utility/pool/fixed'], (FixedPool) -> test 'FixedPool', ->
 
 	class MyPool extends FixedPool
 

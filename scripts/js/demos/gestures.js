@@ -5,7 +5,6 @@ define(['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], function(d
   window.dommy = new Dommy;
   g = new GestureHandler(document);
   g.listen();
-  window.g = g;
   return dr(function() {
     return (function() {
       var transforms;

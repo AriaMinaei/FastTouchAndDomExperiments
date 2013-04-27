@@ -83,6 +83,10 @@ define(['./lightmatrix/base', './lightmatrix/translation', './lightmatrix/scale'
       return Base.toCss(this.toMatrix());
     };
 
+    LightMatrix.prototype.toArray = function() {
+      return Base.toArray(this.toMatrix());
+    };
+
     LightMatrix.prototype.toMatrix = function() {
       var soFar;
 

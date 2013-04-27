@@ -34,7 +34,7 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 			moved = false
 
-			if Math.abs(Math.abs(nextX) - Math.abs(@_appliedPos.x)) > 0.99 or Math.abs(Math.abs(nextY) - Math.abs(@_appliedPos.y)) > 0.99
+			if Math.abs(Math.abs(nextX) - Math.abs(@_appliedPos.x)) > 0.9 or Math.abs(Math.abs(nextY) - Math.abs(@_appliedPos.y)) > 0.9
 
 				@_moveEl nextX, nextY
 
@@ -50,27 +50,9 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 			@_appliedPos.x = nextX
 			@_appliedPos.y = nextY
 
-			@_transformMatrix.setMovement nextX, nextY, 0
+			@_transformMatrix.setMovement parseInt(nextX), parseInt(nextY), 0
 
 			@el.style.webkitTransform = @_transformMatrix.toCss()
-
-		# Returns dx
-		# _integrate: (ax, ay) ->
-
-		# 	# Euler's Integrator
-		# 	# dt = (Date.now() - @_t0)/1000
-			
-
-		# 	# if dt is 0 
-		# 	dt = .5
-
-		# 	@pos.x = .5 * ax * Math.pow(dt, 2) + @v.x * dt + @pos.x
-		# 	@pos.y = .5 * (ay) * Math.pow(dt, 2) + @v.y * dt + @pos.y
-
-		# 	@v.x = ax * dt + @v.x
-		# 	@v.y = (ay) * dt+ @v.y
-
-		# 	@pos
 
 		_integrateD: (a, dt, v0, d0) ->
 

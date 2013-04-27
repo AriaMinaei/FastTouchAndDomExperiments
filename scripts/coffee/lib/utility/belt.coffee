@@ -29,19 +29,46 @@ define ->
 		###
 		append: (to, add) ->
 
-			to[key] = add[key] for key of add
+			to[key] = add[key] for key of add when add[key] isnt undefined
 
 			to
 
+		deepAppend: (to, add) ->
+
+			for key of add
+
+				val = add[key]
+
+				continue if val is undefined
+
+				if belt.typeOf(val) isnt 'object'
+
+					to[key] = val
+
+				else
+
+					to[key] = {} if belt.typeOf(to[key]) isnt 'object'
+
+					belt.deepAppend to[key], val
+
+			to
+
+
 		###
-		Returns type of an object, including 'array'
+		Returns type of an object, including:
+		undefined, null, string, number, array,
+		arguments, element, textnode, whitespace, and object
 		###
 		typeOf: (item) ->
 
-			return 'null' if item == null
+			return 'null' if item is null
 			
-			return 'array' if Array.isArray(item)
+			return typeof item if typeof item isnt 'object'
 
+			return 'array' if Array.isArray item
+
+			# From MooTools
+			# - do we even need this?
 			if item.nodeName
 
 				if item.nodeType is 1 then return 'element'

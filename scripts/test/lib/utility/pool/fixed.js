@@ -4,39 +4,41 @@ var __hasProp = {}.hasOwnProperty,
 require('../../../prepare');
 
 spec(['utility/pool/fixed'], function(FixedPool) {
-  var MyPool, a, b, c, pool, _ref;
+  return test('FixedPool', function() {
+    var MyPool, a, b, c, pool, _ref;
 
-  MyPool = (function(_super) {
-    __extends(MyPool, _super);
+    MyPool = (function(_super) {
+      __extends(MyPool, _super);
 
-    function MyPool() {
-      _ref = MyPool.__super__.constructor.apply(this, arguments);
-      return _ref;
-    }
+      function MyPool() {
+        _ref = MyPool.__super__.constructor.apply(this, arguments);
+        return _ref;
+      }
 
-    MyPool.prototype._create = function() {
-      return {
-        name: '',
-        age: 0
+      MyPool.prototype._create = function() {
+        return {
+          name: '',
+          age: 0
+        };
       };
-    };
 
-    MyPool.prototype._reset = function(item) {
-      item.name = '';
-      item.age = 0;
-      return item;
-    };
+      MyPool.prototype._reset = function(item) {
+        item.name = '';
+        item.age = 0;
+        return item;
+      };
 
-    return MyPool;
+      return MyPool;
 
-  })(FixedPool);
-  pool = new MyPool(2);
-  a = pool.get();
-  b = pool.get();
-  c = pool.get();
-  c.should.equal(a);
-  c.should.not.equal(b);
-  return pool.get().should.equal(b);
+    })(FixedPool);
+    pool = new MyPool(2);
+    a = pool.get();
+    b = pool.get();
+    c = pool.get();
+    c.should.equal(a);
+    c.should.not.equal(b);
+    return pool.get().should.equal(b);
+  });
 });
 
 /*

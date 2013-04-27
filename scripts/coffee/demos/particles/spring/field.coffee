@@ -1,39 +1,42 @@
-define ['./vector', './particle', 'utility/shims'], (Vector, Particle) ->
+define ['./vector', './particle', 'utility/belt', 'utility/shims'], (Vector, Particle, belt) ->
 
 	_containerEl = document.createElement 'div'
 	_containerEl.classList.add 'container'
 
 	class SpringField
 
-		constructor: (@root = document.querySelector 'body') ->
+		constructor: (@root = document.querySelector 'body', options = {}) ->
 
-			@_fieldSize = new Vector 40, 40
+			@options = 
 
-			@_containerCapacity = 1600
+				particleMargin: 40
 
-			@_particleMargin = new Vector window.innerWidth / @_fieldSize.x,
-				window.innerHeight / @_fieldSize.y
+			belt.deepAppend @options, options
+
+			@_fieldSize = new Vector Math.floor(@root.clientWidth / @options.particleMargin),
+				Math.floor(@root.clientHeight / @options.particleMargin)
+
+			@_containerCapacity = 600
 
 			@_particles = []
 
 			@_boundFrame = @_frame.bind @
 
-			@_mousePos = new Vector @_particleMargin.x * @_fieldSize.x / 2, @_particleMargin.y * @_fieldSize.y / 2
+			@_mousePos = new Vector @root.clientWidth / 2, @root.clientHeight / 2
 
 			@_mouseForce = new Vector 0, 0
 
-			# Particles to render per frame
-			@_ppf = 1600
+			do @_prepareParticles
 
 			@_currentParticlesCursor = 0
-			
-			do @_prepareParticles
 
 			@_particlesCount = @_particles.length
 
+			@_maxFrameDuration = 7
+
 			do @_senseMouse
 
-			do @_frame
+			do @_frame2
 			
 		_prepareParticles: ->			
 
@@ -47,7 +50,7 @@ define ['./vector', './particle', 'utility/shims'], (Vector, Particle) ->
 
 						@root.appendChild container
 
-					particle = new Particle new Vector (j + 1) * @_particleMargin.x, (i + 1) * @_particleMargin.y
+					particle = new Particle new Vector (i + 1) * @options.particleMargin, (j + 1) * @options.particleMargin
 
 					container.appendChild particle.el
 
@@ -59,10 +62,15 @@ define ['./vector', './particle', 'utility/shims'], (Vector, Particle) ->
 
 		_frame: ->
 
+			requestAnimationFrame @_boundFrame
+
 			renderedInThisFrame = 0
 
-			loop
+			# movement = Math.random() * ( if Math.random() > 0.5 then 2 else -2 )
 
+			started = Date.now()
+
+			loop
 
 				@_currentParticlesCursor++
 
@@ -82,11 +90,41 @@ define ['./vector', './particle', 'utility/shims'], (Vector, Particle) ->
 
 					particle.applyForce @_mouseForce 
 
-				renderedInThisFrame++ if do particle.continueMove
+				do particle.continueMove
+				
+				# particle._moveEl particle.pos.x + movement, particle.pos.y + movement
+				
+				renderedInThisFrame++
 
-				break if renderedInThisFrame is @_ppf or renderedInThisFrame is @_particlesCount
+				break if renderedInThisFrame is @_particlesCount
+
+				if renderedInThisFrame % 50 is 0
+
+					break if Date.now() - started > @_maxFrameDuration
+
+		_frame2: ->
 
 			requestAnimationFrame @_boundFrame
+
+			@_currentParticlesCursor++
+
+			if @_currentParticlesCursor is @_particlesCount
+
+				@_currentParticlesCursor = 0
+
+			particle = @_particles[@_currentParticlesCursor]
+
+			dx = @_mousePos.x - particle.pos.x
+			dy = @_mousePos.y - particle.pos.y
+
+			if Math.pow(dx, 2) + Math.pow(dy, 2) < 16000
+
+				@_mouseForce.x = -10 * dx
+				@_mouseForce.y = -10 * dy
+
+				particle.applyForce @_mouseForce 
+
+			do particle.continueMove
 
 		_senseMouse: ->
 
