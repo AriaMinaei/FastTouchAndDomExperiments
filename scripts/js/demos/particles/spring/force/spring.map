@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "spring.js",
+  "sourceRoot": "..\\..\\..\\..\\..",
+  "sources": [
+    "coffee\\demos\\particles\\spring\\force\\spring.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,EAAA,GAAP,GAAO;CAEN,KAAA,KAAA;;SAAM;CAEQ,CAAQ,CAAR,CAAA,KAAA,YAAE;CAAyB,EAAzB,CAAA,EAAD;CAA0B,EAAnB,CAAA,EAAD;CAApB,IAAa;;CAAb,CAEoB,CAAX,IAAT,CAAS,CAAC,SAAD;CAER,EAAqC,CAAb,EAAxB,EAAiC,CAAjC,SAAkB;CAAlB,EAGqC,CAAb,EAAxB,EAAiC,CAHjC,SAGkB;CALV,YAQR;CAVD,IAES;;CAFT;;CAJK;CAAA"
+}

@@ -12,17 +12,13 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 			@m = 50
 
-			# @_lastT = 0
-
 			@pos = new Vector @initPos.x, @initPos.y
 
 			@v = new Vector 0, 0
 
-			@_externalForces = new Vector 0, 0
+			@_forces = {}
 
-			@_springForce = new Vector 0, 0
-
-			@_damperForce = new Vector 0, 0
+			@_forceVector = new Vector 0, 0
 
 			@_t0 = Date.now()
 
@@ -34,7 +30,8 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 			moved = false
 
-			if Math.abs(Math.abs(nextX) - Math.abs(@_appliedPos.x)) > 0.9 or Math.abs(Math.abs(nextY) - Math.abs(@_appliedPos.y)) > 0.9
+			if Math.abs(Math.abs(nextX) - Math.abs(@_appliedPos.x)) > 0.5 or
+			   Math.abs(Math.abs(nextY) - Math.abs(@_appliedPos.y)) > 0.5
 
 				@_moveEl nextX, nextY
 
@@ -50,7 +47,7 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 			@_appliedPos.x = nextX
 			@_appliedPos.y = nextY
 
-			@_transformMatrix.setMovement parseInt(nextX), parseInt(nextY), 0
+			@_transformMatrix.setMovement nextX, nextY, 0
 
 			@el.style.webkitTransform = @_transformMatrix.toCss()
 
@@ -62,40 +59,31 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 			a * dt + v0
 
-		applyForces: (forces...) ->
+		addForce: (name, force) ->
 
-			for force in forces
+			@_forces[name] = force
 
-				@_externalForces.x += force.x
-				@_externalForces.y += force.y
+			@
 
-		applyForce: (force) ->
+		_getForceVector: ->
 
-			@_externalForces.x += force.x
-			@_externalForces.y += force.y
+			@_forceVector.x = 0
+			@_forceVector.y = 0
 
-		continueMove: ->
+			@_forces[name].applyTo(@, @_forceVector) for name of @_forces
 
-			@_springForce.x = @pos.x - @initPos.x
-			@_springForce.y = @pos.y - @initPos.y
+			@_forceVector
 
-			@_damperForce.x = 2 * @v.x
-			@_damperForce.y = 2 * @v.y
+		continueMove: (dt) ->
 
-			dt = 0.5
+			forceVector = @_getForceVector()
 
-			aX = (@_externalForces.x - @_springForce.x - @_damperForce.x) / @m
+			aX = forceVector.x / @m
 			nextX = @_integrateD aX, dt, @v.x, @pos.x
 			@v.x = @_integrateV aX, dt, @v.x
 
-			aY = (@_externalForces.y - @_springForce.y - @_damperForce.y) / @m
+			aY = forceVector.y / @m
 			nextY = @_integrateD aY, dt, @v.y, @pos.y
 			@v.y = @_integrateV aY, dt, @v.y
 
-			# nextPos = @_gotoPos @_integrate((@_externalForces.x - @_springForce.x - @_damperForce.x) / @m, (@_externalForces.y - @_springForce.y - @_damperForce.y) / @m)
-
-			@_externalForces.x = 0
-			@_externalForces.y = 0
-
 			@_gotoPos nextX, nextY
-

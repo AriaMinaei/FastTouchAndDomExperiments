@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "damper.js",
+  "sourceRoot": "..\\..\\..\\..\\..",
+  "sources": [
+    "coffee\\demos\\particles\\spring\\force\\damper.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,EAAA,GAAP,GAAO;CAEN,KAAA,KAAA;;SAAM;CAEQ,EAAA,CAAA,KAAA,YAAE;CAAiB,CAAA,CAAjB,CAAA,EAAD;CAAd,IAAa;;CAAb,CAEoB,CAAX,IAAT,CAAS,CAAC,SAAD;CAER,EAAuC,CAAf,EAAxB,EAAgC,CAAhC,SAAkB;CAAlB,EAEuC,CAAf,EAAxB,EAAgC,CAFhC,SAEkB;CAJV,YAMR;CARD,IAES;;CAFT;;CAJK;CAAA"
+}

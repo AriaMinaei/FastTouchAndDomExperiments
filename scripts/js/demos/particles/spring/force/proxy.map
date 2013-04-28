@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "proxy.js",
+  "sourceRoot": "..\\..\\..\\..\\..",
+  "sources": [
+    "coffee\\demos\\particles\\spring\\force\\proxy.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,EAAA,GAAP,GAAO;CAEN,KAAA,IAAA;;SAAM;CAEQ,EAAA,CAAA,CAAA,eAAE;CAAQ,EAAR,CAAA,CAAQ,CAAT;CAAd,IAAa;;CAAb,CAEoB,CAAX,IAAT,CAAS,CAAC,SAAD;CAEP,CAAwB,EAAxB,CAAK,EAAN,CAAA,KAAA,KAAA;CAJD,IAES;;CAFT;;CAJK;CAAA"
+}

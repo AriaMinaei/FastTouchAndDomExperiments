@@ -19,6 +19,8 @@ body {
 
 .field {
   position: absolute;
+  top: 40px;
+  left: 40px;
 	width: 100%;
   height: 100%;
 }

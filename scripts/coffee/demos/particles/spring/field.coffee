@@ -1,32 +1,91 @@
-define ['./vector', './particle', 'utility/belt', 'utility/shims'], (Vector, Particle, belt) ->
+define [
 
-	_containerEl = document.createElement 'div'
-	_containerEl.classList.add 'container'
+	'./vector'		, 	'./particle'	,
+
+	'./force/spring', 	'./force/damper', './force/proxy', './force/attractor',
+
+	'utility/belt'	, 	'utility/shims'	
+	
+	], (Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, belt) ->
 
 	class SpringField
 
-		constructor: (@root = document.querySelector 'body', options = {}) ->
+		constructor: (@root = document.querySelector('body'), options = {}) ->
 
 			@options = 
 
-				particleMargin: 40
+				particleMargin: 60
+
+				forces:
+
+					spring:
+
+						intensity: 1000
+
+					damper:
+
+						intensity: 20
+
+					mouse:
+
+						radius: 100
+
+						intensity: 150
 
 			belt.deepAppend @options, options
 
-			@_fieldSize = new Vector Math.floor(@root.clientWidth / @options.particleMargin),
-				Math.floor(@root.clientHeight / @options.particleMargin)
+			@_fieldSize = new Vector Math.floor(@root.clientWidth  / @options.particleMargin),
+									 Math.floor(@root.clientHeight / @options.particleMargin)
 
-			@_containerCapacity = 600
+			do @_prepareMouse			
+
+			do @_prepareParticles
+
+			do @_prepareAnimation
+
+			do @_frame
+		
+		_prepareMouse: ->
+
+			@_mousePos = new Vector @root.clientWidth  * 2, 
+									@root.clientHeight * 2
+
+			@_mouseForce = new ProxyForce new AttractorForce(
+				@_mousePos, 
+				@options.forces.mouse.radius,
+				@options.forces.mouse.intensity
+				)
+
+			@root.addEventListener 'mousemove', (e) =>
+
+				@_mousePos.x = e.clientX
+				@_mousePos.y = e.clientY
+
+		_prepareParticles: ->
+
+			@_damperForce = new DamperForce @options.forces.damper.intensity
 
 			@_particles = []
 
+			for i in [0...@_fieldSize.x]
+
+				for j in [0...@_fieldSize.y]
+
+					pos = new Vector i * @options.particleMargin, j * @options.particleMargin
+					
+					particle = new Particle pos
+					
+					particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
+					particle.addForce 'damper', @_damperForce
+					particle.addForce 'mouse', @_mouseForce
+
+					@root.appendChild particle.el
+
+					@_particles.push particle
+
+		_prepareAnimation: ->
+
 			@_boundFrame = @_frame.bind @
-
-			@_mousePos = new Vector @root.clientWidth / 2, @root.clientHeight / 2
-
-			@_mouseForce = new Vector 0, 0
-
-			do @_prepareParticles
 
 			@_currentParticlesCursor = 0
 
@@ -34,39 +93,25 @@ define ['./vector', './particle', 'utility/belt', 'utility/shims'], (Vector, Par
 
 			@_maxFrameDuration = 7
 
-			do @_senseMouse
+			@_lastFrameTime = 0
 
-			do @_frame2
-			
-		_prepareParticles: ->			
-
-			for i in [0...@_fieldSize.x]
-
-				for j in [0...@_fieldSize.y]
-
-					if @_particles.length % @_containerCapacity is 0
-
-						container = @_getContainer()
-
-						@root.appendChild container
-
-					particle = new Particle new Vector (i + 1) * @options.particleMargin, (j + 1) * @options.particleMargin
-
-					container.appendChild particle.el
-
-					@_particles.push particle
-
-		_getContainer: ->
-			
-			do _containerEl.cloneNode
-
-		_frame: ->
+		_frame: (t) ->
 
 			requestAnimationFrame @_boundFrame
 
 			renderedInThisFrame = 0
 
-			# movement = Math.random() * ( if Math.random() > 0.5 then 2 else -2 )
+			if not t
+
+				@_lastFrameTime = 0
+
+				dt = 0.016
+
+			else
+
+				dt = (t - @_lastFrameTime) / 1000
+
+				@_lastFrameTime = t
 
 			started = Date.now()
 
@@ -78,22 +123,8 @@ define ['./vector', './particle', 'utility/belt', 'utility/shims'], (Vector, Par
 
 					@_currentParticlesCursor = 0
 
-				particle = @_particles[@_currentParticlesCursor]
+				@_particles[@_currentParticlesCursor].continueMove dt
 
-				dx = @_mousePos.x - particle.pos.x
-				dy = @_mousePos.y - particle.pos.y
-
-				if Math.pow(dx, 2) + Math.pow(dy, 2) < 16000
-
-					@_mouseForce.x = -10 * dx
-					@_mouseForce.y = -10 * dy
-
-					particle.applyForce @_mouseForce 
-
-				do particle.continueMove
-				
-				# particle._moveEl particle.pos.x + movement, particle.pos.y + movement
-				
 				renderedInThisFrame++
 
 				break if renderedInThisFrame is @_particlesCount
@@ -101,35 +132,3 @@ define ['./vector', './particle', 'utility/belt', 'utility/shims'], (Vector, Par
 				if renderedInThisFrame % 50 is 0
 
 					break if Date.now() - started > @_maxFrameDuration
-
-		_frame2: ->
-
-			requestAnimationFrame @_boundFrame
-
-			@_currentParticlesCursor++
-
-			if @_currentParticlesCursor is @_particlesCount
-
-				@_currentParticlesCursor = 0
-
-			particle = @_particles[@_currentParticlesCursor]
-
-			dx = @_mousePos.x - particle.pos.x
-			dy = @_mousePos.y - particle.pos.y
-
-			if Math.pow(dx, 2) + Math.pow(dy, 2) < 16000
-
-				@_mouseForce.x = -10 * dx
-				@_mouseForce.y = -10 * dy
-
-				particle.applyForce @_mouseForce 
-
-			do particle.continueMove
-
-		_senseMouse: ->
-
-			document.addEventListener 'mousemove', (e) =>
-
-				@_mousePos.x = e.clientX
-				@_mousePos.y = e.clientY
-					
