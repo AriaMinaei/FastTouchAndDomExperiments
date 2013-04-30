@@ -4,9 +4,11 @@ define [
 
 	'./force/spring', 	'./force/damper', './force/proxy', './force/attractor',
 
+	'./force/tornado',
+
 	'utility/belt'	, 	'utility/shims'	
 	
-	], (Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, belt) ->
+	], (Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, belt) ->
 
 	class SpringField
 
@@ -20,7 +22,7 @@ define [
 
 					spring:
 
-						intensity: 1000
+						intensity: 5000
 
 					damper:
 
@@ -31,6 +33,14 @@ define [
 						radius: 100
 
 						intensity: 150
+
+					tornado:
+
+						radius: 100
+
+						intensity: 1000
+
+						direction: 1
 
 			belt.deepAppend @options, options
 
@@ -50,16 +60,19 @@ define [
 			@_mousePos = new Vector @root.clientWidth  * 2, 
 									@root.clientHeight * 2
 
-			@_mouseForce = new ProxyForce new AttractorForce(
+			@_mouseForce = new ProxyForce new TornadoForce(
 				@_mousePos, 
-				@options.forces.mouse.radius,
-				@options.forces.mouse.intensity
+				@options.forces.tornado.radius,
+				@options.forces.tornado.intensity,
+				@options.forces.tornado.direction
 				)
+
+			rootPos = @root.getBoundingClientRect()
 
 			@root.addEventListener 'mousemove', (e) =>
 
-				@_mousePos.x = e.clientX
-				@_mousePos.y = e.clientY
+				@_mousePos.x = e.clientX - rootPos.left
+				@_mousePos.y = e.clientY - rootPos.top
 
 		_prepareParticles: ->
 
@@ -67,21 +80,39 @@ define [
 
 			@_particles = []
 
+			do =>
+
+				pos = new Vector @_fieldSize.x * @options.particleMargin / 2, @_fieldSize.y * @options.particleMargin / 2
+				
+				particle = new Particle pos
+				
+				particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
+				particle.addForce 'damper', @_damperForce
+				particle.addForce 'mouse', @_mouseForce
+
+				@root.appendChild particle.el
+
+				@_particles.push particle
+
+			return
+
 			for i in [0...@_fieldSize.x]
 
 				for j in [0...@_fieldSize.y]
 
-					pos = new Vector i * @options.particleMargin, j * @options.particleMargin
-					
-					particle = new Particle pos
-					
-					particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
-					particle.addForce 'damper', @_damperForce
-					particle.addForce 'mouse', @_mouseForce
+					do =>
 
-					@root.appendChild particle.el
+						pos = new Vector i * @options.particleMargin, j * @options.particleMargin
+						
+						particle = new Particle pos
+						
+						particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
+						particle.addForce 'damper', @_damperForce
+						particle.addForce 'mouse', @_mouseForce
 
-					@_particles.push particle
+						@root.appendChild particle.el
+
+						@_particles.push particle
 
 		_prepareAnimation: ->
 
@@ -129,6 +160,6 @@ define [
 
 				break if renderedInThisFrame is @_particlesCount
 
-				if renderedInThisFrame % 50 is 0
+				# if renderedInThisFrame % 50 is 0
 
-					break if Date.now() - started > @_maxFrameDuration
+				# 	break if Date.now() - started > @_maxFrameDuration

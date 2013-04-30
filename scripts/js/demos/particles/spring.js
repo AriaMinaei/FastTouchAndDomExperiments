@@ -6,14 +6,14 @@ define(['../../../../js/demos/particles/spring/field', 'domReady'], function(Spr
       particleMargin: 60,
       forces: {
         spring: {
-          intensity: 80000
+          intensity: 0
         },
         damper: {
-          intensity: 700
+          intensity: 100
         },
         mouse: {
-          radius: 100,
-          intensity: 150000
+          radius: 300,
+          intensity: -92000
         }
       }
     });

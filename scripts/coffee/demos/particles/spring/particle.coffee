@@ -28,17 +28,17 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 		_gotoPos: (nextX, nextY) ->
 
-			moved = false
+			moved = no
+
+			@pos.x = nextX
+			@pos.y = nextY
 
 			if Math.abs(Math.abs(nextX) - Math.abs(@_appliedPos.x)) > 0.5 or
 			   Math.abs(Math.abs(nextY) - Math.abs(@_appliedPos.y)) > 0.5
 
 				@_moveEl nextX, nextY
 
-				moved = true
-
-			@pos.x = nextX
-			@pos.y = nextY
+				moved = yes
 
 			moved
 

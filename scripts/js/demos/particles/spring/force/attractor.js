@@ -13,9 +13,9 @@ define(['utility/math'], function(math) {
 
       dx = math.unit(this.pos.x - particle.pos.x);
       dy = math.unit(this.pos.y - particle.pos.y);
-      distance = math.distance(particle.pos.x, particle.pos.y, this.pos.x, this.pos.y);
+      distance = math.distance(this.pos.x, this.pos.y, particle.pos.x, particle.pos.y);
       if (distance < this.radius) {
-        d = 1 - this._curve(distance / this.radius);
+        d = this._curve(1 - distance / this.radius);
         currentForceVector.x += this.intensity * dx * d;
         currentForceVector.y += this.intensity * dy * d;
       }

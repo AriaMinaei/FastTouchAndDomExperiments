@@ -11,15 +11,15 @@ define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField
 
 				spring:
 
-					intensity: 80000
+					intensity: 0
 
 				damper:
 
-					intensity: 700
+					intensity: 100
 
 				mouse:
 
-					radius: 100
+					radius: 300
 
-					intensity: 150000
+					intensity: -92000
 

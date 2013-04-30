@@ -21,12 +21,12 @@ define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
       var moved;
 
       moved = false;
+      this.pos.x = nextX;
+      this.pos.y = nextY;
       if (Math.abs(Math.abs(nextX) - Math.abs(this._appliedPos.x)) > 0.5 || Math.abs(Math.abs(nextY) - Math.abs(this._appliedPos.y)) > 0.5) {
         this._moveEl(nextX, nextY);
         moved = true;
       }
-      this.pos.x = nextX;
-      this.pos.y = nextY;
       return moved;
     };
 

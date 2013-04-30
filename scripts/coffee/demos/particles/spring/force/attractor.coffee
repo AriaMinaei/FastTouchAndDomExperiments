@@ -9,14 +9,17 @@ define ['utility/math'], (math) ->
 			dx = math.unit @pos.x - particle.pos.x
 			dy = math.unit @pos.y - particle.pos.y
 
-			distance = math.distance particle.pos.x, particle.pos.y, @pos.x, @pos.y
+			distance = math.distance @pos.x, @pos.y, particle.pos.x, particle.pos.y
 
 			if distance < @radius
 
-				d = 1 - @_curve distance / @radius
+				d = @_curve 1 - distance / @radius
 
-				currentForceVector.x += @intensity * dx *  d
-				currentForceVector.y += @intensity * dy *  d
+				currentForceVector.x += @intensity * dx * d
+				currentForceVector.y += @intensity * dy * d
+
+				# currentForceVector.x += 500000				
+				# currentForceVector.y -= 500000
 
 			currentForceVector
 

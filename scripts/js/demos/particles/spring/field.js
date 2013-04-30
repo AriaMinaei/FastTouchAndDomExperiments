@@ -1,4 +1,4 @@
-define(['./vector', './particle', './force/spring', './force/damper', './force/proxy', './force/attractor', 'utility/belt', 'utility/shims'], function(Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, belt) {
+define(['./vector', './particle', './force/spring', './force/damper', './force/proxy', './force/attractor', './force/tornado', 'utility/belt', 'utility/shims'], function(Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, belt) {
   var SpringField;
 
   return SpringField = (function() {
@@ -11,7 +11,7 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
         particleMargin: 60,
         forces: {
           spring: {
-            intensity: 1000
+            intensity: 5000
           },
           damper: {
             intensity: 20
@@ -19,6 +19,11 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
           mouse: {
             radius: 100,
             intensity: 150
+          },
+          tornado: {
+            radius: 100,
+            intensity: 1000,
+            direction: 1
           }
         }
       };
@@ -31,35 +36,55 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
     }
 
     SpringField.prototype._prepareMouse = function() {
-      var _this = this;
+      var rootPos,
+        _this = this;
 
       this._mousePos = new Vector(this.root.clientWidth * 2, this.root.clientHeight * 2);
-      this._mouseForce = new ProxyForce(new AttractorForce(this._mousePos, this.options.forces.mouse.radius, this.options.forces.mouse.intensity));
+      this._mouseForce = new ProxyForce(new TornadoForce(this._mousePos, this.options.forces.tornado.radius, this.options.forces.tornado.intensity, this.options.forces.tornado.direction));
+      rootPos = this.root.getBoundingClientRect();
       return this.root.addEventListener('mousemove', function(e) {
-        _this._mousePos.x = e.clientX;
-        return _this._mousePos.y = e.clientY;
+        _this._mousePos.x = e.clientX - rootPos.left;
+        return _this._mousePos.y = e.clientY - rootPos.top;
       });
     };
 
     SpringField.prototype._prepareParticles = function() {
-      var i, j, particle, pos, _i, _ref, _results;
+      var i, j, _i, _ref, _results,
+        _this = this;
 
       this._damperForce = new DamperForce(this.options.forces.damper.intensity);
       this._particles = [];
+      (function() {
+        var particle, pos;
+
+        pos = new Vector(_this._fieldSize.x * _this.options.particleMargin / 2, _this._fieldSize.y * _this.options.particleMargin / 2);
+        particle = new Particle(pos);
+        particle.addForce('spring', new SpringForce(pos, _this.options.forces.spring.intensity));
+        particle.addForce('damper', _this._damperForce);
+        particle.addForce('mouse', _this._mouseForce);
+        _this.root.appendChild(particle.el);
+        return _this._particles.push(particle);
+      })();
+      return;
       _results = [];
       for (i = _i = 0, _ref = this._fieldSize.x; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         _results.push((function() {
-          var _j, _ref1, _results1;
+          var _j, _ref1, _results1,
+            _this = this;
 
           _results1 = [];
           for (j = _j = 0, _ref1 = this._fieldSize.y; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
-            pos = new Vector(i * this.options.particleMargin, j * this.options.particleMargin);
-            particle = new Particle(pos);
-            particle.addForce('spring', new SpringForce(pos, this.options.forces.spring.intensity));
-            particle.addForce('damper', this._damperForce);
-            particle.addForce('mouse', this._mouseForce);
-            this.root.appendChild(particle.el);
-            _results1.push(this._particles.push(particle));
+            _results1.push((function() {
+              var particle, pos;
+
+              pos = new Vector(i * _this.options.particleMargin, j * _this.options.particleMargin);
+              particle = new Particle(pos);
+              particle.addForce('spring', new SpringForce(pos, _this.options.forces.spring.intensity));
+              particle.addForce('damper', _this._damperForce);
+              particle.addForce('mouse', _this._mouseForce);
+              _this.root.appendChild(particle.el);
+              return _this._particles.push(particle);
+            })());
           }
           return _results1;
         }).call(this));
@@ -98,13 +123,6 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
         renderedInThisFrame++;
         if (renderedInThisFrame === this._particlesCount) {
           break;
-        }
-        if (renderedInThisFrame % 50 === 0) {
-          if (Date.now() - started > this._maxFrameDuration) {
-            break;
-          } else {
-            _results.push(void 0);
-          }
         } else {
           _results.push(void 0);
         }

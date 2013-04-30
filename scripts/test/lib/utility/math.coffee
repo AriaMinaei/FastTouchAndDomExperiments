@@ -9,6 +9,9 @@ spec ['utility/math'], (math) ->
 	test 'distance', ->
 
 		math.distance(0, 0, 1, 1).should.equal Math.sqrt(2)
+		math.distance(-1, -1, 0, 0).should.equal Math.sqrt(2)
+		math.distance(0, 0, 5, 0).should.equal 5
+		math.distance(5, 0, -5, 0).should.equal 10
 
 	test 'limit', ->
 
@@ -22,3 +25,4 @@ spec ['utility/math'], (math) ->
 		math.unit(10).should.equal 1
 		math.unit(0).should.equal 1
 		math.unit(-0.5).should.equal -1
+		math.unit(-100).should.equal -1
