@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "array.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "test\\lib\\utility\\array.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAQ,MAAR,QAAA;;AAEA,CAFA,CAEwB,CAAA,CAAxB,CAAwB,IAAC,MAApB;CAEC,CAAS,CAAA,CAAd,GAAA,EAAA;CAEC,OAAA;;CAAA,CAAQ,CAAJ,CAAJ;CAAA,CAEuB,CAAf,CAAR,CAAA;CAFA,GAIA,CAAK,CAAO;CAJZ,GAMA,CAAM,CAAS;CANf,GAOA,CAAM,CAAS;CAPf,GAQA,CAAM,CAAS;CACT,IAAD,CAAO,KAAZ;CAXD,EAAc;CAFS"
+}

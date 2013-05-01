@@ -11,7 +11,7 @@ define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField
 
 				spring:
 
-					intensity: 8000
+					intensity: 10
 
 				damper:
 
@@ -25,7 +25,7 @@ define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField
 
 				tornado:
 
-					radius: 1000
+					radius: 1500
 
 					intensity: 900000
 

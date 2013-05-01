@@ -6,7 +6,7 @@ define(['../../../../js/demos/particles/spring/field', 'domReady'], function(Spr
       particleMargin: 70,
       forces: {
         spring: {
-          intensity: 8000
+          intensity: 10
         },
         damper: {
           intensity: 800
@@ -16,7 +16,7 @@ define(['../../../../js/demos/particles/spring/field', 'domReady'], function(Spr
           intensity: -9200000
         },
         tornado: {
-          radius: 1000,
+          radius: 1500,
           intensity: 900000,
           direction: 1
         }

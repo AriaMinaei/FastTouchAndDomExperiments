@@ -21,8 +21,8 @@ define(['utility/math', 'utility/func'], function(math, func) {
       distance = math.distance(this.pos.x, this.pos.y, particle.pos.x, particle.pos.y);
       if (distance < this.radius) {
         d = this._curve(1 - distance / this.radius);
-        currentForceVector.x += this.intensity * d * Math.cos(teta);
-        currentForceVector.y += this.intensity * d * Math.sin(teta);
+        currentForceVector.x += (this.intensity * d * Math.cos(teta)) + (-this.intensity * math.unit(dx) / 5);
+        currentForceVector.y += (this.intensity * d * Math.sin(teta)) + (-this.intensity * math.unit(dy) / 5);
       } else {
 
       }

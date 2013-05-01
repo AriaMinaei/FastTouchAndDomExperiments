@@ -1,4 +1,4 @@
-var amdefine, assert, color, path, pathToLib;
+var amdefine, color, path, pathToLib;
 
 amdefine = require('./amdefine.js')(module);
 
@@ -85,7 +85,7 @@ global.test = function(name, fn) {
 
 global.should = require('should');
 
-assert = require('assert');
+global.assert = require('assert');
 
 Array.prototype.shouldEqual = function(b, msg) {
   if (msg == null) {

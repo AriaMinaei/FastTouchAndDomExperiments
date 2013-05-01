@@ -1,4 +1,4 @@
-define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
+define(['./vector', 'visuals/lightmatrix', 'utility/hash'], function(Vector, LightMatrix, Hash) {
   var Particle;
 
   return Particle = (function() {
@@ -10,7 +10,7 @@ define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
       this.m = 50;
       this.pos = new Vector(this.initPos.x, this.initPos.y);
       this.v = new Vector(0, 0);
-      this._forces = {};
+      this._forces = new Hash;
       this._forceVector = new Vector(0, 0);
       this._t0 = Date.now();
       this._appliedPos = new Vector(0, 0);
@@ -46,17 +46,19 @@ define(['./vector', 'visuals/lightmatrix'], function(Vector, LightMatrix) {
     };
 
     Particle.prototype.addForce = function(name, force) {
-      this._forces[name] = force;
+      this._forces.set(name, force);
       return this;
     };
 
     Particle.prototype._getForceVector = function() {
-      var name;
+      var force, _i, _len, _ref;
 
       this._forceVector.x = 0;
       this._forceVector.y = 0;
-      for (name in this._forces) {
-        this._forces[name].applyTo(this, this._forceVector);
+      _ref = this._forces.array;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        force = _ref[_i];
+        force.applyTo(this, this._forceVector);
       }
       return this._forceVector;
     };

@@ -16,6 +16,8 @@ local.properties
 .settings/
 .loadpath
 
+.sass-cache/
+
 # External tool builders
 .externalToolBuilders/
 

@@ -96,7 +96,7 @@ global.test = (name, fn) ->
 global.should = require 'should'
 
 # We're gonna need assert
-assert = require 'assert'
+global.assert = require 'assert'
 
 # should.js doesn't do deep equal.
 Array::shouldEqual = (b, msg = '') ->

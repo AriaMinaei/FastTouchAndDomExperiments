@@ -1,4 +1,4 @@
-define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
+define ['./vector', 'visuals/lightmatrix', 'utility/hash'], (Vector, LightMatrix, Hash)->
 
 	class Particle
 
@@ -16,7 +16,7 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 			@v = new Vector 0, 0
 
-			@_forces = {}
+			@_forces = new Hash
 
 			@_forceVector = new Vector 0, 0
 
@@ -61,7 +61,7 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 
 		addForce: (name, force) ->
 
-			@_forces[name] = force
+			@_forces.set name, force
 
 			@
 
@@ -70,7 +70,7 @@ define ['./vector', 'visuals/lightmatrix'], (Vector, LightMatrix)->
 			@_forceVector.x = 0
 			@_forceVector.y = 0
 
-			@_forces[name].applyTo(@, @_forceVector) for name of @_forces
+			force.applyTo(@, @_forceVector) for force in @_forces.array
 
 			@_forceVector
 

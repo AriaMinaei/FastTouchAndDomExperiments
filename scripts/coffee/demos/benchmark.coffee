@@ -1,33 +1,74 @@
-require ['domReady', 'benchmark'], (domReady, Benchmark) ->
-	
-	domReady ->
+require ['dev/benchmark/simple-suite', 'utility/hash', 'utility/array'], (suite, Hash, array) ->
 
-		# To quickly benchmark different possible approaches on stuff
-		do ->
-			suite = new Benchmark.Suite
+	# getA = ->
 
-			suite.add '1', ->
+	# 	[
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 		{'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, {'name': 'me', 'value': 'you'}, 
+	# 	]
 
-				
+	# suite.add 'splice', ->
 
-			suite.add '2', ->
+	# 	a = getA()
 
-				
+	# 	a.splice 20, 1
 
-			suite.on 'cycle', (e) ->
+	# 	null
 
-				console.log String e.target
+	# suite.add 'pluck', ->
 
-			suite.on 'complete', ->
+	# 	a = getA()
 
-				console.log Base.toCss(w) is 'matrix3d(' + i.join(', ') + ')'
+	# 	array.pluck a, 20
 
-				console.log 'Fastest:',  @filter('fastest').pluck('name')[0]
+	# 	null
 
-			window.run = ->
+	num = 32
+	empty = ->
 
-				suite.run
+	array = []
+	obj = {}
+	h = new Hash
+	for i in [0...num]
 
-					async: true
+		array.push empty 
+		obj[i] = empty
+		h.set i, empty
 
-				return null
+	suite.add 'array', ->
+
+		do func for func in array
+
+		null
+
+	suite.add 'hash.array', ->
+
+		do func for func in h.array
+
+		null
+
+	suite.add 'hash.each', ->
+
+		h.each (i, val) ->
+
+			do val
+
+		null
+
+	suite.add 'obj', ->
+
+		do obj[i] for i of obj
+
+		null
