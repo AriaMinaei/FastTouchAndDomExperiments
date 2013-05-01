@@ -18,9 +18,6 @@ define ['utility/math'], (math) ->
 				currentForceVector.x += @intensity * dx * d
 				currentForceVector.y += @intensity * dy * d
 
-				# currentForceVector.x += 500000				
-				# currentForceVector.y -= 500000
-
 			currentForceVector
 
 		_curve: (d) -> d * d

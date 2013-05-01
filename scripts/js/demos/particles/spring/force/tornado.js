@@ -1,4 +1,4 @@
-define(['utility/math'], function(math) {
+define(['utility/math', 'utility/func'], function(math, func) {
   var Tornado;
 
   return Tornado = (function() {
@@ -10,22 +10,27 @@ define(['utility/math'], function(math) {
     }
 
     Tornado.prototype.applyTo = function(particle, currentForceVector) {
-      var cot, distance, dx, dy, tan;
+      var d, distance, dx, dy, teta;
 
       dx = particle.pos.x - this.pos.x;
       dy = particle.pos.y - this.pos.y;
-      tan = -(dy / dx);
-      cot = 1 / tan;
+      teta = (Math.atan(dy / dx)) - math.halfPi;
+      if (dx < 0) {
+        teta -= Math.PI;
+      }
       distance = math.distance(this.pos.x, this.pos.y, particle.pos.x, particle.pos.y);
       if (distance < this.radius) {
-        currentForceVector.x += this.intensity * tan;
-        currentForceVector.y += this.intensity * cot;
+        d = this._curve(1 - distance / this.radius);
+        currentForceVector.x += this.intensity * d * Math.cos(teta);
+        currentForceVector.y += this.intensity * d * Math.sin(teta);
+      } else {
+
       }
       return currentForceVector;
     };
 
     Tornado.prototype._curve = function(d) {
-      return d * d;
+      return d;
     };
 
     return Tornado;

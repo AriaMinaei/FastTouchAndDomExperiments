@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "func.js",
+  "sourceRoot": "..\\..\\..",
+  "sources": [
+    "coffee\\lib\\utility\\func.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,CAAO,EAAA,GAAP,GAAO;CAEN,GAAA,EAAA;;GAEC,CAFD,KAAA;CAEC,CAAU,CAAA,CAAV,IAAA,CAAW;CAEV,SAAA;;;GAFuB,KAAP;QAEhB;CAAA,EAAa,GAAb,IAAA;CAEA,EAAO,MAAA,IAAA;CAEN,EAAA,SAAA;;CAAA,EAAA,CAAU,IAAV;CAEA,EAAG,CAAA,IAAH,EAAG;CAEF,eAAA;UAJD;CAAA,EAMa,KAAb,EAAA;CAEK,CAAY,EAAb,CAAJ,IAAA,MAAA;CAVD,MAAO;CAJR,IAAU;CAJL;CAAA"
+}

@@ -1,4 +1,4 @@
-define ['utility/math'], (math) ->
+define ['utility/math', 'utility/func'], (math, func) ->
 
 	class Tornado
 
@@ -8,21 +8,27 @@ define ['utility/math'], (math) ->
 
 			dx = particle.pos.x - @pos.x
 			dy = particle.pos.y - @pos.y
+			
+			teta = (Math.atan dy / dx) - math.halfPi
 
+			if dx < 0
 
-			tan = -(dy / dx)
-			cot = 1 / tan
+				teta -= Math.PI
 
 			distance = math.distance @pos.x, @pos.y, particle.pos.x, particle.pos.y
 
 			if distance < @radius
 
-				# console.log dx, dy
-				# d = @_curve 1 - distance / @radius
+				d = @_curve 1 - distance / @radius
 
-				currentForceVector.x += @intensity * tan #- math.unit(dx) * 10 * 0 / d )
-				currentForceVector.y += @intensity * cot #- math.unit(dy) * 10 * 0 / d )
+				currentForceVector.x += @intensity * d * Math.cos teta
+				currentForceVector.y += @intensity * d * Math.sin teta
+
+			else
+
+				# currentForceVector.x += @intensity * 10 * math.unit -dx
+				# currentForceVector.y += @intensity * 10 *math.unit -dy
 
 			currentForceVector
 
-		_curve: (d) -> d * d
+		_curve: (d) -> d

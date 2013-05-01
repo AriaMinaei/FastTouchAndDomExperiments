@@ -11,18 +11,18 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
         particleMargin: 60,
         forces: {
           spring: {
-            intensity: 5000
+            intensity: 55000
           },
           damper: {
             intensity: 20
           },
-          mouse: {
+          attractor: {
             radius: 100,
             intensity: 150
           },
           tornado: {
             radius: 100,
-            intensity: 1000,
+            intensity: 4000,
             direction: 1
           }
         }
@@ -49,23 +49,10 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
     };
 
     SpringField.prototype._prepareParticles = function() {
-      var i, j, _i, _ref, _results,
-        _this = this;
+      var i, j, _i, _ref, _results;
 
       this._damperForce = new DamperForce(this.options.forces.damper.intensity);
       this._particles = [];
-      (function() {
-        var particle, pos;
-
-        pos = new Vector(_this._fieldSize.x * _this.options.particleMargin / 2, _this._fieldSize.y * _this.options.particleMargin / 2);
-        particle = new Particle(pos);
-        particle.addForce('spring', new SpringForce(pos, _this.options.forces.spring.intensity));
-        particle.addForce('damper', _this._damperForce);
-        particle.addForce('mouse', _this._mouseForce);
-        _this.root.appendChild(particle.el);
-        return _this._particles.push(particle);
-      })();
-      return;
       _results = [];
       for (i = _i = 0, _ref = this._fieldSize.x; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         _results.push((function() {

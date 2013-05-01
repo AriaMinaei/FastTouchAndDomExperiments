@@ -1,0 +1,48 @@
+/* line 1, ../sass/monitor.sass */
+.monitor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+}
+/* line 11, ../sass/monitor.sass */
+.monitor:before {
+  display: block;
+  content: "\0020";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: white;
+  opacity: 0.4;
+}
+
+/* line 27, ../sass/monitor.sass */
+.monitor-el {
+  position: relative;
+  float: right;
+  height: 100%;
+  text-align: right;
+  font-size: 18px;
+  padding: 10px;
+  margin-left: 40px;
+  box-sizing: border-box;
+  width: 140px;
+}
+
+/* line 47, ../sass/monitor.sass */
+.monitor-el-title {
+  font-family: Helvetica;
+  clear: both;
+  display: block;
+}
+
+/* line 55, ../sass/monitor.sass */
+.monitor-el-value {
+  display: block;
+  font-family: Helvetica;
+  font-size: 40px;
+  clear: both;
+}

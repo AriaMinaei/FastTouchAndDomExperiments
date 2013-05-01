@@ -28,7 +28,8 @@ define(function() {
         return -1;
       }
       return 1;
-    }
+    },
+    halfPi: Math.PI / 2
   };
 });
 

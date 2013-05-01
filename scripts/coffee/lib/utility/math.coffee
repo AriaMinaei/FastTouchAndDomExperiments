@@ -22,4 +22,6 @@ define ->
 
 			return -1 if n < 0
 			return 1
+
+		halfPi: Math.PI / 2
 	

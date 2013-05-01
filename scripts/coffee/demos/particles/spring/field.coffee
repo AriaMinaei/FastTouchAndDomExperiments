@@ -22,13 +22,13 @@ define [
 
 					spring:
 
-						intensity: 5000
+						intensity: 55000
 
 					damper:
 
 						intensity: 20
 
-					mouse:
+					attractor:
 
 						radius: 100
 
@@ -38,7 +38,7 @@ define [
 
 						radius: 100
 
-						intensity: 1000
+						intensity: 4000
 
 						direction: 1
 
@@ -67,6 +67,12 @@ define [
 				@options.forces.tornado.direction
 				)
 
+			# @_mouseForce = new ProxyForce new AttractorForce(
+			# 	@_mousePos, 
+			# 	@options.forces.attractor.radius,
+			# 	@options.forces.attractor.intensity
+			# 	)
+
 			rootPos = @root.getBoundingClientRect()
 
 			@root.addEventListener 'mousemove', (e) =>
@@ -80,21 +86,21 @@ define [
 
 			@_particles = []
 
-			do =>
+			# do =>
 
-				pos = new Vector @_fieldSize.x * @options.particleMargin / 2, @_fieldSize.y * @options.particleMargin / 2
+			# 	pos = new Vector @_fieldSize.x * @options.particleMargin / 2, @_fieldSize.y * @options.particleMargin / 2
 				
-				particle = new Particle pos
+			# 	particle = new Particle pos
 				
-				particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
-				particle.addForce 'damper', @_damperForce
-				particle.addForce 'mouse', @_mouseForce
+			# 	particle.addForce 'spring', new SpringForce pos, @options.forces.spring.intensity
+			# 	particle.addForce 'damper', @_damperForce
+			# 	particle.addForce 'mouse', @_mouseForce
 
-				@root.appendChild particle.el
+			# 	@root.appendChild particle.el
 
-				@_particles.push particle
+			# 	@_particles.push particle
 
-			return
+			# return
 
 			for i in [0...@_fieldSize.x]
 
