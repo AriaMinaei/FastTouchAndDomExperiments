@@ -75,7 +75,7 @@ define [
 
 			rootPos = @root.getBoundingClientRect()
 
-			@root.addEventListener 'mousemove', (e) =>
+			document.addEventListener 'mousemove', (e) =>
 
 				@_mousePos.x = e.clientX - rootPos.left
 				@_mousePos.y = e.clientY - rootPos.top

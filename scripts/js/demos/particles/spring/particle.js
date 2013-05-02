@@ -18,7 +18,7 @@ define(['./vector', 'visuals/lightmatrix', 'utility/hash'], function(Vector, Lig
     }
 
     Particle.prototype._gotoPos = function(nextX, nextY) {
-      var moved;
+      var max, moved, v;
 
       moved = false;
       this.pos.x = nextX;
@@ -26,6 +26,13 @@ define(['./vector', 'visuals/lightmatrix', 'utility/hash'], function(Vector, Lig
       if (Math.abs(Math.abs(nextX) - Math.abs(this._appliedPos.x)) > 0.5 || Math.abs(Math.abs(nextY) - Math.abs(this._appliedPos.y)) > 0.5) {
         this._moveEl(nextX, nextY);
         moved = true;
+      }
+      v = Math.max(Math.abs(this.v.x), Math.abs(this.v.y));
+      max = 50;
+      if (v < max) {
+        this.el.style.opacity = Math.max(v / max, 0.1);
+      } else {
+        this.el.style.opacity = 1;
       }
       return moved;
     };
@@ -63,10 +70,21 @@ define(['./vector', 'visuals/lightmatrix', 'utility/hash'], function(Vector, Lig
       return this._forceVector;
     };
 
+    Particle.prototype._getForceVector2 = function() {
+      var name;
+
+      this._forceVector.x = 0;
+      this._forceVector.y = 0;
+      for (name in this._forces._pairs) {
+        this._forces._pairs[name].applyTo(this, this._forceVector);
+      }
+      return this._forceVector;
+    };
+
     Particle.prototype.continueMove = function(dt) {
       var aX, aY, forceVector, nextX, nextY;
 
-      forceVector = this._getForceVector();
+      forceVector = this._getForceVector2();
       aX = forceVector.x / this.m;
       nextX = this._integrateD(aX, dt, this.v.x, this.pos.x);
       this.v.x = this._integrateV(aX, dt, this.v.x);

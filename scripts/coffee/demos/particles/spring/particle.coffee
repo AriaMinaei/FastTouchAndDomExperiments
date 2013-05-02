@@ -40,6 +40,18 @@ define ['./vector', 'visuals/lightmatrix', 'utility/hash'], (Vector, LightMatrix
 
 				moved = yes
 
+			v = Math.max Math.abs(@v.x), Math.abs(@v.y)
+
+			max = 50
+
+			if v < max
+
+				@el.style.opacity = Math.max v / max, 0.1
+
+			else
+
+				@el.style.opacity = 1
+
 			moved
 
 		_moveEl: (nextX, nextY) ->
@@ -74,9 +86,18 @@ define ['./vector', 'visuals/lightmatrix', 'utility/hash'], (Vector, LightMatrix
 
 			@_forceVector
 
+		_getForceVector2: ->
+
+			@_forceVector.x = 0
+			@_forceVector.y = 0
+
+			@_forces._pairs[name].applyTo(@, @_forceVector) for name of @_forces._pairs
+
+			@_forceVector
+
 		continueMove: (dt) ->
 
-			forceVector = @_getForceVector()
+			forceVector = @_getForceVector2()
 
 			aX = forceVector.x / @m
 			nextX = @_integrateD aX, dt, @v.x, @pos.x

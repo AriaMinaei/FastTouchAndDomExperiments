@@ -42,7 +42,7 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
       this._mousePos = new Vector(this.root.clientWidth * 2, this.root.clientHeight * 2);
       this._mouseForce = new ProxyForce(new TornadoForce(this._mousePos, this.options.forces.tornado.radius, this.options.forces.tornado.intensity, this.options.forces.tornado.direction));
       rootPos = this.root.getBoundingClientRect();
-      return this.root.addEventListener('mousemove', function(e) {
+      return document.addEventListener('mousemove', function(e) {
         _this._mousePos.x = e.clientX - rootPos.left;
         return _this._mousePos.y = e.clientY - rootPos.top;
       });

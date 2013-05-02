@@ -21,13 +21,8 @@ define ['utility/math', 'utility/func'], (math, func) ->
 
 				d = @_curve 1 - distance / @radius
 
-				currentForceVector.x += (@intensity * d * Math.cos teta) + (-@intensity * math.unit(dx)  / 5)
-				currentForceVector.y += (@intensity * d * Math.sin teta) + (-@intensity * math.unit(dy)  / 5)
-
-			else
-
-				# currentForceVector.x += @intensity * 10 * math.unit -dx
-				# currentForceVector.y += @intensity * 10 *math.unit -dy
+				currentForceVector.x += (@intensity * d * Math.cos teta) + (-@intensity * math.unit(dx) * d / 10)
+				currentForceVector.y += (@intensity * d * Math.sin teta) + (-@intensity * math.unit(dy) * d / 10)
 
 			currentForceVector
 

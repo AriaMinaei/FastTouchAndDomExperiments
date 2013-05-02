@@ -5,23 +5,23 @@ define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField
 
 		field = new SpringField document.querySelector('.field'), 
 
-			particleMargin: 70
+			particleMargin: 80
 
 			forces:
 
 				spring:
 
-					intensity: 10
+					intensity: 8000
 
 				damper:
 
-					intensity: 800
+					intensity: 500
 
 				attractor:
 
-					radius: 300
+					radius: 500
 
-					intensity: -9200000
+					intensity: 920000
 
 				tornado:
 
