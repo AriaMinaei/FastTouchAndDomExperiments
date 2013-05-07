@@ -1,73 +1,63 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['./move/instant', './move/persistent'], (setupInstant, setupPersistent) ->
+define
 
-	return (defineGesture) ->
+	# Move gesture, waits to see if the user really intends a one-finger move gesture.
+	# If the user immediately starts with more than one finger, 'move' won't capture.
+	name: 'move'
+	
+	check: ->
 
-		# Move gesture, waits to see if the user really intends a one-finger move gesture.
-		# If the user immediately starts with more than one finger, 'move' won't capture.
-		defineGesture
+		if not @h.hadRealMove
 
-			name: 'move'
-			
-			check: (h) ->
+			if @h.starts is 1
 
-				if not h.hadRealMove
+				return 0 
 
-					if h.starts is 1
+			else
 
-						return 0 
+				return -1
 
-					else
+		return 1
+	
+	init: (h) ->
 
-						return -1
+		@_initFromEvent @h, @h.lastEvents.move
 
-				return 1
-			
-			init: (h) ->
+	_initFromEvent: (h, e) ->
 
-				@_initFromEvent h, h.lastEvents.move
+		# Hold the starting position
+		@h.vars.startX = e.touches[0].pageX
+		@h.vars.startY = e.touches[0].pageY
 
-			_initFromEvent: (h, e) ->
+		# Remember id of the main touch
+		@h.vars.id = e.touches[0].identifier
 
-				# Hold the starting position
-				h.vars.startX = e.touches[0].pageX
-				h.vars.startY = e.touches[0].pageY
+		@h.fire
 
-				# Remember id of the main touch
-				h.vars.id = e.touches[0].identifier
+			translateX: 0
+			translateY: 0
 
-				h.fire
+	move: (h, e) ->
 
-					translateX: 0
-					translateY: 0
+		@h.fire 
+		
+			translateX: e.touches[0].pageX - @h.vars.startX
+			translateY: e.touches[0].pageY - @h.vars.startY
 
-			move: (h, e) ->
+	end: (h, e) ->
 
-				h.fire 
-				
-					translateX: e.touches[0].pageX - h.vars.startX
-					translateY: e.touches[0].pageY - h.vars.startY
+		# Do nothing if there are no fingers left on screen
+		return if e.touches.length is 0
 
-			end: (h, e) ->
+		# Do nothing if the ended touch is not the touch we are tracking
+		return if e.changedTouches[0].identifier isnt @h.vars.id
 
-				# Do nothing if there are no fingers left on screen
-				return if e.touches.length is 0
+		# Alright, now we should track the next finger on the screen
+		
+		# Let's remember its id
+		@h.vars.id = e.touches[0].identifier
 
-				# Do nothing if the ended touch is not the touch we are tracking
-				return if e.changedTouches[0].identifier isnt h.vars.id
-
-				# Alright, now we should track the next finger on the screen
-				
-				# Let's remember its id
-				h.vars.id = e.touches[0].identifier
-
-				# And update the startX and startY
-				h.vars.startX = e.touches[0].pageX - (e.changedTouches[0].pageX - h.vars.startX)
-				h.vars.startY = e.touches[0].pageY - (e.changedTouches[0].pageY - h.vars.startY)
-			
-		# Setup the move-instant
-		setupInstant defineGesture
-
-		# Setup the move-persistent
-		setupPersistent defineGesture
+		# And update the startX and startY
+		@h.vars.startX = e.touches[0].pageX - (e.changedTouches[0].pageX - @h.vars.startX)
+		@h.vars.startY = e.touches[0].pageY - (e.changedTouches[0].pageY - @h.vars.startY)

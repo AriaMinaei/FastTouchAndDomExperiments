@@ -4,16 +4,17 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['./definitions', './tools', '../utility/belt'], function(GestureDefinitions, TouchTools, belt) {
+define(['./definitions', './tools', '../utility/object'], function(GestureDefinitions, TouchTools, object) {
   var GestureDefinitionsList, Handler, emptyFunction;
 
   emptyFunction = function() {};
   Handler = (function() {
-    function Handler(root, dommy) {
+    function Handler(options) {
       var _this = this;
 
-      this.root = root != null ? root : window.document;
-      this.dommy = dommy != null ? dommy : window.dommy;
+      this.options = object.override(options, Handler.getDefaultOptions());
+      this.root = this.options.root;
+      this.dommy = this.options.dommy;
       this._boundListeners = {
         start: this._touchstartListener.bind(this),
         end: this._touchendListener.bind(this),
@@ -22,6 +23,7 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       };
       this.lastEvents = {};
       this._candidates = [];
+      this._gestures = {};
       this._elCustomEventListeners = {};
       this.vars = {};
       this.options = {
@@ -33,6 +35,13 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       };
       this._reset();
     }
+
+    Handler.getDefaultOptions = function() {
+      return {
+        root: window.document,
+        dommy: window.dommy ? window.dommy : void 0
+      };
+    };
 
     Handler.prototype._reset = function() {
       this.lastEvents.start = null;
@@ -50,8 +59,8 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       this.elFastId = 0;
       this._elEventListener = emptyFunction;
       this._elEventListenerInitialized = false;
-      belt.empty(this._elCustomEventListeners);
-      belt.empty(this.vars);
+      object.empty(this._elCustomEventListeners);
+      object.empty(this.vars);
       return null;
     };
 
@@ -88,12 +97,21 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
         this._findCandidates();
       }
       if (this.gesture) {
-        return this.gesture.start(this, e, first);
+        return this.gesture.start(e, first);
       } else {
         this._checkForType();
         if (this.gesture) {
-          return this.gesture.start(this, e, first);
+          return this.gesture.start(e, first);
         }
+      }
+    };
+
+    Handler.prototype._getGestureByName = function(name) {
+      if (this._gestures[name] === void 0) {
+        this._gestures[name] = new GestureDefinitionsList[name](this);
+      }
+      if (this._gestures[name] !== void 0) {
+        return this._gestures[name];
       }
     };
 
@@ -103,11 +121,11 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       this.lastEventType = 'end';
       this.lastEvents.end = this._copyTouchEvent(e);
       if (this.gesture) {
-        this.gesture.end(this, e);
+        this.gesture.end(e);
       } else {
         this._checkForType();
         if (this.gesture) {
-          this.gesture.end(this, e);
+          this.gesture.end(e);
         }
       }
       if (e.touches.length === 0) {
@@ -121,7 +139,7 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       this.lastEventType = 'cancel';
       this.lastEvents.cancel = this._copyTouchEvent(e);
       if (this.gesture) {
-        this.gesture.cancel(this, e);
+        this.gesture.cancel(e);
       }
       if (e.touches.length === 0) {
         return this._shouldFinish();
@@ -143,11 +161,11 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
         }
       }
       if (this.gesture) {
-        return this.gesture.move(this, this.lastEvents.move);
+        return this.gesture.move(this.lastEvents.move);
       } else {
         this._checkForType();
         if (this.gesture) {
-          return this.gesture.move(this, this.lastEvents.move);
+          return this.gesture.move(this.lastEvents.move);
         }
       }
     };
@@ -157,7 +175,7 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
 
       shouldFinish = true;
       if (this.gesture) {
-        shouldFinish = this.gesture.shouldFinish(this);
+        shouldFinish = this.gesture.shouldFinish();
       }
       if (!shouldFinish) {
         return;
@@ -167,17 +185,16 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
 
     Handler.prototype.finish = function() {
       if (this.gesture) {
-        this.gesture.finish(this);
+        this.gesture.finish();
       }
       return this._reset();
     };
 
     Handler.prototype._findCandidates = function() {
-      var gestureName, gestures, id, target, tempGests, _i, _len, _results;
+      var gestureName, gestures, id, target, tempGests, _i, _len;
 
       target = this.firstEvent.target;
       tempGests = {};
-      _results = [];
       while (target != null) {
         id = this.dommy.id(target);
         gestures = this._getElGestures(id, target);
@@ -202,9 +219,9 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
         if (target === this.root) {
           break;
         }
-        _results.push(target = target.parentNode);
+        target = target.parentNode;
       }
-      return _results;
+      return console.log('candidates: ', this._candidates);
     };
 
     Handler.prototype._getElGestures = function(id, el) {
@@ -238,8 +255,8 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
       while (this._candidates.length !== 0) {
         set = this._candidates[0];
         gestureName = set.gestureName;
-        g = GestureDefinitionsList[gestureName];
-        switch (g.check(this)) {
+        g = this._getGestureByName(gestureName);
+        switch (g.check) {
           case -1:
             this._candidates.shift();
             continue;
@@ -251,7 +268,7 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
             this.elFastId = set.id;
             this.gestureName = gestureName;
             this.gesture = g;
-            this.gesture.init(this);
+            this.gesture.init();
             return;
         }
         if (shouldBreak) {
@@ -299,16 +316,10 @@ define(['./definitions', './tools', '../utility/belt'], function(GestureDefiniti
     return Handler;
 
   })();
-  Handler.create = function(root, dommy) {
+  Handler.create = function(options) {
     var h;
 
-    if (root == null) {
-      root = window.document;
-    }
-    if (dommy == null) {
-      dommy = window.dommy;
-    }
-    h = new Handler(root, dommy);
+    h = new Handler(options);
     h.listen();
     return h;
   };

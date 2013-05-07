@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'], function(SingleAxisScroller, belt) {
+define(['../behavior/scroll/singleAxis', '../utility/object', '../utility/shims'], function(SingleAxisScroller, object) {
   var Scrolls, emptyFunction;
 
   emptyFunction = function() {};
@@ -19,7 +19,7 @@ define(['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
       this.options = {
         axis: 'both'
       };
-      this.options = belt.append(this.options, JSON.parse('{' + this.parentEl.getAttribute('data-scroll-options') + '}'));
+      this.options = object.append(this.options, JSON.parse('{' + this.parentEl.getAttribute('data-scroll-options') + '}'));
       this._enabledAxis = {
         x: 1,
         y: 1
@@ -46,7 +46,7 @@ define(['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
           space: parentRects.width
         };
         if (_this.options.x != null) {
-          belt.append(ops, _this.options.x);
+          object.append(ops, _this.options.x);
         }
         return ops;
       })());
@@ -62,7 +62,7 @@ define(['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
           space: parentRects.height
         };
         if (_this.options.y != null) {
-          belt.append(ops, _this.options.y);
+          object.append(ops, _this.options.y);
         }
         return ops;
       })());

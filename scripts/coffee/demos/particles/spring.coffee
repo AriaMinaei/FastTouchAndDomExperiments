@@ -1,4 +1,3 @@
-								
 define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField, domReady) ->
 	
 	domReady ->
@@ -11,23 +10,22 @@ define ['../../../../js/demos/particles/spring/field', 'domReady'], (SpringField
 
 				spring:
 
-					intensity: 8000
+					intensity: 20000
 
 				damper:
 
-					intensity: 500
+					intensity: 3000
 
 				attractor:
 
-					radius: 500
+					radius: 15000
 
-					intensity: 920000
+					intensity: 420000
 
-				tornado:
+				# tornado:
 
-					radius: 1500
+				# 	radius: 100000
 
-					intensity: 900000
+				# 	intensity: 300000
 
-					direction: 1
-
+				# 	direction: 1

@@ -1,6 +1,6 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'], (SingleAxisScroller, belt) ->
+define ['../behavior/scroll/singleAxis', '../utility/object', '../utility/shims'], (SingleAxisScroller, object) ->
 	
 	emptyFunction = ->
 
@@ -19,7 +19,7 @@ define ['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
 			# Load more options from the data-attrs of @parentEl
 			# Example:
 			# <div data-types="scroll" data-scroll-options='"axis":"x"'>
-			@options = belt.append @options,
+			@options = object.append @options,
 
 				JSON.parse '{' + @parentEl.getAttribute('data-scroll-options') + '}'
 
@@ -62,7 +62,7 @@ define ['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
 
 				if @options.x?
 
-					belt.append ops, @options.x
+					object.append ops, @options.x
 
 				ops
 
@@ -81,7 +81,7 @@ define ['../behavior/scroll/singleAxis', '../utility/belt', '../utility/shims'],
 
 				if @options.y?
 
-					belt.append ops, @options.y
+					object.append ops, @options.y
 
 				ops
 

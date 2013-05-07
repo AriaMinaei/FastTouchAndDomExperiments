@@ -1,6 +1,8 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, TouchTools, belt) ->
+define [
+	'./definitions', './tools', '../utility/object'
+	], (GestureDefinitions, TouchTools, object) ->
 
 	emptyFunction = ->
 
@@ -10,9 +12,15 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 	# Choose a high-level element, like the html element, since this can delegate events
 	# to child elements.
 	class Handler
-		
-		# Just specify the root element. document.body usually works
-		constructor: (@root = window.document, @dommy = window.dommy) ->
+
+		# Just specify the root element. window.document usually works
+		constructor: (options) ->
+
+			@options = object.override options, Handler.getDefaultOptions()
+
+			@root = @options.root
+
+			@dommy = @options.dommy
 
 			# Binding our few listeners to 'this'
 			@_boundListeners =
@@ -27,6 +35,9 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 
 			# Candidate gestures with their elements
 			@_candidates = []
+
+			# Holds instances to all gesture definitions
+			@_gestures = {}
 
 			# Element event listeners for event with custom names
 			@_elCustomEventListeners = {}
@@ -45,7 +56,15 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				do @finish
 
 			do @_reset
-				
+
+		@getDefaultOptions: ->
+
+			{
+				root: window.document
+
+				dommy: if window.dommy then window.dommy
+			}
+
 		# Resets the whole object, but keeps the root el
 		_reset: ->
 
@@ -90,9 +109,9 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 			# Have we retrieved an eventListener for the current element from the dommy?
 			@_elEventListenerInitialized = false
 
-			belt.empty @_elCustomEventListeners
+			object.empty @_elCustomEventListeners
 
-			belt.empty @vars
+			object.empty @vars
 
 			null
 
@@ -137,13 +156,21 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				
 				do @_findCandidates
 
-			if @gesture then @gesture.start @, e, first
+			if @gesture then @gesture.start e, first
 
 			else
 
 				do @_checkForType
 
-				if @gesture then @gesture.start @, e, first
+				if @gesture then @gesture.start e, first
+
+		_getGestureByName: (name) ->
+
+			if @_gestures[name] is undefined
+
+				@_gestures[name] = new GestureDefinitionsList[name] @
+
+			return @_gestures[name] unless @_gestures[name] is undefined
 
 		# Listener for touchend
 		_touchendListener: (e) ->
@@ -154,13 +181,13 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 			@lastEventType = 'end'
 			@lastEvents.end = @_copyTouchEvent e
 
-			if @gesture then @gesture.end @, e
+			if @gesture then @gesture.end e
 
 			else 
 
 				@_checkForType()
 
-				if @gesture then @gesture.end @, e
+				if @gesture then @gesture.end e
 
 			@_shouldFinish() if e.touches.length is 0
 
@@ -172,7 +199,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 			@lastEventType = 'cancel'
 			@lastEvents.cancel = @_copyTouchEvent e
 
-			if @gesture then @gesture.cancel @, e
+			if @gesture then @gesture.cancel e
 
 			@_shouldFinish() if e.touches.length is 0
 
@@ -195,13 +222,13 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				Math.abs(touch.screenY - first.screenY) >= @options.real_move_distance
 					@hadRealMove = yes
 						
-			if @gesture then @gesture.move @, @lastEvents.move
+			if @gesture then @gesture.move @lastEvents.move
 
 			else
 
 				do @_checkForType
 
-				if @gesture then @gesture.move @, @lastEvents.move
+				if @gesture then @gesture.move @lastEvents.move
 
 		# Runs when there are no touches left.
 		# If the gesture allows, it will finish
@@ -209,7 +236,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 
 			shouldFinish = true
 			
-			shouldFinish = @gesture.shouldFinish(@) if @gesture
+			shouldFinish = @gesture.shouldFinish() if @gesture
 
 			return if not shouldFinish
 
@@ -218,7 +245,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 		# Final method that runs when the gesture ends.
 		finish: ->
 
-			@gesture.finish @ if @gesture
+			@gesture.finish() if @gesture
 
 			#console.info 'finished with: ' + @gestureName if @gestureName
 			#console.info '-----------------------------'
@@ -272,7 +299,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				# Bubbling up
 				target = target.parentNode
 
-			# #console.log 'candidates: ', @_candidates
+			console.log 'candidates: ', @_candidates
 
 		# Gets El's gestures either from its data-gestures attribute, or a chached
 		# one from dommy.
@@ -314,10 +341,10 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				# console.log 'checking ' + @_candidates[0].gestureName
 
 				# reference to gesture definition object
-				g = GestureDefinitionsList[gestureName]
+				g = @_getGestureByName gestureName
 
 				# Check if gesture applies
-				switch g.check @
+				switch g.check
 
 					# Doesn't apply > Remove it
 					when -1
@@ -343,7 +370,7 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 						@elFastId = set.id
 						@gestureName = gestureName
 						@gesture = g
-						@gesture.init @
+						do @gesture.init
 
 						# console.groupEnd()
 						return
@@ -351,8 +378,8 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 				break if shouldBreak
 
 			# if @_candidates.length isnt 0
-				# console.log 'havent determined yet'
-			# else # console.log "Don't know!"
+			# 	console.log 'havent determined yet'
+			# else  console.log "Don't know!"
 			# console.groupEnd()
 
 		# Fires event on our elements
@@ -406,9 +433,9 @@ define ['./definitions', './tools', '../utility/belt'], (GestureDefinitions, Tou
 			@_touchstartListener e
 
 
-	Handler.create = (root = window.document, dommy = window.dommy) ->
+	Handler.create = (options) ->
 		
-		h = new Handler root, dommy
+		h = new Handler options
 		
 		do h.listen
 

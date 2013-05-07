@@ -1,14 +1,14 @@
 define [
 
-	'./vector'		, 	'./particle'	,
+	'./vector'		 , 	'./particle'	,
 
-	'./force/spring', 	'./force/damper', './force/proxy', './force/attractor',
+	'./force/spring' , 	'./force/damper', './force/proxy', './force/attractor',
 
 	'./force/tornado',
 
-	'utility/belt'	, 	'utility/shims'	
+	'utility/object' , 	'utility/shims'	
 	
-	], (Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, belt) ->
+	], (Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, object) ->
 
 	class SpringField
 
@@ -42,7 +42,7 @@ define [
 
 						direction: 1
 
-			belt.deepAppend @options, options
+			object.overrideOnto options, @options
 
 			@_fieldSize = new Vector Math.floor(@root.clientWidth  / @options.particleMargin),
 									 Math.floor(@root.clientHeight / @options.particleMargin)
@@ -67,11 +67,11 @@ define [
 				@options.forces.tornado.direction
 				)
 
-			# @_mouseForce = new ProxyForce new AttractorForce(
-			# 	@_mousePos, 
-			# 	@options.forces.attractor.radius,
-			# 	@options.forces.attractor.intensity
-			# 	)
+			@_mouseForce = new ProxyForce new AttractorForce(
+				@_mousePos, 
+				@options.forces.attractor.radius,
+				@options.forces.attractor.intensity
+				)
 
 			rootPos = @root.getBoundingClientRect()
 

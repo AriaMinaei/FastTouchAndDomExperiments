@@ -5,11 +5,10 @@ define ['./standard/tap', './standard/hold', './standard/move', './standard/tran
 	return (defineGesture) ->
 
 		# define all standard gestures
-		tap defineGesture
+		defineGesture tap
 
-		hold defineGesture
+		defineGesture hold
 
-		move defineGesture
+		defineGesture move
 		
-		transform defineGesture
-
+		defineGesture transform

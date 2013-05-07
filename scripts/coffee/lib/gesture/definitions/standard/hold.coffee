@@ -1,24 +1,20 @@
 if typeof define isnt 'function' then define = require('amdefine')(module)
 
-define ->
-	return (defineGesture) ->
-		
-		# 'hold' gesture
-		defineGesture
+define 
 
-			name: 'hold'
-		
-			hold_time: 250
+	name: 'hold'
 
-			check: (h) ->
+	hold_time: 250
 
-				return -1 if h.starts isnt 1 or h.hadRealMove
+	check: (h) ->
 
-				return 0 if h.lastEventType isnt 'end' or
-					h.lastEvents.end.timeStamp - h.firstEvent.timeStamp < @hold_time
+		return -1 if h.starts isnt 1 or h.hadRealMove
 
-				return 1
+		return 0 if h.lastEventType isnt 'end' or
+			h.lastEvents.end.timeStamp - h.firstEvent.timeStamp < @hold_time
 
-			end: (h, e) ->
+		return 1
 
-				h.fire({})
+	end: (h, e) ->
+
+		h.fire({})

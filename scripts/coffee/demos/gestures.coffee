@@ -1,84 +1,87 @@
 define ['domReady', 'gesture/handler', 'dommy/dambo', 'dommy/dommy'], (dr, GestureHandler, Dambo, Dommy) ->
+
 	window.dambo = new Dambo
 	window.dommy = new Dommy
+
 	# Instantiate a new GestureHandler
 	# We only assign it to the topmost element, and it'll delegate
 	# the events to the descendants.
-	g = new GestureHandler document
+	g = new GestureHandler
 
 	# Start listening for events
 	g.listen()
 
 	dr ->
 
-		# Wrap around an anonymous function
-		do ->
-			# holds refrences to transform handler objects for each element
-			transforms = {}
+		# holds refrences to transform handler objects for each element
+		transforms = {}
 
-			dambo.forThe('babs')
+		dambo.forThe('babs')
 
-				.addEvent 'transform-instant', (e, id, el) ->
+			.addEvent 'transform', (e, id, el) ->
 
-					# If we don't have a reference to this element's transform handler
-					unless transforms[id]
+				console.log 't'
 
-						# Get one
-						transforms[id] = t = dommy.styles.getTransform id, el
+				# If we don't have a reference to this element's transform handler
+				unless transforms[id]
 
-					else t = transforms[id]
+					# Get one
+					transforms[id] = t = dommy.styles.getTransform id, el
 
-					# Get a temporary transformation matrix handler,
-					t.temporarily()
+				else t = transforms[id]
 
-						# then scale,
-						.scale(e.scale, e.scale, 1)
-						# and translate it.
-						.move(e.translateX, e.translateY, 0)
+				# Get a temporary transformation matrix handler,
+				t.temporarily()
 
-					# Apply the temp transformation matrix to the element
-					t.applyTo el
+					# then scale,
+					.scale(e.scale, e.scale, 1)
+					# and translate it.
+					.move(e.translateX, e.translateY, 0)
 
-				.addEvent 'transform-instant:finish', (e, id, el) ->
+				# Apply the temp transformation matrix to the element
+				t.applyTo el
 
-					# Commit the temp transformation as the current transformation.
-					# This way, the next time the user touches the element, the transformation
-					# will pick up from where we left it off.
-					do transforms[id].commit
+			.addEvent 'transform:finish', (e, id, el) ->
 
-					# Remove reference to transformation handler
-					transforms[id] = null if transforms[id]
+				# Commit the temp transformation as the current transformation.
+				# This way, the next time the user touches the element, the transformation
+				# will pick up from where we left it off.
+				do transforms[id].commit
 
-				# listen to 'move-instant', for all elements of 'babs' type
-				.addEvent 'move-instant', (e, id, el) ->
-					
-					# If we don't have a reference to this element's transform handler
-					unless transforms[id]
-						# Get one
-						transforms[id] = t = dommy.styles.getTransform id, el
+				# Remove reference to transformation handler
+				transforms[id] = null if transforms[id]
 
-					else t = transforms[id]
+			# listen to 'move-instant', for all elements of 'babs' type
+			.addEvent 'move', (e, id, el) ->
+				
+				# If we don't have a reference to this element's transform handler
+				unless transforms[id]
+				
+					# Get one
+					transforms[id] = t = dommy.styles.getTransform id, el
 
-					# Get a temporary transformation matrix handler
-					t.temporarily()
-						# Set its rotation (not finished for now)
-						# ._setRotationY(e.translateX * Math.PI / 720)
-						# 
-						# Translate it
-						.move e.translateX, e.translateY, 0
+				else t = transforms[id]
 
-					# Apply the temp transformation matrix to the element
-					t.applyTo el
+				# Get a temporary transformation matrix handler
+				t.temporarily()
+					# Set its rotation (not finished for now)
+					# ._setRotationY(e.translateX * Math.PI / 720)
+					# 
+					# Translate it
+					.move e.translateX, e.translateY, 0
 
-				# When move-instant-end fires
-				.addEvent 'move-instant:finish', (e, id, el) ->
-					
-					# console.log 'received move-instant-end event for', e
+				# Apply the temp transformation matrix to the element
+				t.applyTo el
 
-					# Commit the temp transformation as the current transformation.
-					# This way, the next time the user touches the element, the transformation
-					# will pick up from where we left it off.
-					do transforms[id].commit
+			# When move-instant-end fires
+			.addEvent 'move:finish', (e, id, el) ->
+				
+				# console.log 'received move-instant-end event for', e
 
-					# Remove reference to transformation handler
-					transforms[id] = null if transforms[id]
+				# Commit the temp transformation as the current transformation.
+				# This way, the next time the user touches the element, the transformation
+				# will pick up from where we left it off.
+				do transforms[id].commit
+
+				# Remove reference to transformation handler
+				transforms[id] = null if transforms[id]

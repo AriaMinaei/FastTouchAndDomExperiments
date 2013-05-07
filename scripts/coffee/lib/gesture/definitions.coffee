@@ -2,11 +2,44 @@ if typeof define isnt 'function' then define = require('amdefine')(module)
 
 define ['./definitions/standard'], (setupStandardDefinitions) ->
 
-	# List of classes of different gesture definitions
-	classes = {}
+	Definitions =
+
+		# List of all gesture definitions (instantiated)
+		list: {}
+
+		# To define a new gesture
+		define: (structure) ->
+
+			# The name fo the new gesture
+			name = structure.name
+
+			# Let's see which class it has to extend
+			ExtendsFrom = do ->
+
+				extendsFrom = structure.extends or 'basic'
+
+				Definitions.list[extendsFrom]
+
+			# A dummy constructor function
+			NewGesture = ->
+
+				NewGesture.__super__.constructor.apply @, arguments
+
+			# Extend from parent class
+			NewGesture extends ExtendsFrom
+
+			# Add the methods from structure to the class
+			for key of structure
+
+				NewGesture::[key] = structure[key]
+
+			# Hold a reference to the class
+			Definitions.list[name] = NewGesture
 
 	# Basic Gesture class
-	classes['basic'] = class BasicGesture
+	Definitions.list['basic'] = class BasicGesture
+
+		constructor: (@h) ->
 
 		# This should check whether the user is performing this gesture or not.
 		# 
@@ -27,7 +60,7 @@ define ['./definitions/standard'], (setupStandardDefinitions) ->
 		# things down.
 		# 
 		# If you need to introduce new variables, put them all in h.stuff
-		init: -> #console.log 'Gesture "' + name + '" initialized'
+		init: -> console.log 'Gesture "' + name + '" initialized'
 
 		# Called on touchstart events, when this gesture is active.
 		start: (h, e) -> #console.log 'Caught touchstart for "' + name + '"'
@@ -59,44 +92,6 @@ define ['./definitions/standard'], (setupStandardDefinitions) ->
 		finish: (h) ->
 			
 			h.fireCustom @name + ':finish', {}
-
-
-	Definitions =
-
-		# List of all gesture definitions (instantiated)
-		list: {}
-
-		# To define a new gesture
-		define: (structure) ->
-
-			# The name fo the new gesture
-			name = structure.name
-
-			# Let's see which class it has to extend
-			ExtendsFrom = do ->
-
-				extendsFrom = structure.extends or 'basic'
-
-				classes[extendsFrom]
-
-			# A dummy constructor function
-			NewGesture = ->
-
-				NewGesture.__super__.constructor.apply @, arguments
-
-			# Extend from parent class
-			NewGesture extends ExtendsFrom
-
-			# Add the methods from structure to the class
-			for key of structure
-
-				NewGesture::[key] = structure[key]
-
-			# Hold a reference to the class
-			classes[name] = NewGesture
-
-			# Instantiate and hold a reference
-			Definitions.list[name] = new NewGesture()
 
 	# A reference to the define() method
 	defineGesture = (what) -> Definitions.define what

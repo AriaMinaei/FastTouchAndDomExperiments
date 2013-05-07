@@ -143,6 +143,39 @@ define ->
 				m.m43 + ', ' +
 				m.m44 + ')'
 		
+		toCss2: (m) ->
+
+			'matrix3d(' + 
+				@_toCssNumber(m.m11) + ', ' +
+				@_toCssNumber(m.m12) + ', ' +
+				@_toCssNumber(m.m13) + ', ' +
+				@_toCssNumber(m.m14) + ', ' +
+
+				@_toCssNumber(m.m21) + ', ' +
+				@_toCssNumber(m.m22) + ', ' +
+				@_toCssNumber(m.m23) + ', ' +
+				@_toCssNumber(m.m24) + ', ' +
+
+				@_toCssNumber(m.m31) + ', ' +
+				@_toCssNumber(m.m32) + ', ' +
+				@_toCssNumber(m.m33) + ', ' +
+				@_toCssNumber(m.m34) + ', ' +
+
+				@_toCssNumber(m.m41) + ', ' +
+				@_toCssNumber(m.m42) + ', ' +
+				@_toCssNumber(m.m43) + ', ' +
+				@_toCssNumber(m.m44) + ')'
+		
+		_toCssNumber: (num) ->
+
+			if -0.000001 < num < 0.000001
+
+				return 0
+
+			else
+
+				return num
+		
 		multiply: (b, a) ->
 
 			{

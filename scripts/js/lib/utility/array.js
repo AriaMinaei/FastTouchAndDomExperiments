@@ -4,10 +4,29 @@ if (typeof define !== 'function') {
   define = require('amdefine')(module);
 }
 
-define(function() {
-  var array;
+define(['./_common'], function(common) {
+  return {
+    _clone: common._cloneArray.bind(common),
+    clone: function(what) {
+      if (!Array.isArray(what)) {
+        throw Error("`what` isn\'t an array.");
+      }
+      return this._clone.apply(this, arguments);
+    },
+    /*
+    	Tries to turn anything into an array.
+    */
 
-  return array = {
+    from: function(r) {
+      return Array.prototype.slice.call(r);
+    },
+    /*
+    	Clone of an array. Properties will be shallow copies.
+    */
+
+    simpleClone: function(a) {
+      return a.slice(0);
+    },
     pluck: function(a, i) {
       var index, value, _i, _len;
 

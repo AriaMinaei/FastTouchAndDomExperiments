@@ -83,9 +83,13 @@ global.test = (name, fn) ->
 			console.log '          Actual:'
 			console.log '          "' + color(err.actual, 'yellow') + '"\n'
 
+			
+
 		console.log '          Stack:'
 
-		console.log '          %s\n', color(err.stack, 'yellow')
+		console.log '          %s', color(err.stack, 'yellow')
+
+		`console.log("\007")`
 
 		return
 

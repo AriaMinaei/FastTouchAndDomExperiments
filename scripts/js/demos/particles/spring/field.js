@@ -1,4 +1,4 @@
-define(['./vector', './particle', './force/spring', './force/damper', './force/proxy', './force/attractor', './force/tornado', 'utility/belt', 'utility/shims'], function(Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, belt) {
+define(['./vector', './particle', './force/spring', './force/damper', './force/proxy', './force/attractor', './force/tornado', 'utility/object', 'utility/shims'], function(Vector, Particle, SpringForce, DamperForce, ProxyForce, AttractorForce, TornadoForce, object) {
   var SpringField;
 
   return SpringField = (function() {
@@ -27,7 +27,7 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
           }
         }
       };
-      belt.deepAppend(this.options, options);
+      object.overrideOnto(options, this.options);
       this._fieldSize = new Vector(Math.floor(this.root.clientWidth / this.options.particleMargin), Math.floor(this.root.clientHeight / this.options.particleMargin));
       this._prepareMouse();
       this._prepareParticles();
@@ -41,6 +41,7 @@ define(['./vector', './particle', './force/spring', './force/damper', './force/p
 
       this._mousePos = new Vector(this.root.clientWidth * 2, this.root.clientHeight * 2);
       this._mouseForce = new ProxyForce(new TornadoForce(this._mousePos, this.options.forces.tornado.radius, this.options.forces.tornado.intensity, this.options.forces.tornado.direction));
+      this._mouseForce = new ProxyForce(new AttractorForce(this._mousePos, this.options.forces.attractor.radius, this.options.forces.attractor.intensity));
       rootPos = this.root.getBoundingClientRect();
       return document.addEventListener('mousemove', function(e) {
         _this._mousePos.x = e.clientX - rootPos.left;

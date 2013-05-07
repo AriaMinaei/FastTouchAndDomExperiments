@@ -90,6 +90,16 @@ define(function() {
     toCss: function(m) {
       return 'matrix3d(' + m.m11 + ', ' + m.m12 + ', ' + m.m13 + ', ' + m.m14 + ', ' + m.m21 + ', ' + m.m22 + ', ' + m.m23 + ', ' + m.m24 + ', ' + m.m31 + ', ' + m.m32 + ', ' + m.m33 + ', ' + m.m34 + ', ' + m.m41 + ', ' + m.m42 + ', ' + m.m43 + ', ' + m.m44 + ')';
     },
+    toCss2: function(m) {
+      return 'matrix3d(' + this._toCssNumber(m.m11) + ', ' + this._toCssNumber(m.m12) + ', ' + this._toCssNumber(m.m13) + ', ' + this._toCssNumber(m.m14) + ', ' + this._toCssNumber(m.m21) + ', ' + this._toCssNumber(m.m22) + ', ' + this._toCssNumber(m.m23) + ', ' + this._toCssNumber(m.m24) + ', ' + this._toCssNumber(m.m31) + ', ' + this._toCssNumber(m.m32) + ', ' + this._toCssNumber(m.m33) + ', ' + this._toCssNumber(m.m34) + ', ' + this._toCssNumber(m.m41) + ', ' + this._toCssNumber(m.m42) + ', ' + this._toCssNumber(m.m43) + ', ' + this._toCssNumber(m.m44) + ')';
+    },
+    _toCssNumber: function(num) {
+      if ((-0.000001 < num && num < 0.000001)) {
+        return 0;
+      } else {
+        return num;
+      }
+    },
     multiply: function(b, a) {
       return {
         m11: a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31 + a.m14 * b.m41,

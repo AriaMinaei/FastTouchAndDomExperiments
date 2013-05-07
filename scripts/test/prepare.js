@@ -77,7 +77,8 @@ global.test = function(name, fn) {
       console.log('          "' + color(err.actual, 'yellow') + '"\n');
     }
     console.log('          Stack:');
-    console.log('          %s\n', color(err.stack, 'yellow'));
+    console.log('          %s', color(err.stack, 'yellow'));
+    console.log("\007");
     return;
   }
   return console.log('     √ \x1b[32m%s\x1b[0m', name);

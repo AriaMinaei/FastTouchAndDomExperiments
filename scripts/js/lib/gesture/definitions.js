@@ -7,17 +7,42 @@ if (typeof define !== 'function') {
 }
 
 define(['./definitions/standard'], function(setupStandardDefinitions) {
-  var BasicGesture, Definitions, classes, defineGesture;
+  var BasicGesture, Definitions, defineGesture;
 
-  classes = {};
-  classes['basic'] = BasicGesture = (function() {
-    function BasicGesture() {}
+  Definitions = {
+    list: {},
+    define: function(structure) {
+      var ExtendsFrom, NewGesture, key, name;
+
+      name = structure.name;
+      ExtendsFrom = (function() {
+        var extendsFrom;
+
+        extendsFrom = structure["extends"] || 'basic';
+        return Definitions.list[extendsFrom];
+      })();
+      NewGesture = function() {
+        return NewGesture.__super__.constructor.apply(this, arguments);
+      };
+      __extends(NewGesture, ExtendsFrom);
+      for (key in structure) {
+        NewGesture.prototype[key] = structure[key];
+      }
+      return Definitions.list[name] = NewGesture;
+    }
+  };
+  Definitions.list['basic'] = BasicGesture = (function() {
+    function BasicGesture(h) {
+      this.h = h;
+    }
 
     BasicGesture.prototype.check = function(h) {
       return -1;
     };
 
-    BasicGesture.prototype.init = function() {};
+    BasicGesture.prototype.init = function() {
+      return console.log('Gesture "' + name + '" initialized');
+    };
 
     BasicGesture.prototype.start = function(h, e) {};
 
@@ -38,29 +63,6 @@ define(['./definitions/standard'], function(setupStandardDefinitions) {
     return BasicGesture;
 
   })();
-  Definitions = {
-    list: {},
-    define: function(structure) {
-      var ExtendsFrom, NewGesture, key, name;
-
-      name = structure.name;
-      ExtendsFrom = (function() {
-        var extendsFrom;
-
-        extendsFrom = structure["extends"] || 'basic';
-        return classes[extendsFrom];
-      })();
-      NewGesture = function() {
-        return NewGesture.__super__.constructor.apply(this, arguments);
-      };
-      __extends(NewGesture, ExtendsFrom);
-      for (key in structure) {
-        NewGesture.prototype[key] = structure[key];
-      }
-      classes[name] = NewGesture;
-      return Definitions.list[name] = new NewGesture();
-    }
-  };
   defineGesture = function(what) {
     return Definitions.define(what);
   };
